@@ -24,5 +24,7 @@ namespace Bantay_Kalamidad_Pilipinas
         {
             InitializeComponent();
         }
+
+        // hello
     }
 }
