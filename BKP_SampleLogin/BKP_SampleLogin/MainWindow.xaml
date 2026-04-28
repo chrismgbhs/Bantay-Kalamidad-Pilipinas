@@ -1,0 +1,107 @@
+<Window x:Class="BKP_SampleLogin.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Bantay Kalamidad Pilipinas"
+        Height="450" Width="600"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize">
+
+    <Grid Background="White">
+        <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,2,0,0">
+
+            <Border
+                HorizontalAlignment="Center">
+                <TextBlock Text="BKP" FontSize="32" FontWeight="Bold"
+                           Foreground="White" HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+
+            </Border>
+
+            <Image Source="Images/bkp_logo.png" Width="200" Height="200" />
+
+
+            <TextBlock Text="Bantay Kalamidad Pilipinas"
+                       FontSize="22" FontWeight="Bold"
+                       Foreground="Black" HorizontalAlignment="Center"
+                       Margin="0,0,0,6"/>
+
+            <TextBlock Text="Disaster Response and Relief Coordination System"
+                       FontSize="12" Foreground="Black"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,40"/>
+
+            <!--portal-->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+
+                <Button Name="btnRescue" Content="RESCUE"
+                        Width="180" Height="50" Margin="10,0"
+                        FontSize="13" FontWeight="SemiBold"
+                        Background="Red" Foreground="White"
+                        BorderThickness="0" Cursor="Hand"
+                        Click="BtnRescue_Click">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background" Value="red"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}"
+                                                CornerRadius="6" Padding="10">
+                                            <ContentPresenter HorizontalAlignment="Center"
+                                                              VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="Red"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter Property="Background" Value="#922B21"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <Button Name="btnDonation" Content="DONATION"
+                        Width="180" Height="50" Margin="10,0"
+                        FontSize="13" FontWeight="SemiBold"
+                        Cursor="Hand"
+                        Click="BtnDonation_Click">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background" Value="Blue"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}"
+                                                CornerRadius="6" Padding="10">
+                                            <ContentPresenter HorizontalAlignment="Center"
+                                                              VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="Blue"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter Property="Background" Value="Blue"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+            </StackPanel>
+
+        </StackPanel>
+    </Grid>
+</Window>
