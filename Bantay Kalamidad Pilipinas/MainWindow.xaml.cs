@@ -23,6 +23,7 @@ namespace Bantay_Kalamidad_Pilipinas
         public MainWindow()
         {
             InitializeComponent();
+            this.DataContext = new ViewModel.MainWindowViewModel();
         }
 
         // hello

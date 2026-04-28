@@ -55,6 +55,32 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\UserModel.cs" />
+    <Compile Include="ViewModel\DatabaseManager.cs" />
+    <Compile Include="ViewModel\DonationLoginViewModel.cs" />
+    <Compile Include="ViewModel\MainWindowViewModel.cs" />
+    <Compile Include="ViewModel\ObservableObject.cs" />
+    <Compile Include="ViewModel\RelayCommand.cs" />
+    <Compile Include="ViewModel\RescueLoginViewModel.cs" />
+    <Compile Include="ViewModel\SQL.cs" />
+    <Compile Include="View\DonationAdmin.xaml.cs">
+      <DependentUpon>DonationAdmin.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\DonationLogin.xaml.cs">
+      <DependentUpon>DonationLogin.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\DonationUser.xaml.cs">
+      <DependentUpon>DonationUser.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\RescueAdmin.xaml.cs">
+      <DependentUpon>RescueAdmin.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\RescueLogin.xaml.cs">
+      <DependentUpon>RescueLogin.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\RescueUser.xaml.cs">
+      <DependentUpon>RescueUser.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -67,6 +93,30 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\DonationAdmin.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\DonationLogin.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\DonationUser.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\RescueAdmin.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\RescueLogin.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\RescueUser.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -93,6 +143,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Images\bkp_logo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
