@@ -10,7 +10,6 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace Bantay_Kalamidad_Pilipinas.View
@@ -18,11 +17,12 @@ namespace Bantay_Kalamidad_Pilipinas.View
     /// <summary>
     /// Interaction logic for DonationLogin.xaml
     /// </summary>
-    public partial class DonationLogin : UserControl
+    public partial class DonationLogin : Window
     {
         public DonationLogin()
         {
             InitializeComponent();
+            this.DataContext = new ViewModel.DonationLoginViewModel();
         }
     }
 }
