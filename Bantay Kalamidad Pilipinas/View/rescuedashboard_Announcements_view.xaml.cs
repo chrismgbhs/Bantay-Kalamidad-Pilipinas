@@ -10,16 +10,17 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace Bantay_Kalamidad_Pilipinas.View
 {
     /// <summary>
-    /// Interaction logic for DonationUser.xaml
+    /// Interaction logic for rescuedashboard_Announcements_view.xaml
     /// </summary>
-    public partial class DonationUser : Window
+    public partial class rescuedashboard_Announcements_view : UserControl
     {
-        public DonationUser()
+        public rescuedashboard_Announcements_view()
         {
             InitializeComponent();
         }

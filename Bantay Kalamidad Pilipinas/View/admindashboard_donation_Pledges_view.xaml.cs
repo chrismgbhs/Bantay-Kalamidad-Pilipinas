@@ -10,19 +10,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace Bantay_Kalamidad_Pilipinas.View
 {
     /// <summary>
-    /// Interaction logic for DonationLogin.xaml
+    /// Interaction logic for admindashboard_donation_Pledges_view.xaml
     /// </summary>
-    public partial class DonationLogin : Window
+    public partial class admindashboard_donation_Pledges_view : UserControl
     {
-        public DonationLogin()
+        public admindashboard_donation_Pledges_view()
         {
             InitializeComponent();
-            this.DataContext = new ViewModel.DonationLoginViewModel();
         }
     }
 }

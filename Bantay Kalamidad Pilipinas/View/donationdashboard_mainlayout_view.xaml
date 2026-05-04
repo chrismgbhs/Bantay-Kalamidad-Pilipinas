@@ -1,0 +1,295 @@
+﻿<Window x:Class="Bantay_Kalamidad_Pilipinas.View.donationdashboard_mainlayout_view"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Donation Dashboard"
+        WindowStartupLocation="CenterScreen"
+        Background="White"
+        ResizeMode="CanResize">
+
+    <Viewbox Stretch="Uniform">
+        <Grid Width="1100" Height="750" Background="White">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="120"/>
+                <RowDefinition Height="62"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Margin="70,28,70,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="250"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Image Source="/Images/bkp_logo.png"
+                           Width="70"
+                           Height="70"
+                           Margin="0,0,16,0"/>
+
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Bantay Kalamidad Pilipinas"
+                                   FontSize="24"
+                                   FontWeight="Black"/>
+                        <TextBlock Text="Disaster Response and Relief Coordination System"
+                                   FontSize="15"
+                                   FontWeight="Bold"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <Grid Grid.Column="1"
+                      HorizontalAlignment="Right"
+                      VerticalAlignment="Center">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="48"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel VerticalAlignment="Center" Margin="0,0,10,0">
+                        <TextBlock Text="Welcome, Donor!"
+                                   FontSize="17"
+                                   FontWeight="Black"
+                                   HorizontalAlignment="Right"
+                                   Margin="0,0,0,8"/>
+
+                        <Button Content="Logout"
+                                Width="150"
+                                Height="32"
+                                Background="#7F7F7F"
+                                Foreground="White"
+                                FontWeight="Bold"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Command="{Binding LogoutCommand}">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="2">
+                                        <ContentPresenter HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
+
+                    <TextBlock Grid.Column="1"
+                               Text="👤"
+                               FontSize="34"
+                               VerticalAlignment="Top"
+                               HorizontalAlignment="Center"/>
+                </Grid>
+            </Grid>
+
+            <Border Grid.Row="1"
+                    Height="50"
+                    Background="#07314E"
+                    Margin="85,0,85,0"
+                    VerticalAlignment="Center">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="58"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="0"
+                            Content="My Donations"
+                            Background="#07314E"
+                            Foreground="White"
+                            FontSize="14"
+                            FontWeight="Bold"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Command="{Binding ShowMyDonationsCommand}"/>
+
+                    <Grid Grid.Column="1">
+                        <Button Content="Pledge"
+                                Background="#07314E"
+                                Foreground="White"
+                                FontSize="14"
+                                FontWeight="Bold"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Command="{Binding TogglePledgeMenuCommand}"/>
+
+                        <Popup IsOpen="{Binding IsPledgeMenuOpen}"
+                               Placement="Bottom"
+                               PlacementTarget="{Binding RelativeSource={RelativeSource AncestorType=Grid}}"
+                               AllowsTransparency="True"
+                               StaysOpen="False">
+                            <Border Width="150"
+                                    Background="#D9D9D9"
+                                    BorderBrush="#BFBFBF"
+                                    BorderThickness="1">
+                                <StackPanel>
+                                    <Button Content="Make a Pledge"
+                                            Height="30"
+                                            Background="#D9D9D9"
+                                            Foreground="Black"
+                                            FontWeight="Bold"
+                                            BorderThickness="0"
+                                            Cursor="Hand"
+                                            Command="{Binding ShowMakePledgeCommand}"/>
+                                    <Button Content="My Pledges"
+                                            Height="30"
+                                            Background="#D9D9D9"
+                                            Foreground="Black"
+                                            FontWeight="Bold"
+                                            BorderThickness="0"
+                                            Cursor="Hand"
+                                            Command="{Binding ShowMyPledgesCommand}"/>
+                                </StackPanel>
+                            </Border>
+                        </Popup>
+                    </Grid>
+
+                    <Button Grid.Column="2"
+                            Content="Pickup &amp; Delivery"
+                            Background="#07314E"
+                            Foreground="White"
+                            FontSize="14"
+                            FontWeight="Bold"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Command="{Binding ShowPickupDeliveryCommand}"/>
+
+                    <Button Grid.Column="3"
+                            Content="About Us"
+                            Background="#07314E"
+                            Foreground="White"
+                            FontSize="14"
+                            FontWeight="Bold"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Command="{Binding ShowAboutUsCommand}"/>
+
+                    <Button Grid.Column="4"
+                            Content="Contact Us"
+                            Background="#07314E"
+                            Foreground="White"
+                            FontSize="14"
+                            FontWeight="Bold"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Command="{Binding ShowContactUsCommand}"/>
+
+                    <Button Grid.Column="5"
+                            Background="#07314E"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Command="{Binding SearchCommand}">
+                        <TextBlock Text="🔍"
+                                   FontSize="23"
+                                   Foreground="Black"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Row="2" Margin="85,12,85,45">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="260"/>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0"
+                            Background="#07314E"
+                            CornerRadius="10"
+                            Margin="0,0,0,12"
+                            Padding="16">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="My Total Donations"
+                                       Foreground="White"
+                                       FontSize="15"
+                                       FontWeight="Bold"
+                                       TextAlignment="Center"/>
+                            <TextBlock Text="{Binding TotalDonationsCount, FallbackValue=0}"
+                                       Foreground="White"
+                                       FontSize="28"
+                                       FontWeight="Black"
+                                       TextAlignment="Center"
+                                       Margin="0,8,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Row="1"
+                            Background="#07314E"
+                            CornerRadius="10"
+                            Margin="0,0,0,12"
+                            Padding="16">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="Active Pledges"
+                                       Foreground="White"
+                                       FontSize="15"
+                                       FontWeight="Bold"
+                                       TextAlignment="Center"/>
+                            <TextBlock Text="{Binding ActivePledgesCount, FallbackValue=0}"
+                                       Foreground="White"
+                                       FontSize="28"
+                                       FontWeight="Black"
+                                       TextAlignment="Center"
+                                       Margin="0,8,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Row="2"
+                            Background="#07314E"
+                            CornerRadius="10"
+                            Padding="16">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="Scheduled Pickups"
+                                       Foreground="White"
+                                       FontSize="15"
+                                       FontWeight="Bold"
+                                       TextAlignment="Center"/>
+                            <TextBlock Text="{Binding ScheduledPickupsCount, FallbackValue=0}"
+                                       Foreground="White"
+                                       FontSize="28"
+                                       FontWeight="Black"
+                                       TextAlignment="Center"
+                                       Margin="0,8,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <Border Grid.Column="2"
+                        Background="#F6F6F6"
+                        CornerRadius="10"
+                        BorderBrush="#D9D9D9"
+                        BorderThickness="1"
+                        Padding="16">
+
+                    <ContentControl Content="{Binding CurrentDonationDashboardView}">
+                        <ContentControl.Template>
+                            <ControlTemplate TargetType="ContentControl">
+                                <Border Background="White"
+                                        CornerRadius="10"
+                                        BorderBrush="#DDDDDD"
+                                        BorderThickness="1">
+                                    <ContentPresenter/>
+                                </Border>
+                            </ControlTemplate>
+                        </ContentControl.Template>
+                    </ContentControl>
+
+                </Border>
+
+            </Grid>
+
+        </Grid>
+    </Viewbox>
+</Window>

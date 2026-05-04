@@ -37,6 +37,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -63,23 +65,101 @@
     <Compile Include="ViewModel\RelayCommand.cs" />
     <Compile Include="ViewModel\RescueLoginViewModel.cs" />
     <Compile Include="ViewModel\SQL.cs" />
-    <Compile Include="View\DonationAdmin.xaml.cs">
-      <DependentUpon>DonationAdmin.xaml</DependentUpon>
+    <Compile Include="View\admindashboard_donation_Distribution_view.xaml.cs">
+      <DependentUpon>admindashboard_donation_Distribution_view.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\DonationLogin.xaml.cs">
-      <DependentUpon>DonationLogin.xaml</DependentUpon>
+    <Compile Include="View\admindashboard_donation_Donations_view.xaml.cs">
+      <DependentUpon>admindashboard_donation_Donations_view.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\DonationUser.xaml.cs">
-      <DependentUpon>DonationUser.xaml</DependentUpon>
+    <Compile Include="View\admindashboard_donation_Inventory_view.xaml.cs">
+      <DependentUpon>admindashboard_donation_Inventory_view.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\RescueAdmin.xaml.cs">
-      <DependentUpon>RescueAdmin.xaml</DependentUpon>
+    <Compile Include="View\admindashboard_donation_Logistics_view.xaml.cs">
+      <DependentUpon>admindashboard_donation_Logistics_view.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\RescueLogin.xaml.cs">
-      <DependentUpon>RescueLogin.xaml</DependentUpon>
+    <Compile Include="View\admindashboard_donation_mainlayout_view.xaml.cs">
+      <DependentUpon>admindashboard_donation_mainlayout_view.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\RescueUser.xaml.cs">
-      <DependentUpon>RescueUser.xaml</DependentUpon>
+    <Compile Include="View\admindashboard_donation_Pledges_view.xaml.cs">
+      <DependentUpon>admindashboard_donation_Pledges_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\admindashboard_donation_Waste_view.xaml.cs">
+      <DependentUpon>admindashboard_donation_Waste_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\admindashboard_rescue_Assignments_view.xaml.cs">
+      <DependentUpon>admindashboard_rescue_Assignments_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\admindashboard_rescue_DisasterEvents_view.xaml.cs">
+      <DependentUpon>admindashboard_rescue_DisasterEvents_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\admindashboard_rescue_mainlayout_view.xaml.cs">
+      <DependentUpon>admindashboard_rescue_mainlayout_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\admindashboard_rescue_Operations_view.xaml.cs">
+      <DependentUpon>admindashboard_rescue_Operations_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\admindashboard_rescue_Rescuers_view.xaml.cs">
+      <DependentUpon>admindashboard_rescue_Rescuers_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\admindashboard_rescue_Teams_view.xaml.cs">
+      <DependentUpon>admindashboard_rescue_Teams_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\admin_login_view.xaml.cs">
+      <DependentUpon>admin_login_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\admin_menu_view.xaml.cs">
+      <DependentUpon>admin_menu_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\donationdashboard_AboutUs_view.xaml.cs">
+      <DependentUpon>donationdashboard_AboutUs_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\donationdashboard_ContactUs_view.xaml.cs">
+      <DependentUpon>donationdashboard_ContactUs_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\donationdashboard_mainlayout_view.xaml.cs">
+      <DependentUpon>donationdashboard_mainlayout_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\donationdashboard_MakeAPledge_view.xaml.cs">
+      <DependentUpon>donationdashboard_MakeAPledge_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\donationdashboard_MyDonations_view.xaml.cs">
+      <DependentUpon>donationdashboard_MyDonations_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\donationdashboard_MyPledges_view.xaml.cs">
+      <DependentUpon>donationdashboard_MyPledges_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\donationdashboard_Pickup&amp;Delivery_view.xaml.cs">
+      <DependentUpon>donationdashboard_Pickup&amp;Delivery_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\donation_login_view.xaml.cs">
+      <DependentUpon>donation_login_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\donation_signup_view.xaml.cs">
+      <DependentUpon>donation_signup_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\rescuedashboard_Announcements_view.xaml.cs">
+      <DependentUpon>rescuedashboard_Announcements_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\rescuedashboard_mainlayout_view.xaml.cs">
+      <DependentUpon>rescuedashboard_mainlayout_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\rescuedashboard_MyRescueOperations_view.xaml.cs">
+      <DependentUpon>rescuedashboard_MyRescueOperations_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\rescuedashboard_MyTeam_view.xaml.cs">
+      <DependentUpon>rescuedashboard_MyTeam_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\rescuedashboard_RescueLocations_view.xaml.cs">
+      <DependentUpon>rescuedashboard_RescueLocations_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\rescue_login_view.xaml.cs">
+      <DependentUpon>rescue_login_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\rescue_signup_view.xaml.cs">
+      <DependentUpon>rescue_signup_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\start_view.xaml.cs">
+      <DependentUpon>start_view.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -93,27 +173,131 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="View\DonationAdmin.xaml">
+    <Page Include="View\admindashboard_donation_Distribution_view.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\DonationLogin.xaml">
+    <Page Include="View\admindashboard_donation_Donations_view.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\DonationUser.xaml">
+    <Page Include="View\admindashboard_donation_Inventory_view.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\RescueAdmin.xaml">
+    <Page Include="View\admindashboard_donation_Logistics_view.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\RescueLogin.xaml">
+    <Page Include="View\admindashboard_donation_mainlayout_view.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\RescueUser.xaml">
+    <Page Include="View\admindashboard_donation_Pledges_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\admindashboard_donation_Waste_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\admindashboard_rescue_Assignments_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\admindashboard_rescue_DisasterEvents_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\admindashboard_rescue_mainlayout_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\admindashboard_rescue_Operations_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\admindashboard_rescue_Rescuers_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\admindashboard_rescue_Teams_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\admin_login_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\admin_menu_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\donationdashboard_AboutUs_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\donationdashboard_ContactUs_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\donationdashboard_mainlayout_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\donationdashboard_MakeAPledge_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\donationdashboard_MyDonations_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\donationdashboard_MyPledges_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\donationdashboard_Pickup&amp;Delivery_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\donation_login_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\donation_signup_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\rescuedashboard_Announcements_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\rescuedashboard_mainlayout_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\rescuedashboard_MyRescueOperations_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\rescuedashboard_MyTeam_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\rescuedashboard_RescueLocations_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\rescue_login_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\rescue_signup_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\start_view.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -144,7 +328,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Images\fb_logo.png" />
+    <Resource Include="Images\google_logo.png" />
+    <Resource Include="Images\ig_logo.png" />
+    <Resource Include="Images\x_logo.png" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\bkp_logo.png" />
   </ItemGroup>
