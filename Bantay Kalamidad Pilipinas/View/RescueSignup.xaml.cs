@@ -10,16 +10,17 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace Bantay_Kalamidad_Pilipinas.View
 {
     /// <summary>
-    /// Interaction logic for RescueUser.xaml
+    /// Interaction logic for RescueSignup.xaml
     /// </summary>
-    public partial class RescueUser : Window
+    public partial class RescueSignup : UserControl
     {
-        public RescueUser()
+        public RescueSignup()
         {
             InitializeComponent();
         }

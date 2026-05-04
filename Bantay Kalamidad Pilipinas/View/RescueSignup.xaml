@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Bantay_Kalamidad_Pilipinas.View.DonationLogin"
+﻿<UserControl x:Class="Bantay_Kalamidad_Pilipinas.View.RescueSignup"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 

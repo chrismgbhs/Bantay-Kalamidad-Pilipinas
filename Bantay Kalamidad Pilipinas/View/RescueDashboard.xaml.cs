@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace Bantay_Kalamidad_Pilipinas.View
 {
     /// <summary>
-    /// Interaction logic for RescueLogin.xaml
+    /// Interaction logic for RescueDashboard.xaml
     /// </summary>
-    public partial class RescueLogin : UserControl
+    public partial class RescueDashboard : UserControl
     {
-        public RescueLogin()
+        public RescueDashboard()
         {
             InitializeComponent();
         }

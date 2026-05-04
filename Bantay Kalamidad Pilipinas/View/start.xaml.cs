@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace Bantay_Kalamidad_Pilipinas.View
 {
     /// <summary>
-    /// Interaction logic for DonationUser.xaml
+    /// Interaction logic for start.xaml
     /// </summary>
-    public partial class DonationUser : Window
+    public partial class start : Window
     {
-        public DonationUser()
+        public start()
         {
             InitializeComponent();
         }
