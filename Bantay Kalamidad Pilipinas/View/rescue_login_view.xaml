@@ -105,14 +105,14 @@
                             </Button.Template>
                         </Button>
 
-                        <Button Content="Log in"
+                        <Button Content="Sign in"
                                 Height="40"
                                 Margin="0,30,0,30"
                                 Background="#A30000"
                                 Foreground="White"
                                 FontWeight="Bold"
                                 Cursor="Hand"
-                                Command="{Binding LoginCommand}">
+                                Command="{Binding LoginCommand}" Click="Button_Click">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border Background="{TemplateBinding Background}"

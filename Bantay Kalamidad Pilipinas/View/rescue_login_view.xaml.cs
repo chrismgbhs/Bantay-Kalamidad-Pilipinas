@@ -24,5 +24,10 @@ namespace Bantay_Kalamidad_Pilipinas.View
         {
             InitializeComponent();
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
