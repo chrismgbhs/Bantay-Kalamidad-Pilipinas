@@ -26,6 +26,7 @@
                    VerticalAlignment="Center"
                    Margin="14,0,0,0"/>
 
+        <!-- ABOUT -->
         <TextBlock Grid.Row="1"
                    Text="About Bantay Kalamidad Pilipinas"
                    FontSize="15"
@@ -46,6 +47,7 @@
                  Margin="14,0,14,10"
                  Padding="10"/>
 
+        <!-- MISSION -->
         <TextBlock Grid.Row="3"
                    Text="Mission"
                    FontSize="15"
@@ -66,6 +68,7 @@
                  Margin="14,0,14,10"
                  Padding="10"/>
 
+        <!-- VISION -->
         <TextBlock Grid.Row="5"
                    Text="Vision"
                    FontSize="15"
@@ -86,6 +89,7 @@
                  Margin="14,0,14,10"
                  Padding="10"/>
 
+        <!-- HOW IT WORKS -->
         <TextBlock Grid.Row="7"
                    Text="How the System Works"
                    FontSize="15"

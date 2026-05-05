@@ -64,7 +64,8 @@
                                 Command="{Binding LogoutCommand}">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
-                                    <Border Background="{TemplateBinding Background}" CornerRadius="2">
+                                    <Border Background="{TemplateBinding Background}"
+                                            CornerRadius="2">
                                         <ContentPresenter HorizontalAlignment="Center"
                                                           VerticalAlignment="Center"/>
                                     </Border>
@@ -207,7 +208,7 @@
                                            FontWeight="Bold"
                                            Margin="0,0,0,5"/>
 
-                                <TextBlock Text="{Binding CurrentMode, FallbackValue=View}"
+                                <TextBlock Text="{Binding CurrentMode}"
                                            Foreground="White"
                                            FontSize="18"
                                            FontWeight="Black"/>

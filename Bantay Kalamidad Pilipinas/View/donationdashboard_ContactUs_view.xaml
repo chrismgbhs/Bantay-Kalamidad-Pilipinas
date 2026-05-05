@@ -44,7 +44,7 @@
                        VerticalAlignment="Center"/>
 
             <Border Grid.Column="1"
-                    Background="#8A8A8A"
+                    Background="White"
                     CornerRadius="3"
                     Height="30">
                 <TextBox Text="{Binding FullName}"
@@ -71,7 +71,7 @@
                        VerticalAlignment="Center"/>
 
             <Border Grid.Column="1"
-                    Background="#8A8A8A"
+                    Background="White"
                     CornerRadius="3"
                     Height="30">
                 <TextBox Text="{Binding Email}"
@@ -98,7 +98,7 @@
                        VerticalAlignment="Center"/>
 
             <Border Grid.Column="1"
-                    Background="#8A8A8A"
+                    Background="White"
                     CornerRadius="3"
                     Height="30">
                 <TextBox Text="{Binding Subject}"
@@ -120,7 +120,7 @@
                    VerticalAlignment="Center"/>
 
         <Border Grid.Row="5"
-                Background="#8A8A8A"
+                Background="White"
                 CornerRadius="3"
                 Margin="18,0,18,0">
 
