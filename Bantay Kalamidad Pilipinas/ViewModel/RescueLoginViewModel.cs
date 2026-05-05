@@ -11,31 +11,31 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
 {
     internal class RescueLoginViewModel : ObservableObject
     {
-        public static UserModel CurrentUser { get; set; }
-        public ICommand ViewPortalCommand { get; set; }
-        public ICommand LoginCommand { get; set; }
+        //public static UserModel CurrentUser { get; set; }
+        //public ICommand ViewPortalCommand { get; set; }
+        //public ICommand LoginCommand { get; set; }
 
-        public RescueLoginViewModel() 
-        { 
-            CurrentUser = new UserModel();
-            ViewPortalCommand = new RelayCommand(ViewPortal);
-            LoginCommand = new RelayCommand(Login);
-        }
+        //public RescueLoginViewModel() 
+        //{ 
+        //    CurrentUser = new UserModel();
+        //    ViewPortalCommand = new RelayCommand(ViewPortal);
+        //    LoginCommand = new RelayCommand(Login);
+        //}
 
-        private async void Login()
-        {
-            MessageBox.Show($"{CurrentUser.Username}");
-            await DatabaseManager.RescueLogin();
-        }
+        //private async void Login()
+        //{
+        //    MessageBox.Show($"{CurrentUser.Username}");
+        //    await DatabaseManager.RescueLogin();
+        //}
 
-        private void ViewPortal()
-        {
-            var mainWindow = new MainWindow();
-            System.Windows.Application.Current.MainWindow = mainWindow; // ✅ Set BEFORE closing
-            mainWindow.Show();                           // ✅ Non-blocking
-            System.Windows.Application.Current.Windows
-                .OfType<View.RescueLogin>()
-                .FirstOrDefault()?.Close();                 // ✅ Close login after
-        }
+        //private void ViewPortal()
+        //{
+        //    var mainWindow = new MainWindow();
+        //    System.Windows.Application.Current.MainWindow = mainWindow; // ✅ Set BEFORE closing
+        //    mainWindow.Show();                           // ✅ Non-blocking
+        //    System.Windows.Application.Current.Windows
+        //        .OfType<View.RescueLogin>()
+        //        .FirstOrDefault()?.Close();                 // ✅ Close login after
+        //}
     }
 }

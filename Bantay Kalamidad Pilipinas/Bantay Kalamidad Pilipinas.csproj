@@ -64,7 +64,9 @@
     <Compile Include="ViewModel\ObservableObject.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
     <Compile Include="ViewModel\RescueLoginViewModel.cs" />
+    <Compile Include="ViewModel\rescue_login_ViewModel.cs" />
     <Compile Include="ViewModel\SQL.cs" />
+    <Compile Include="ViewModel\start_view_ViewModel.cs" />
     <Compile Include="View\admindashboard_donation_Distribution_view.xaml.cs">
       <DependentUpon>admindashboard_donation_Distribution_view.xaml</DependentUpon>
     </Compile>
