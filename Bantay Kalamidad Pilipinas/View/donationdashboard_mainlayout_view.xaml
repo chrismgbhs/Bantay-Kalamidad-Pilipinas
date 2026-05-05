@@ -185,7 +185,7 @@
                             Command="{Binding SearchCommand}">
                         <TextBlock Text="🔍"
                                    FontSize="23"
-                                   Foreground="Black"
+                                   Foreground="White"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"/>
                     </Button>

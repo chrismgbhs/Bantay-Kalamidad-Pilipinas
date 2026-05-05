@@ -4,202 +4,255 @@
              Background="White">
 
     <Viewbox Stretch="Uniform">
-        <Grid Width="1100" Height="750">
+        <Grid Width="1200" Height="800" Background="White">
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+            <StackPanel HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
 
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Center"
-                        Margin="0,75,0,25">
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Margin="0,0,0,40">
 
-                <Image Source="/Images/bkp_logo.png"
-                       Width="75"
-                       Height="75"
-                       Margin="0,0,18,0"/>
+                    <Image Source="/Images/bkp_logo.png"
+                           Width="85"
+                           Height="85"
+                           Margin="0,0,20,0"/>
 
-                <StackPanel VerticalAlignment="Center">
-                    <TextBlock Text="Bantay Kalamidad Pilipinas"
-                               FontSize="28"
-                               FontWeight="Black"/>
-                    <TextBlock Text="Disaster Response and Relief Coordination System"
-                               FontSize="20"
-                               FontWeight="Bold"/>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Bantay Kalamidad Pilipinas"
+                                   FontSize="34"
+                                   FontWeight="Black"/>
+                        <TextBlock Text="Disaster Response and Relief Coordination System"
+                                   FontSize="20"
+                                   FontWeight="Bold"/>
+                    </StackPanel>
+
                 </StackPanel>
 
-            </StackPanel>
-
-            <Grid Grid.Row="1">
-
-                <Border Width="430"
-                        Height="520"
-                        BorderBrush="#990000"
+                <Border Width="460"
+                        Height="540"
+                        BorderBrush="#A30000"
                         BorderThickness="3"
                         CornerRadius="10"
-                        Background="White"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Top"
-                        Margin="0,5,0,0">
+                        Background="White">
 
-                    <StackPanel Margin="48,25,48,0">
+                    <Grid>
 
-                        <TextBlock Text="RESCUER SIGN UP"
-                                   FontSize="16"
-                                   FontWeight="Black"
-                                   HorizontalAlignment="Center"/>
-
-                        <StackPanel Orientation="Horizontal"
-                                    HorizontalAlignment="Center"
-                                    Margin="0,5,0,22">
-
-                            <TextBlock Text="Already have an account? "
-                                       FontSize="12"
-                                       Foreground="#777"/>
-
-                            <Button Content="Sign in"
-                                    Background="Transparent"
-                                    BorderThickness="0"
-                                    Foreground="Black"
-                                    FontSize="12"
-                                    Cursor="Hand"
-                                    Command="{Binding OpenSigninCommand}">
-                                <Button.Template>
-                                    <ControlTemplate TargetType="Button">
-                                        <TextBlock Text="{TemplateBinding Content}"
-                                                   TextDecorations="Underline"/>
-                                    </ControlTemplate>
-                                </Button.Template>
-                            </Button>
-
-                        </StackPanel>
-
-                        <Grid Margin="0,0,0,18">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="18"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <StackPanel Grid.Column="0">
-                                <TextBlock Text="First name" FontSize="13"/>
-                                <TextBox Height="35"
-                                         Margin="0,5,0,0"
-                                         Padding="10"
-                                         Text="{Binding FirstName}"/>
-                            </StackPanel>
-
-                            <StackPanel Grid.Column="2">
-                                <TextBlock Text="Last name" FontSize="13"/>
-                                <TextBox Height="35"
-                                         Margin="0,5,0,0"
-                                         Padding="10"
-                                         Text="{Binding LastName}"/>
-                            </StackPanel>
-                        </Grid>
-
-                        <TextBlock Text="Email address" FontSize="13"/>
-                        <TextBox Height="35"
-                                 Margin="0,5,0,18"
-                                 Padding="10"
-                                 Text="{Binding EmailAddress}"/>
-
-                        <TextBlock Text="Phone number" FontSize="13"/>
-                        <TextBox Height="35"
-                                 Margin="0,5,0,18"
-                                 Padding="10"
-                                 Text="{Binding PhoneNumber}"/>
-
-                        <Grid Margin="0,0,0,5">
-                            <TextBlock Text="Password"
-                                       FontSize="13"
-                                       HorizontalAlignment="Left"/>
-
-                            <Button Content="Hide"
-                                    Background="Transparent"
-                                    BorderThickness="0"
-                                    Foreground="#777"
-                                    FontSize="11"
-                                    HorizontalAlignment="Right"
-                                    Cursor="Hand"
-                                    Command="{Binding TogglePasswordVisibilityCommand}">
-                                <Button.Template>
-                                    <ControlTemplate TargetType="Button">
-                                        <TextBlock Text="{TemplateBinding Content}"
-                                                   Foreground="{TemplateBinding Foreground}"
-                                                   FontSize="{TemplateBinding FontSize}"/>
-                                    </ControlTemplate>
-                                </Button.Template>
-                            </Button>
-                        </Grid>
-
-                        <PasswordBox Height="35"
-                                     Margin="0,0,0,25"
-                                     Padding="10"/>
-
-                        <Button Content="Sign up"
-                                Height="40"
-                                Margin="0,0,0,25"
-                                Background="#A30000"
-                                Foreground="White"
-                                FontWeight="Bold"
+                        <Button Width="50"
+                                Height="50"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Margin="18,14,0,0"
+                                Background="Transparent"
+                                BorderThickness="0"
                                 Cursor="Hand"
-                                Command="{Binding SignupCommand}">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border Background="{TemplateBinding Background}"
-                                            CornerRadius="5">
-                                        <ContentPresenter HorizontalAlignment="Center"
-                                                          VerticalAlignment="Center"/>
-                                    </Border>
-                                </ControlTemplate>
-                            </Button.Template>
+                                Command="{Binding BackCommand}">
+                            <TextBlock Text="&#xE72B;"
+                                       FontFamily="Segoe MDL2 Assets"
+                                       FontSize="22"
+                                       Foreground="Black"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
                         </Button>
 
-                        <StackPanel Orientation="Horizontal"
-                                    HorizontalAlignment="Center"
-                                    Margin="0,0,0,20">
+                        <StackPanel Margin="55,35,55,0">
 
-                            <Button Width="55" Height="38" Margin="5"
-                                    Background="White"
-                                    BorderBrush="#DDD"
-                                    BorderThickness="1"
-                                    Command="{Binding FacebookLoginCommand}">
-                                <Image Source="/Images/fb_logo.png" Width="18"/>
+                            <TextBlock Text="RESCUER SIGN UP"
+                                       FontSize="16"
+                                       FontWeight="Black"
+                                       HorizontalAlignment="Center"/>
+
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center"
+                                        Margin="0,6,0,24">
+
+                                <TextBlock Text="Already have an account? "
+                                           FontSize="12"
+                                           Foreground="#777"/>
+
+                                <Button Content="Sign in"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        FontSize="12"
+                                        Cursor="Hand"
+                                        Command="{Binding OpenSigninCommand}">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <TextBlock Text="{TemplateBinding Content}"
+                                                       TextDecorations="Underline"/>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+
+                            </StackPanel>
+
+                            <Grid Margin="0,0,0,18">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="20"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="First name"
+                                               FontSize="13"
+                                               Margin="0,0,0,6"/>
+                                    <TextBox Height="34"
+                                             Padding="12,0"
+                                             FontSize="13"
+                                             VerticalContentAlignment="Center"
+                                             BorderBrush="#555"
+                                             BorderThickness="1"
+                                             Text="{Binding FirstName}"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Last name"
+                                               FontSize="13"
+                                               Margin="0,0,0,6"/>
+                                    <TextBox Height="34"
+                                             Padding="12,0"
+                                             FontSize="13"
+                                             VerticalContentAlignment="Center"
+                                             BorderBrush="#555"
+                                             BorderThickness="1"
+                                             Text="{Binding LastName}"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <TextBlock Text="Email address"
+                                       FontSize="13"
+                                       Margin="0,0,0,6"/>
+
+                            <TextBox Height="34"
+                                     Padding="12,0"
+                                     FontSize="13"
+                                     VerticalContentAlignment="Center"
+                                     BorderBrush="#555"
+                                     BorderThickness="1"
+                                     Margin="0,0,0,18"
+                                     Text="{Binding EmailAddress}"/>
+
+                            <TextBlock Text="Phone number"
+                                       FontSize="13"
+                                       Margin="0,0,0,6"/>
+
+                            <TextBox Height="34"
+                                     Padding="12,0"
+                                     FontSize="13"
+                                     VerticalContentAlignment="Center"
+                                     BorderBrush="#555"
+                                     BorderThickness="1"
+                                     Margin="0,0,0,18"
+                                     Text="{Binding PhoneNumber}"/>
+
+                            <Grid Margin="0,0,0,6">
+                                <TextBlock Text="Password"
+                                           FontSize="13"
+                                           HorizontalAlignment="Left"/>
+
+                                <Button Content="Hide"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Foreground="#777"
+                                        FontSize="11"
+                                        HorizontalAlignment="Right"
+                                        Cursor="Hand"
+                                        Command="{Binding TogglePasswordVisibilityCommand}">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <TextBlock Text="{TemplateBinding Content}"
+                                                       Foreground="{TemplateBinding Foreground}"
+                                                       FontSize="{TemplateBinding FontSize}"/>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </Grid>
+
+                            <PasswordBox Height="34"
+                                         Padding="12,0"
+                                         FontSize="13"
+                                         VerticalContentAlignment="Center"
+                                         BorderBrush="#555"
+                                         BorderThickness="1"
+                                         Margin="0,0,0,24"/>
+
+                            <Button Content="Sign up"
+                                    Height="42"
+                                    Background="#A30000"
+                                    Foreground="White"
+                                    FontWeight="Bold"
+                                    FontSize="14"
+                                    Margin="0,0,0,22"
+                                    Cursor="Hand"
+                                    Command="{Binding SignupCommand}">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}"
+                                                CornerRadius="6">
+                                            <ContentPresenter HorizontalAlignment="Center"
+                                                              VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
                             </Button>
 
-                            <Button Width="55" Height="38" Margin="5"
-                                    Background="White"
-                                    BorderBrush="#DDD"
-                                    BorderThickness="1"
-                                    Command="{Binding InstagramLoginCommand}">
-                                <Image Source="/Images/ig_logo.png" Width="18"/>
-                            </Button>
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center">
 
-                            <Button Width="55" Height="38" Margin="5"
-                                    Background="White"
-                                    BorderBrush="#DDD"
-                                    BorderThickness="1"
-                                    Command="{Binding GoogleLoginCommand}">
-                                <Image Source="/Images/google_logo.png" Width="18"/>
-                            </Button>
+                                <Button Width="58" Height="38" Margin="0,0,14,0"
+                                        Background="White"
+                                        BorderBrush="#D6D6D6"
+                                        BorderThickness="1"
+                                        Command="{Binding FacebookLoginCommand}">
+                                    <Border CornerRadius="19">
+                                        <Image Source="/Images/fb_logo.png"
+                                               Width="20"/>
+                                    </Border>
+                                </Button>
 
-                            <Button Width="55" Height="38" Margin="5"
-                                    Background="White"
-                                    BorderBrush="#DDD"
-                                    BorderThickness="1"
-                                    Command="{Binding XLoginCommand}">
-                                <Image Source="/Images/x_logo.png" Width="18"/>
-                            </Button>
+                                <Button Width="58" Height="38" Margin="0,0,14,0"
+                                        Background="White"
+                                        BorderBrush="#D6D6D6"
+                                        BorderThickness="1"
+                                        Command="{Binding InstagramLoginCommand}">
+                                    <Border CornerRadius="19">
+                                        <Image Source="/Images/ig_logo.png"
+                                               Width="20"/>
+                                    </Border>
+                                </Button>
+
+                                <Button Width="58" Height="38" Margin="0,0,14,0"
+                                        Background="White"
+                                        BorderBrush="#D6D6D6"
+                                        BorderThickness="1"
+                                        Command="{Binding GoogleLoginCommand}">
+                                    <Border CornerRadius="19">
+                                        <Image Source="/Images/google_logo.png"
+                                               Width="20"/>
+                                    </Border>
+                                </Button>
+
+                                <Button Width="58" Height="38"
+                                        Background="White"
+                                        BorderBrush="#D6D6D6"
+                                        BorderThickness="1"
+                                        Command="{Binding XLoginCommand}">
+                                    <Border CornerRadius="19">
+                                        <Image Source="/Images/x_logo.png"
+                                               Width="18"/>
+                                    </Border>
+                                </Button>
+
+                            </StackPanel>
 
                         </StackPanel>
 
-                    </StackPanel>
+                    </Grid>
 
                 </Border>
 
-            </Grid>
+            </StackPanel>
 
         </Grid>
     </Viewbox>
