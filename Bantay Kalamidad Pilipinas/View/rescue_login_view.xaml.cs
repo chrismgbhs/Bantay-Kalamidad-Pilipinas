@@ -23,6 +23,7 @@ namespace Bantay_Kalamidad_Pilipinas.View
         public rescue_login_view()
         {
             InitializeComponent();
+            this.DataContext = new ViewModel.rescue_login_ViewModel();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

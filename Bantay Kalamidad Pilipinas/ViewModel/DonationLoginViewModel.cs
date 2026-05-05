@@ -11,30 +11,30 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
 {
     internal class DonationLoginViewModel : ObservableObject
     {
-        public static UserModel CurrentUser { get; set; }  
-        public ICommand ViewPortalCommand { get; set; }
-        public ICommand LoginCommand { get; set; }
+        //public static UserModel CurrentUser { get; set; }  
+        //public ICommand ViewPortalCommand { get; set; }
+        //public ICommand LoginCommand { get; set; }
 
-        public DonationLoginViewModel()
-        {
-            CurrentUser = new UserModel();
-            ViewPortalCommand = new RelayCommand(ViewPortal);
-            LoginCommand = new RelayCommand(Login);
-        }
+        //public DonationLoginViewModel()
+        //{
+        //    CurrentUser = new UserModel();
+        //    ViewPortalCommand = new RelayCommand(ViewPortal);
+        //    LoginCommand = new RelayCommand(Login);
+        //}
 
-        private async void Login()
-        {
-            await DatabaseManager.DonationLogin();
-        }
+        //private async void Login()
+        //{
+        //    await DatabaseManager.DonationLogin();
+        //}
 
-        private void ViewPortal()
-        {
-            var mainWindow = new MainWindow();
-            System.Windows.Application.Current.MainWindow = mainWindow; // ✅ Set BEFORE closing
-            mainWindow.Show();                           // ✅ Non-blocking
-            System.Windows.Application.Current.Windows
-                .OfType<View.DonationLogin>()
-                .FirstOrDefault()?.Close();                 // ✅ Close login after
-        }
+        //private void ViewPortal()
+        //{
+        //    var mainWindow = new MainWindow();
+        //    System.Windows.Application.Current.MainWindow = mainWindow; // ✅ Set BEFORE closing
+        //    mainWindow.Show();                           // ✅ Non-blocking
+        //    System.Windows.Application.Current.Windows
+        //        .OfType<View.DonationLogin>()
+        //        .FirstOrDefault()?.Close();                 // ✅ Close login after
+        //}
     }
 }

@@ -158,15 +158,10 @@
                                     Command="{Binding XLoginCommand}">
                                 <Image Source="/Images/x_logo.png" Width="18"/>
                             </Button>
-
                         </StackPanel>
-
                     </StackPanel>
-
                 </Border>
-
             </Grid>
-
         </Grid>
     </Viewbox>
 </UserControl>
