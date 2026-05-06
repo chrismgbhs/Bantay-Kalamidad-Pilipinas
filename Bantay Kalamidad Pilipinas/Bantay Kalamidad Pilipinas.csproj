@@ -58,12 +58,13 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Model\UserModel.cs" />
+    <Compile Include="ViewModel\admin_login_ViewModel.cs" />
     <Compile Include="ViewModel\DatabaseManager.cs" />
-    <Compile Include="ViewModel\DonationLoginViewModel.cs" />
+    <Compile Include="ViewModel\donation_login_ViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
+    <Compile Include="ViewModel\NavigationStack.cs" />
     <Compile Include="ViewModel\ObservableObject.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
-    <Compile Include="ViewModel\RescueLoginViewModel.cs" />
     <Compile Include="ViewModel\rescue_login_ViewModel.cs" />
     <Compile Include="ViewModel\SQL.cs" />
     <Compile Include="ViewModel\start_view_ViewModel.cs" />

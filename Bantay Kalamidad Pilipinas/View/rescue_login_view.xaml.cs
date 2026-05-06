@@ -26,9 +26,11 @@ namespace Bantay_Kalamidad_Pilipinas.View
             this.DataContext = new ViewModel.rescue_login_ViewModel();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-
+            // Assign to ViewModel or use directly
+            ViewModel.rescue_login_ViewModel.CurrentUser.Password = passwordBox.Password;
         }
+
     }
 }

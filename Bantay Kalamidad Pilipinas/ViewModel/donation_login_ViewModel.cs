@@ -8,12 +8,12 @@ using System.Windows.Input;
 
 namespace Bantay_Kalamidad_Pilipinas.ViewModel
 {
-    internal class rescue_login_ViewModel
+    internal class donation_login_ViewModel
     {
         public static UserModel CurrentUser { get; set; }
         public ICommand LoginCommand { get; set; }
 
-        public rescue_login_ViewModel()
+        public donation_login_ViewModel()
         {
             CurrentUser = new UserModel();
             LoginCommand = new RelayCommand(Login);
@@ -21,7 +21,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
 
         private async void Login()
         {
-            await DatabaseManager.Login(CurrentUser, "rescue", "Volunteer");
+            await DatabaseManager.Login(CurrentUser, "donation", "Donor");
         }
     }
 }

@@ -74,13 +74,16 @@
                                      BorderBrush="#555"
                                      BorderThickness="1"
                                      Margin="0,0,0,20"
-                                     Text="{Binding Username}"/>
+                                     Text="{Binding CurrentUser.Username}"/>
 
                             <TextBlock Text="Password"
                                        FontSize="13"
                                        Margin="0,0,0,6"/>
 
-                            <PasswordBox Height="34"
+                            <PasswordBox 
+                                         x:Name="passwordBox" 
+                                         PasswordChanged="PasswordBox_PasswordChanged"
+                                         Height="34"
                                          Padding="12,0"
                                          FontSize="13"
                                          VerticalContentAlignment="Center"

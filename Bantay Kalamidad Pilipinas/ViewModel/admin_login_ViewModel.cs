@@ -1,19 +1,20 @@
-﻿using Bantay_Kalamidad_Pilipinas.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Bantay_Kalamidad_Pilipinas.Model;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Forms;
 
 namespace Bantay_Kalamidad_Pilipinas.ViewModel
 {
-    internal class rescue_login_ViewModel
+    internal class admin_login_ViewModel
     {
         public static UserModel CurrentUser { get; set; }
         public ICommand LoginCommand { get; set; }
 
-        public rescue_login_ViewModel()
+        public admin_login_ViewModel()
         {
             CurrentUser = new UserModel();
             LoginCommand = new RelayCommand(Login);
@@ -21,7 +22,8 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
 
         private async void Login()
         {
-            await DatabaseManager.Login(CurrentUser, "rescue", "Volunteer");
+            //MessageBox.Show($"username: {CurrentUser.Username}, password: {CurrentUser.Password}");
+            await DatabaseManager.Login(CurrentUser, "admin", "Admin");
         }
     }
 }

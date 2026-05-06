@@ -25,6 +25,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         {
             // Inside your login logic
             var window = new View.rescue_login_view(); // this is a UserControl
+            NavigationStack.UserControls.Add("View.rescue_login_view");
             Application.Current.MainWindow.Content = window;
         }
 
@@ -32,12 +33,14 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         {
             // Inside your login logic
             var window = new View.donation_login_view(); // this is a UserControl
+            NavigationStack.UserControls.Add("View.donation_Login_view");
             Application.Current.MainWindow.Content = window;
         }
 
         public static void OpenAdmin()
         {
             var window = new View.admin_login_view(); // this is a UserControl
+            NavigationStack.UserControls.Add("View.admin_login_view");
             Application.Current.MainWindow.Content = window;
         }   
     }
