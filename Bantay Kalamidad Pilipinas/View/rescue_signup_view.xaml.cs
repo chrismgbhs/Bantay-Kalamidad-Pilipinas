@@ -23,6 +23,13 @@ namespace Bantay_Kalamidad_Pilipinas.View
         public rescue_signup_view()
         {
             InitializeComponent();
+            this.DataContext = new ViewModel.rescuer_signup_ViewModel();
+        }
+
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            // Assign to ViewModel or use directly
+            ViewModel.rescuer_signup_ViewModel.Password = passwordBox.Password;
         }
     }
 }

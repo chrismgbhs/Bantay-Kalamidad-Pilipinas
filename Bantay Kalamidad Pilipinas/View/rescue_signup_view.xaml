@@ -168,15 +168,16 @@
                                     </Button.Template>
                                 </Button>
                             </Grid>
-
-                            <PasswordBox Height="34"
+                            <PasswordBox 
+                                         x:Name="passwordBox" 
+                                         PasswordChanged="PasswordBox_PasswordChanged"
+                                         Height="34"
                                          Padding="12,0"
                                          FontSize="13"
                                          VerticalContentAlignment="Center"
                                          BorderBrush="#555"
                                          BorderThickness="1"
                                          Margin="0,0,0,24"/>
-
                             <Button Content="Sign up"
                                     Height="42"
                                     Background="#A30000"
@@ -196,7 +197,6 @@
                                     </ControlTemplate>
                                 </Button.Template>
                             </Button>
-
                             <StackPanel Orientation="Horizontal"
                                         HorizontalAlignment="Center">
 
@@ -243,17 +243,11 @@
                                                Width="18"/>
                                     </Border>
                                 </Button>
-
                             </StackPanel>
-
                         </StackPanel>
-
                     </Grid>
-
                 </Border>
-
             </StackPanel>
-
         </Grid>
     </Viewbox>
 </UserControl>
