@@ -168,5 +168,72 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             }
         }
 
+        /// <summary>
+        /// Retrieves rows from a table with an optional WHERE condition.
+        /// </summary>
+        /// <param name="tableName">The table to query.</param>
+        /// <param name="condition">Optional WHERE condition. Pass null or empty for all rows.</param>
+        /// <param name="data">The retrieved rows as a DataTable. Empty if no rows found or on error.</param>
+        /// <returns>True if at least one row was retrieved; otherwise false.</returns>
+        public static bool GetTableData(string tableName, string condition, out DataTable data)
+        {
+            data = new DataTable();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+                {
+                    string query = string.IsNullOrEmpty(condition)
+                        ? $"SELECT * FROM {tableName}"
+                        : $"SELECT * FROM {tableName} WHERE {condition}";
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        connection.Open();
+                        using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                        {
+                            adapter.Fill(data);
+                        }
+                    }
+                }
+                return data.Rows.Count > 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// This is suitable for getting table data with join queries or other complex queries that don't fit the simple GetTableData method.
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static bool GetTableDataWithCustomizedQuery(string query, out DataTable data)
+        {
+            data = new DataTable();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        connection.Open();
+                        using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                        {
+                            adapter.Fill(data);
+                        }
+                    }
+                }
+                return data.Rows.Count > 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return false;
+            }
+        }
+
     }
 }

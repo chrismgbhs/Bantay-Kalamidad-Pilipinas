@@ -57,6 +57,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\RescueOperation.cs" />
     <Compile Include="Model\UserModel.cs" />
     <Compile Include="ViewModel\admin_login_ViewModel.cs" />
     <Compile Include="ViewModel\DatabaseManager.cs" />
@@ -66,7 +67,9 @@
     <Compile Include="ViewModel\NavigationStack.cs" />
     <Compile Include="ViewModel\ObservableObject.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
+    <Compile Include="ViewModel\rescuedashboard_MyRescueOpeartions_ViewModel.cs" />
     <Compile Include="ViewModel\rescuer_signup_ViewModel.cs" />
+    <Compile Include="ViewModel\rescue_dashboard_mainlayout_ViewModel.cs" />
     <Compile Include="ViewModel\rescue_login_ViewModel.cs" />
     <Compile Include="ViewModel\SQL.cs" />
     <Compile Include="ViewModel\start_view_ViewModel.cs" />

@@ -11,6 +11,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
     internal class SQL
     {
         //public static string connectionString = @"Data Source=CHREGION\SQLEXPRESS;Initial Catalog=""Bantay Kalamidad Pilipinas"";Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Application Name=""SQL Server Management Studio""";
-        public static string connectionString = @"Data Source=ccl2-34;Initial Catalog=""Bantay Kalamidad Pilipinas"";Persist Security Info=True;User ID=sa;Password=ccl2;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Application Name=""SQL Server Management Studio"";";
+        //public static string connectionString = @"Data Source=ccl2-34;Initial Catalog=""Bantay Kalamidad Pilipinas"";Persist Security Info=True;User ID=sa;Password=ccl2;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Application Name=""SQL Server Management Studio"";";
+        public static string connectionString = @"Data Source=CCL2-10\MSSQLSERVER01;Initial Catalog=""Bantay Kalamidad Pilipinas (2)"";Persist Security Info=True;User ID=sa;Password=ccl2;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Application Name=""SQL Server Management Studio"";";
     }
 }
