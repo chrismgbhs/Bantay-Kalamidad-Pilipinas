@@ -23,6 +23,7 @@ namespace Bantay_Kalamidad_Pilipinas.View
         public rescuedashboard_MyTeam_view()
         {
             InitializeComponent();
+            this.DataContext = new ViewModel.rescuedashboard_MyTeam_ViewModel();
         }
     }
 }

@@ -66,6 +66,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                                                 window = new View.rescuedashboard_mainlayout_view(); // this is a UserControl
                                                 window.Show();
                                                 Application.Current.MainWindow.Close();
+                                                Application.Current.MainWindow = window;
                                                 break;
 
                                             default:

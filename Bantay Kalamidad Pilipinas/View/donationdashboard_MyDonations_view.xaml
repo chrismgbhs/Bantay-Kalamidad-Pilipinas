@@ -36,7 +36,7 @@
                       FontWeight="Bold"
                       BorderThickness="0"
                       Padding="12,0"
-                      SelectedItem="{Binding SelectedDonationFilter}">
+                      SelectedItem="{Binding SelectedDonationFilter, Mode=TwoWay}">
                 <ComboBoxItem Content="All Donations"/>
                 <ComboBoxItem Content="Pending"/>
                 <ComboBoxItem Content="Received"/>

@@ -9,11 +9,11 @@ namespace Bantay_Kalamidad_Pilipinas.Model
 {
     internal class RescueOperation
     {
-        public string OperationId;
-        public string Event;
-        public string Location;
-        public string DateStarted;
-        public string Status;
+        public string OperationId { get; set; }
+        public string Event { get; set; }
+        public string Location { get; set; }
+        public string DateStarted { get; set; }
+        public string Status { get; set; }
 
         public RescueOperation(string operationID, string eventName, string location, string dateStarted, string status)
         {

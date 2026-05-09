@@ -32,7 +32,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 SELECT 
                     ro.Operation_ID,
                     de.Event_Name,
-                    l.Location_Name,
+                    l.Province,
                     ro.Date_Started,
                     ro.Rescue_Status
                 FROM [Rescue Operation] ro
@@ -48,13 +48,14 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 var operations = data.AsEnumerable().Select(row => new RescueOperation(
                     row["Operation_ID"].ToString(),
                     row["Event_Name"].ToString(),
-                    row["Location_Name"].ToString(),
+                    row["Province"].ToString(),
                     row["Date_Started"].ToString(),
                     row["Rescue_Status"].ToString()
                 ));
 
                 foreach (var op in operations)
                 {
+                    //MessageBox.Show(op.Location);
                     MyRescueOperations.Add(op);
                 } 
             }

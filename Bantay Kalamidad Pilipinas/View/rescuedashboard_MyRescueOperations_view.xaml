@@ -42,27 +42,27 @@
 
         </Border>
 
-        <Border Grid.Row="2"
-                Background="#2C2C2C"
-                Margin="10,0,10,10"
-                ClipToBounds="True">
-
+        <Border 
+                    Grid.Row="2"
+                    Background="#2C2C2C"
+                    Margin="10,0,10,10"
+                    ClipToBounds="True">
             <DataGrid ItemsSource="{Binding MyRescueOperations}"
-                      AutoGenerateColumns="False"
-                      HeadersVisibility="None"
-                      CanUserAddRows="False"
-                      CanUserResizeRows="False"
-                      CanUserResizeColumns="False"
-                      GridLinesVisibility="None"
-                      Background="#2C2C2C"
-                      RowBackground="#2C2C2C"
-                      AlternatingRowBackground="#343434"
-                      Foreground="White"
-                      BorderThickness="0"
-                      RowHeight="34"
-                      FontSize="13"
-                      ScrollViewer.VerticalScrollBarVisibility="Auto"
-                      ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                          AutoGenerateColumns="False"
+                          HeadersVisibility="None"
+                          CanUserAddRows="False"
+                          CanUserResizeRows="False"
+                          CanUserResizeColumns="False"
+                          GridLinesVisibility="None"
+                          Background="#2C2C2C"
+                          RowBackground="#2C2C2C"
+                          AlternatingRowBackground="#343434"
+                          Foreground="White"
+                          BorderThickness="0"
+                          RowHeight="34"
+                          FontSize="13"
+                          ScrollViewer.VerticalScrollBarVisibility="Auto"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 
                 <DataGrid.CellStyle>
                     <Style TargetType="DataGridCell">
@@ -81,10 +81,7 @@
                     <DataGridTextColumn Binding="{Binding DateStarted}" Width="1.2*"/>
                     <DataGridTextColumn Binding="{Binding Status}" Width="1*"/>
                 </DataGrid.Columns>
-
             </DataGrid>
-
         </Border>
-
     </Grid>
 </UserControl>

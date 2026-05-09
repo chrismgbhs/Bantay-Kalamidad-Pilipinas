@@ -43,7 +43,7 @@
                 Margin="10,0,10,10"
                 ClipToBounds="True">
 
-            <DataGrid ItemsSource="{Binding MyTeamMembers}"
+            <DataGrid ItemsSource="{Binding MyTeam}"
                       AutoGenerateColumns="False"
                       HeadersVisibility="None"
                       CanUserAddRows="False"
