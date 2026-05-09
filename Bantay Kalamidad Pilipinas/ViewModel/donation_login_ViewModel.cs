@@ -20,9 +20,11 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             CurrentUser = new UserModel();
             LoginCommand = new RelayCommand(Login);
             OpenSignupCommand = new RelayCommand(Signup);
+            BackCommand = new RelayCommand(Back);
         }
 
         public ICommand OpenSignupCommand { get; set; }
+        public ICommand BackCommand { get; set; }
 
         private async void Signup()
         {
@@ -33,6 +35,15 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         private async void Login()
         {
             await DatabaseManager.Login(CurrentUser, "donation", "Donor");
+        }
+
+        private void Back()
+        {
+            var window = new Window();
+            window = new View.start_view();
+            window.Show();
+            Application.Current.MainWindow.Close();
+            Application.Current.MainWindow = window;
         }
     }
 }

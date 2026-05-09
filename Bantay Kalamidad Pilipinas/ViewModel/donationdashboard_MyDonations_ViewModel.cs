@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,7 +42,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                     _DonationSearchText = value;
                     OnPropertyChanged(nameof(DonationSearchText));
                     InitializeMyDonations();
-                    MessageBox.Show($"Search text: {DonationSearchText}");
+                    //MessageBox.Show($"Search text: {DonationSearchText}");
                 }
             }
         }
@@ -64,7 +65,10 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         public void InitializeMyDonations()
         {
             MyDonations.Clear();
-            string query;
+            string query = "SELECT * FROM dbo.GetMyDonations(@Username, @PickupStatus, @SearchText)";
+            var parameters = new[] { new SqlParameter("@Username", donation_login_ViewModel.CurrentUser.Username),
+                                     new SqlParameter("@PickupStatus", SelectedDonationFilter?.Content.ToString() ?? "All Donations"),
+                                     new SqlParameter("@SearchText", DonationSearchText ?? string.Empty) };
 
             if (SelectedDonationFilter == null)
             {
@@ -73,34 +77,8 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
 
             else
             {
-                if (SelectedDonationFilter.Content.ToString() == "All Donations")
-                {
-                    query = @"
-                    SELECT d.Donation_ID, de.Event_Name, di.Item_Name, ps.Pickup_Date, ps.Pickup_Status
-                    FROM [Users] v
-                    JOIN [Donor] do ON do.User_ID = v.User_ID
-                    JOIN [Donation] d ON d.Donor_ID = do.Donor_ID
-                    JOIN [Disaster Event] de ON de.Event_ID = d.Event_ID
-                    JOIN [Donated Items] di ON di.Donation_ID = d.Donation_ID
-                    JOIN [Pickup Schedule] ps ON ps.Donation_ID = d.Donation_ID
-                    WHERE v.Username = '" + donation_login_ViewModel.CurrentUser.Username + @"'";
-                }
 
-                else
-                {
-                    query = @"
-                    SELECT d.Donation_ID, de.Event_Name, di.Item_Name, ps.Pickup_Date, ps.Pickup_Status
-                    FROM [Users] v
-                    JOIN [Donor] do ON do.User_ID = v.User_ID
-                    JOIN [Donation] d ON d.Donor_ID = do.Donor_ID
-                    JOIN [Disaster Event] de ON de.Event_ID = d.Event_ID
-                    JOIN [Donated Items] di ON di.Donation_ID = d.Donation_ID
-                    JOIN [Pickup Schedule] ps ON ps.Donation_ID = d.Donation_ID
-                    WHERE v.Username = '" + donation_login_ViewModel.CurrentUser.Username + @"' AND ps.Pickup_Status = '" + SelectedDonationFilter.Content + "'";
-                }
-
-
-                if (DatabaseManager.GetTableDataWithCustomizedQuery(query, out DataTable data))
+                if (DatabaseManager.GetTableData(query, parameters, out DataTable data))
                 {
                     var donations = data.AsEnumerable().Select(row => new Donation(
                         row["Donation_ID"].ToString(),
@@ -114,8 +92,6 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                     {
                         MyDonations.Add(donation);
                     }
-
-                    //MessageBox.Show("My donations loaded successfully.");
                 }
 
                 else

@@ -126,7 +126,7 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Binding="{Binding PledgeId}" Width="1.1*"/>
                     <DataGridTextColumn Binding="{Binding Event}" Width="1*"/>
-                    <DataGridTextColumn Binding="{Binding Items}" Width="1.2*"/>
+                    <DataGridTextColumn Binding="{Binding Item}" Width="1.2*"/>
                     <DataGridTextColumn Binding="{Binding ExpectedDate}" Width="1.2*"/>
                     <DataGridTextColumn Binding="{Binding Status}" Width="1*"/>
                 </DataGrid.Columns>

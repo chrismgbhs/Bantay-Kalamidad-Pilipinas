@@ -57,15 +57,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\DeliveryStatus.cs" />
+    <Compile Include="Model\DisasterEvent.cs" />
     <Compile Include="Model\Donation.cs" />
     <Compile Include="Model\Member.cs" />
+    <Compile Include="Model\MyPledge.cs" />
+    <Compile Include="Model\PickupSchedule.cs" />
+    <Compile Include="Model\Pledge.cs" />
     <Compile Include="Model\RescueLocation.cs" />
     <Compile Include="Model\RescueOperation.cs" />
     <Compile Include="Model\UserModel.cs" />
     <Compile Include="ViewModel\admin_login_ViewModel.cs" />
     <Compile Include="ViewModel\DatabaseManager.cs" />
     <Compile Include="ViewModel\donationdashboard_mainlayout_ViewModel.cs" />
+    <Compile Include="ViewModel\donationdashboard_MakeAPledge_ViewModel.cs" />
     <Compile Include="ViewModel\donationdashboard_MyDonations_ViewModel.cs" />
+    <Compile Include="ViewModel\donationdashboard_MyPledges_ViewModel.cs" />
+    <Compile Include="ViewModel\donationdashboard_Pickup&amp;Delivery_ViewModel.cs" />
     <Compile Include="ViewModel\donation_login_ViewModel.cs" />
     <Compile Include="ViewModel\donation_signup_ViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />

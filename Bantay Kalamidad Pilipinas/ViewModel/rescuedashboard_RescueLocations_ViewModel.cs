@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,22 +32,10 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         /// </summary>
         public void InitializeRescueLocations()
         {
-            string query = @"
-                SELECT 
-                    l.Barangay,
-                    l.City,
-                    l.Province,
-                    ec.Center_Name,
-                    ro.Rescue_Status
-                FROM [Rescue Operation] ro
-                JOIN [Operation Assignment] oa ON ro.Operation_ID = oa.Operation_ID
-                JOIN [Volunteer] v            ON oa.Volunteer_ID = v.Volunteer_ID
-                JOIN [Users] u                ON v.User_ID = u.User_ID
-                JOIN [Location] l             ON ro.Location_ID = l.Location_ID
-                JOIN [Evacuation Center] ec ON l.Location_ID = ec.Location_ID
-                WHERE u.Username = '" + rescue_login_ViewModel.CurrentUser.Username + @"'";
+            string query = "SELECT * FROM dbo.GetRescueLocationsByUsername(@Username)";
+            var parameters = new[] { new SqlParameter("@Username", rescue_login_ViewModel.CurrentUser.Username) };
 
-            if (DatabaseManager.GetTableDataWithCustomizedQuery(query, out DataTable data))
+            if (DatabaseManager.GetTableData(query, parameters, out DataTable data))
             {
                 var operations = data.AsEnumerable().Select(row => new RescueLocation(
                     row["Barangay"].ToString(),

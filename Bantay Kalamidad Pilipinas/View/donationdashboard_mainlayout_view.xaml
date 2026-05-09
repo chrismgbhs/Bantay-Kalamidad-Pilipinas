@@ -273,7 +273,7 @@
                         BorderThickness="1"
                         Padding="16">
 
-                    <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Auto">
+                    <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
                         <ContentControl Content="{Binding CurrentDonationDashboardView}">
                             <ContentControl.Template>
                                 <ControlTemplate TargetType="ContentControl">

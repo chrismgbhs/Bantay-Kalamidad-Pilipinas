@@ -23,6 +23,7 @@ namespace Bantay_Kalamidad_Pilipinas.View
         public donationdashboard_MyPledges_view()
         {
             InitializeComponent();
+            this.DataContext = new ViewModel.donationdashboard_MyPledges_ViewModel();
         }
     }
 }

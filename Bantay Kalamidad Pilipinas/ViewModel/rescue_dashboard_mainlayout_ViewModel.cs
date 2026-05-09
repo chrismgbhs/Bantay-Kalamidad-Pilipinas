@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -66,28 +67,19 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         /// </summary>
         public void InitializeActiveDisasterEvent()
         {
-            // Step 1: Get all Operation_IDs assigned to the current user
-            string assignedOpsQuery = @"
-            SELECT de.Event_Name
-            FROM [Rescue Operation] ro
-            JOIN [Disaster Event] de ON de.Event_ID = ro.Event_ID
-            WHERE ro.Rescue_Status = 'Ongoing'";
-
-            if (DatabaseManager.GetTableDataWithCustomizedQuery(assignedOpsQuery, out DataTable events))
+            string query = "SELECT * FROM dbo.GetActiveDisasterEvent()";
+            if (DatabaseManager.GetTableData(query, null, out DataTable data))
             {
-                var eventNames = events.AsEnumerable()
-                                           .Select(row => row["Event_Name"].ToString())
-                                           .ToList();
+                var disasterEvents = data.AsEnumerable().Select(row => new DisasterEvent(
+                    row["Event_Name"].ToString(),
+                    "Filler"
+                ));
 
-                foreach (var eventName in eventNames)
+                foreach (var disasterEvent in disasterEvents)
                 {
-                    ActiveDisasterEvent = eventName.ToString();
+                    MessageBox.Show(disasterEvent.Name);
+                    ActiveDisasterEvent = disasterEvent.Name;
                 }
-            }
-
-            else
-            {
-                MessageBox.Show("Failed to load assigned operations.");
             }
         }
 
@@ -96,17 +88,13 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         /// </summary>
         public void InitializeAssignedOperationsCount()
         {
-            string assignedOpsQuery = @"
-            SELECT COUNT(*) AS OperationCount
-            FROM [Operation Assignment] oa
-            JOIN [Volunteer] v ON oa.Volunteer_ID = v.Volunteer_ID
-            JOIN [Users] u ON v.User_ID = u.User_ID
-            WHERE u.Username = '" + rescue_login_ViewModel.CurrentUser.Username + "'";
-            if (DatabaseManager.GetTableDataWithCustomizedQuery(assignedOpsQuery, out DataTable opsTable))
+            string query = "SELECT * FROM dbo.CountRescueOperationsByUsername(@Username)";
+            var parameters = new[] { new SqlParameter("@Username", rescue_login_ViewModel.CurrentUser.Username) };
+            if (DatabaseManager.GetTableData(query, parameters, out DataTable resultTable))
             {
-                if (opsTable.Rows.Count > 0)
+                if (resultTable.Rows.Count > 0)
                 {
-                    AssignedOperationsCount = Convert.ToInt32(opsTable.Rows[0]["OperationCount"]);
+                    AssignedOperationsCount = Convert.ToInt32(resultTable.Rows[0]["OperationCount"]);
                 }
                 else
                 {
@@ -124,13 +112,9 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         /// </summary>
         public void InitializeCurrentOperationsCount() 
         {
-            string assignedOpsQuery = @"
-            SELECT COUNT(*) AS OperationCount
-            FROM [Operation Assignment] oa
-            JOIN [Volunteer] v ON oa.Volunteer_ID = v.Volunteer_ID
-            JOIN [Users] u ON v.User_ID = u.User_ID
-            WHERE u.Username = '" + rescue_login_ViewModel.CurrentUser.Username + @"' AND oa.Operation_Status = 'Active'";
-            if (DatabaseManager.GetTableDataWithCustomizedQuery(assignedOpsQuery, out DataTable opsTable))
+            string assignedOpsQuery = "SELECT * FROM dbo.GetCurrentOperationsCountByUsername(@Username)";
+            var parameters = new[] { new SqlParameter("@Username", rescue_login_ViewModel.CurrentUser.Username) };
+            if (DatabaseManager.GetTableData(assignedOpsQuery, parameters, out DataTable opsTable))
             {
                 if (opsTable.Rows.Count > 0)
                 {
