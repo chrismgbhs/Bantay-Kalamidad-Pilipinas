@@ -68,6 +68,7 @@
     <Compile Include="Model\RescueOperation.cs" />
     <Compile Include="Model\UserModel.cs" />
     <Compile Include="ViewModel\admin_login_ViewModel.cs" />
+    <Compile Include="Converters\Converters.cs" />
     <Compile Include="ViewModel\DatabaseManager.cs" />
     <Compile Include="ViewModel\donationdashboard_mainlayout_ViewModel.cs" />
     <Compile Include="ViewModel\donationdashboard_MakeAPledge_ViewModel.cs" />

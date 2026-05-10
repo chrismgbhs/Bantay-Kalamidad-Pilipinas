@@ -77,7 +77,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
 
                 foreach (var disasterEvent in disasterEvents)
                 {
-                    MessageBox.Show(disasterEvent.Name);
+                    //MessageBox.Show(disasterEvent.Name);
                     ActiveDisasterEvent = disasterEvent.Name;
                 }
             }
@@ -140,6 +140,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             mainWindow.Content = new View.rescue_login_view();
             Application.Current.MainWindow.Close();
             mainWindow.Show();
+            Application.Current.MainWindow = mainWindow;
         }
     }
 }

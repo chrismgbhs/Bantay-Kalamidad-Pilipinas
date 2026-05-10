@@ -9,23 +9,48 @@ using System.Windows.Input;
 
 namespace Bantay_Kalamidad_Pilipinas.ViewModel
 {
-    internal class rescuer_signup_ViewModel
+    internal class rescuer_signup_ViewModel : ObservableObject
     {
         public static string FirstName { get; set; }
         public static string LastName { get; set; }
         public static string EmailAddress { get; set; }
-        public static string Password { get; set; }
         public static string PhoneNumber { get; set; }
+        public static string password { get; set; }
+
+        private bool _isPasswordVisible;
+        public bool IsPasswordVisible
+        {
+            get => _isPasswordVisible;
+            set
+            {
+                _isPasswordVisible = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _password;
+        public string Password
+        {
+            get => _password;
+            set
+            {
+                _password = value;
+                OnPropertyChanged();
+                password = value;
+            }
+        }
 
         public ICommand SignupCommand { get; set; }
         public ICommand OpenSigninCommand { get; set; }
         public ICommand BackCommand { get; set; }
+        public ICommand TogglePasswordVisibilityCommand { get; }
 
         public rescuer_signup_ViewModel() 
         {
             SignupCommand = new RelayCommand(Signup);
             OpenSigninCommand = new RelayCommand(Signin);
-            BackCommand = new RelayCommand(Back);   
+            BackCommand = new RelayCommand(Back);
+            TogglePasswordVisibilityCommand = new RelayCommand(() => IsPasswordVisible = !IsPasswordVisible);
         }
 
         public static void Back()
@@ -39,9 +64,9 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
 
         public static void Signup()
         {
-            if (FirstName != null && LastName != null && EmailAddress != null && Password != null && PhoneNumber != null) 
+            if (FirstName != null && LastName != null && EmailAddress != null && password != null && PhoneNumber != null) 
             {
-                DatabaseManager.AddVolunteer(EmailAddress, Password, FirstName + " " + LastName, PhoneNumber);
+                DatabaseManager.AddVolunteer(EmailAddress, password, FirstName + " " + LastName, PhoneNumber);
             }
 
             else

@@ -86,7 +86,7 @@
 
                             </StackPanel>
 
-                            <TextBlock Text="Email Address"
+                            <TextBlock Text="Email Address or Username"
                                        FontSize="13"
                                        Margin="0,0,0,6"/>
 
@@ -99,12 +99,34 @@
                                      Margin="0,0,0,20"
                                      Text="{Binding CurrentUser.Username}"/>
 
-                            <TextBlock Text="Password"
-                                       FontSize="13"
-                                       Margin="0,0,0,6"/>
+                            <Grid Margin="0,0,0,6">
+                                <Grid Margin="0,0,0,6">
+                                    <TextBlock Text="Password"
+                                               FontSize="13"
+                                               HorizontalAlignment="Left"/>
 
-                            <PasswordBox 
-                                         x:Name="passwordBox" 
+                                    <!-- Toggle button -->
+                                    <Button Content="{Binding IsPasswordVisible, Converter={StaticResource BoolToTextConverter}}"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Foreground="#777"
+                                            FontSize="11"
+                                            HorizontalAlignment="Right"
+                                            Cursor="Hand"
+                                            Command="{Binding TogglePasswordVisibilityCommand}">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <TextBlock Text="{TemplateBinding Content}"
+                                                           Foreground="{TemplateBinding Foreground}"
+                                                           FontSize="{TemplateBinding FontSize}"/>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                </Grid>
+                            </Grid>
+
+                            <!-- Masked password -->
+                            <PasswordBox x:Name="passwordBox"
                                          PasswordChanged="PasswordBox_PasswordChanged"
                                          Height="34"
                                          Padding="12,0"
@@ -112,7 +134,19 @@
                                          VerticalContentAlignment="Center"
                                          BorderBrush="#555"
                                          BorderThickness="1"
-                                         Margin="0,0,0,12"/>
+                                         Margin="0,0,0,24"
+                                         Visibility="{Binding IsPasswordVisible, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
+
+                            <!-- Visible password -->
+                            <TextBox Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="34"
+                                     Padding="12,0"
+                                     FontSize="13"
+                                     VerticalContentAlignment="Center"
+                                     BorderBrush="#555"
+                                     BorderThickness="1"
+                                     Margin="0,0,0,24"
+                                     Visibility="{Binding IsPasswordVisible, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
                             <!--
                             <Button Content="Forget password?"

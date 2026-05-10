@@ -85,6 +85,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             mainWindow.Content = new View.donation_login_view();
             Application.Current.MainWindow.Close();
             mainWindow.Show();
+            Application.Current.MainWindow = mainWindow;
         }
 
         /// <summary>

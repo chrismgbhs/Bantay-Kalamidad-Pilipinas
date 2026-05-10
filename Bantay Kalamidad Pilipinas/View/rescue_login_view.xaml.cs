@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bantay_Kalamidad_Pilipinas.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,8 +29,10 @@ namespace Bantay_Kalamidad_Pilipinas.View
 
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            // Assign to ViewModel or use directly
-            ViewModel.rescue_login_ViewModel.CurrentUser.Password = passwordBox.Password;
+            if (DataContext is rescue_login_ViewModel vm)
+            {
+                vm.Password = ((PasswordBox)sender).Password;
+            }
         }
 
     }

@@ -10,10 +10,13 @@ using System.Windows.Controls;
 
 namespace Bantay_Kalamidad_Pilipinas.ViewModel
 {
-    internal class donation_login_ViewModel
+    internal class donation_login_ViewModel : ObservableObject
     {
         public static UserModel CurrentUser { get; set; }
         public ICommand LoginCommand { get; set; }
+        public ICommand OpenSignupCommand { get; set; }
+        public ICommand BackCommand { get; set; }
+        public ICommand TogglePasswordVisibilityCommand { get; set; }
 
         public donation_login_ViewModel()
         {
@@ -21,10 +24,31 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             LoginCommand = new RelayCommand(Login);
             OpenSignupCommand = new RelayCommand(Signup);
             BackCommand = new RelayCommand(Back);
+            TogglePasswordVisibilityCommand = new RelayCommand(() => IsPasswordVisible = !IsPasswordVisible);
         }
 
-        public ICommand OpenSignupCommand { get; set; }
-        public ICommand BackCommand { get; set; }
+        private bool _isPasswordVisible;
+        public bool IsPasswordVisible
+        {
+            get => _isPasswordVisible;
+            set
+            {
+                _isPasswordVisible = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _password;
+        public string Password
+        {
+            get => _password;
+            set
+            {
+                _password = value;
+                OnPropertyChanged();
+                CurrentUser.Password = value;
+            }
+        }
 
         private async void Signup()
         {
