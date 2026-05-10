@@ -114,6 +114,7 @@
                                          BorderThickness="1"
                                          Margin="0,0,0,12"/>
 
+                            <!--
                             <Button Content="Forget password?"
                                     Background="Transparent"
                                     BorderThickness="0"
@@ -129,6 +130,7 @@
                                     </ControlTemplate>
                                 </Button.Template>
                             </Button>
+                            -->
 
                             <Button Content="Sign in"
                                     Height="42"
@@ -150,6 +152,7 @@
                                 </Button.Template>
                             </Button>
 
+                            <!--
                             <StackPanel Orientation="Horizontal"
                                         HorizontalAlignment="Center">
 
@@ -198,6 +201,7 @@
                                 </Button>
 
                             </StackPanel>
+                            -->
 
                         </StackPanel>
 

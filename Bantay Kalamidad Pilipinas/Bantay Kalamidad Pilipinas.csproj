@@ -79,6 +79,7 @@
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\NavigationStack.cs" />
     <Compile Include="ViewModel\ObservableObject.cs" />
+    <Compile Include="ViewModel\passwordHelper.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
     <Compile Include="ViewModel\rescuedashboard_MyRescueOpeartions_ViewModel.cs" />
     <Compile Include="ViewModel\rescuedashboard_MyTeam_ViewModel.cs" />

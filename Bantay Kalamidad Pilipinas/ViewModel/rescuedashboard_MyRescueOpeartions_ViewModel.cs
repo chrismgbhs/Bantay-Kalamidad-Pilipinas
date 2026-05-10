@@ -50,7 +50,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
 
             else
             {
-                MessageBox.Show("Failed to load rescue operations.");
+                MessageBox.Show("No available rescue operations.");
             }
         }
     }

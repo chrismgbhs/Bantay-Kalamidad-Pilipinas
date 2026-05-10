@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace Bantay_Kalamidad_Pilipinas.ViewModel
 {
-    internal class donation_signup_ViewModel
+    internal class donation_signup_ViewModel : ObservableObject
     {
         public static string FirstName { get; set; }
         public static string LastName { get; set; }
@@ -16,20 +16,50 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         public static string Password { get; set; }
         public static string PhoneNumber { get; set; }
 
+        private bool _isPasswordVisible;
+        public bool IsPasswordVisible
+        {
+            get => _isPasswordVisible;
+            set
+            {
+                _isPasswordVisible = value;
+                OnPropertyChanged(nameof(IsPasswordVisible));
+            }
+        }
+
+
         public ICommand SignupCommand { get; set; }
         public ICommand OpenSigninCommand { get; set; }
+        public ICommand BackCommand { get; set;  }
+        public ICommand TogglePasswordVisibilityCommand { get; set; }
 
         public donation_signup_ViewModel()
         {
             SignupCommand = new RelayCommand(Signup);
             OpenSigninCommand = new RelayCommand(Signin);
+            BackCommand = new RelayCommand(Back);
+            TogglePasswordVisibilityCommand = new RelayCommand(TogglePasswordVisibility);
+        }
+
+        private void TogglePasswordVisibility()
+        {
+            IsPasswordVisible = !IsPasswordVisible;
+        }
+
+        public void Back()
+        {
+            var window = new Window();
+            window = new View.start_view();
+            window.Show();
+            Application.Current.MainWindow.Close();
+            Application.Current.MainWindow = window;
         }
 
         public static void Signup()
         {
             if (FirstName != null && LastName != null && EmailAddress != null && Password != null && PhoneNumber != null)
             {
-                MessageBox.Show("You are now here.");
+                //MessageBox.Show("You are now here.");
                 DatabaseManager.AddDonor(EmailAddress, Password, FirstName + " " + LastName, PhoneNumber);
             }
 

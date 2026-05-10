@@ -151,6 +151,7 @@
                                            FontSize="13"
                                            HorizontalAlignment="Left"/>
 
+                                <!--
                                 <Button Content="Hide"
                                         Background="Transparent"
                                         BorderThickness="0"
@@ -167,6 +168,7 @@
                                         </ControlTemplate>
                                     </Button.Template>
                                 </Button>
+                                -->
                             </Grid>
                             <PasswordBox 
                                          x:Name="passwordBox" 
@@ -197,6 +199,7 @@
                                     </ControlTemplate>
                                 </Button.Template>
                             </Button>
+                            <!--
                             <StackPanel Orientation="Horizontal"
                                         HorizontalAlignment="Center">
 
@@ -244,6 +247,7 @@
                                     </Border>
                                 </Button>
                             </StackPanel>
+                            -->
                         </StackPanel>
                     </Grid>
                 </Border>

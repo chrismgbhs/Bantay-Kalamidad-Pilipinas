@@ -54,7 +54,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
 
             else
             {
-                MessageBox.Show("Failed to load rescue locations.");
+                MessageBox.Show("No available rescue locations.");
             }
         }
     }

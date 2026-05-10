@@ -19,11 +19,22 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
 
         public ICommand SignupCommand { get; set; }
         public ICommand OpenSigninCommand { get; set; }
+        public ICommand BackCommand { get; set; }
 
         public rescuer_signup_ViewModel() 
         {
             SignupCommand = new RelayCommand(Signup);
             OpenSigninCommand = new RelayCommand(Signin);
+            BackCommand = new RelayCommand(Back);   
+        }
+
+        public static void Back()
+        {
+            var window = new Window();
+            window = new View.start_view();
+            window.Show();
+            Application.Current.MainWindow.Close();
+            Application.Current.MainWindow = window;
         }
 
         public static void Signup()
