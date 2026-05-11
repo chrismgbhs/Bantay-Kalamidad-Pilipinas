@@ -277,12 +277,14 @@
                         <ContentControl Content="{Binding CurrentDonationDashboardView}">
                             <ContentControl.Template>
                                 <ControlTemplate TargetType="ContentControl">
-                                    <Border Background="White"
+                                    <ScrollViewer VerticalScrollBarVisibility="Visible">
+                                        <Border Background="White"
                                         CornerRadius="10"
                                         BorderBrush="#DDDDDD"
                                         BorderThickness="1">
-                                        <ContentPresenter/>
-                                    </Border>
+                                            <ContentPresenter/>
+                                        </Border>
+                                    </ScrollViewer>
                                 </ControlTemplate>
                             </ContentControl.Template>
                         </ContentControl>
