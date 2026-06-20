@@ -1,0 +1,389 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BE084AF9-2A4F-4796-87BB-5588034A09F0}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Bantay_Kalamidad_Pilipinas</RootNamespace>
+    <AssemblyName>Bantay Kalamidad Pilipinas</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Google.Apis, Version=1.75.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.1.75.0\lib\net462\Google.Apis.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Auth, Version=1.75.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.Auth.1.75.0\lib\net462\Google.Apis.Auth.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Core, Version=1.75.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.Core.1.75.0\lib\net462\Google.Apis.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="Model\AssignedOperation.cs" />
+    <Compile Include="Model\CurrentRescueOperationSummary.cs" />
+    <Compile Include="Model\DeliveryStatus.cs" />
+    <Compile Include="Model\DisasterEvent.cs" />
+    <Compile Include="Model\Donation.cs" />
+    <Compile Include="Model\Member.cs" />
+    <Compile Include="Model\MyPledge.cs" />
+    <Compile Include="Model\PickupSchedule.cs" />
+    <Compile Include="Model\Pledge.cs" />
+    <Compile Include="Model\RescueActiveDisasterEvent.cs" />
+    <Compile Include="Model\RescueLocation.cs" />
+    <Compile Include="Model\RescueOperation.cs" />
+    <Compile Include="Model\UserModel.cs" />
+    <Compile Include="ViewModel\admin_login_ViewModel.cs" />
+    <Compile Include="Converters\Converters.cs" />
+    <Compile Include="ViewModel\DatabaseManager.cs" />
+    <Compile Include="ViewModel\donationdashboard_mainlayout_ViewModel.cs" />
+    <Compile Include="ViewModel\donationdashboard_MakeAPledge_ViewModel.cs" />
+    <Compile Include="ViewModel\donationdashboard_MyDonations_ViewModel.cs" />
+    <Compile Include="ViewModel\donationdashboard_MyPledges_ViewModel.cs" />
+    <Compile Include="ViewModel\donationdashboard_Pickup&amp;Delivery_ViewModel.cs" />
+    <Compile Include="ViewModel\donation_login_ViewModel.cs" />
+    <Compile Include="ViewModel\donation_signup_ViewModel.cs" />
+    <Compile Include="ViewModel\GoogleAuthConfig.cs" />
+    <Compile Include="ViewModel\GoogleAuthHelper.cs" />
+    <Compile Include="ViewModel\MainWindowViewModel.cs" />
+    <Compile Include="ViewModel\NavigationStack.cs" />
+    <Compile Include="ViewModel\ObservableObject.cs" />
+    <Compile Include="ViewModel\passwordHelper.cs" />
+    <Compile Include="ViewModel\RelayCommand.cs" />
+    <Compile Include="ViewModel\rescuedashboard_Announcements_ViewModel.cs" />
+    <Compile Include="ViewModel\rescuedashboard_MyRescueOpeartions_ViewModel.cs" />
+    <Compile Include="ViewModel\rescuedashboard_MyTeam_ViewModel.cs" />
+    <Compile Include="ViewModel\rescuedashboard_RescueLocations_ViewModel.cs" />
+    <Compile Include="ViewModel\rescuer_signup_ViewModel.cs" />
+    <Compile Include="ViewModel\rescue_dashboard_mainlayout_ViewModel.cs" />
+    <Compile Include="ViewModel\rescue_login_ViewModel.cs" />
+    <Compile Include="ViewModel\SQL.cs" />
+    <Compile Include="ViewModel\start_view_ViewModel.cs" />
+    <Compile Include="View\admindashboard_donation_Distribution_view.xaml.cs">
+      <DependentUpon>admindashboard_donation_Distribution_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\admindashboard_donation_Donations_view.xaml.cs">
+      <DependentUpon>admindashboard_donation_Donations_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\admindashboard_donation_Inventory_view.xaml.cs">
+      <DependentUpon>admindashboard_donation_Inventory_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\admindashboard_donation_Logistics_view.xaml.cs">
+      <DependentUpon>admindashboard_donation_Logistics_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\admindashboard_donation_mainlayout_view.xaml.cs">
+      <DependentUpon>admindashboard_donation_mainlayout_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\admindashboard_donation_Pledges_view.xaml.cs">
+      <DependentUpon>admindashboard_donation_Pledges_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\admindashboard_donation_Waste_view.xaml.cs">
+      <DependentUpon>admindashboard_donation_Waste_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\admindashboard_rescue_Assignments_view.xaml.cs">
+      <DependentUpon>admindashboard_rescue_Assignments_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\admindashboard_rescue_DisasterEvents_view.xaml.cs">
+      <DependentUpon>admindashboard_rescue_DisasterEvents_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\admindashboard_rescue_mainlayout_view.xaml.cs">
+      <DependentUpon>admindashboard_rescue_mainlayout_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\admindashboard_rescue_Operations_view.xaml.cs">
+      <DependentUpon>admindashboard_rescue_Operations_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\admindashboard_rescue_Rescuers_view.xaml.cs">
+      <DependentUpon>admindashboard_rescue_Rescuers_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\admindashboard_rescue_Teams_view.xaml.cs">
+      <DependentUpon>admindashboard_rescue_Teams_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\admin_login_view.xaml.cs">
+      <DependentUpon>admin_login_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\admin_menu_view.xaml.cs">
+      <DependentUpon>admin_menu_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\donationdashboard_AboutUs_view.xaml.cs">
+      <DependentUpon>donationdashboard_AboutUs_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\donationdashboard_ContactUs_view.xaml.cs">
+      <DependentUpon>donationdashboard_ContactUs_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\donationdashboard_mainlayout_view.xaml.cs">
+      <DependentUpon>donationdashboard_mainlayout_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\donationdashboard_MakeAPledge_view.xaml.cs">
+      <DependentUpon>donationdashboard_MakeAPledge_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\donationdashboard_MyDonations_view.xaml.cs">
+      <DependentUpon>donationdashboard_MyDonations_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\donationdashboard_MyPledges_view.xaml.cs">
+      <DependentUpon>donationdashboard_MyPledges_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\donationdashboard_Pickup&amp;Delivery_view.xaml.cs">
+      <DependentUpon>donationdashboard_Pickup&amp;Delivery_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\donation_login_view.xaml.cs">
+      <DependentUpon>donation_login_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\donation_signup_view.xaml.cs">
+      <DependentUpon>donation_signup_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\rescuedashboard_Announcements_view.xaml.cs">
+      <DependentUpon>rescuedashboard_Announcements_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\rescuedashboard_mainlayout_view.xaml.cs">
+      <DependentUpon>rescuedashboard_mainlayout_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\rescuedashboard_MyRescueOperations_view.xaml.cs">
+      <DependentUpon>rescuedashboard_MyRescueOperations_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\rescuedashboard_MyTeam_view.xaml.cs">
+      <DependentUpon>rescuedashboard_MyTeam_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\rescuedashboard_RescueLocations_view.xaml.cs">
+      <DependentUpon>rescuedashboard_RescueLocations_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\rescue_login_view.xaml.cs">
+      <DependentUpon>rescue_login_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\rescue_signup_view.xaml.cs">
+      <DependentUpon>rescue_signup_view.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\start_view.xaml.cs">
+      <DependentUpon>start_view.xaml</DependentUpon>
+    </Compile>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="View\admindashboard_donation_Distribution_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\admindashboard_donation_Donations_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\admindashboard_donation_Inventory_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\admindashboard_donation_Logistics_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\admindashboard_donation_mainlayout_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\admindashboard_donation_Pledges_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\admindashboard_donation_Waste_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\admindashboard_rescue_Assignments_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\admindashboard_rescue_DisasterEvents_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\admindashboard_rescue_mainlayout_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\admindashboard_rescue_Operations_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\admindashboard_rescue_Rescuers_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\admindashboard_rescue_Teams_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\admin_login_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\admin_menu_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\donationdashboard_AboutUs_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\donationdashboard_ContactUs_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\donationdashboard_mainlayout_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\donationdashboard_MakeAPledge_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\donationdashboard_MyDonations_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\donationdashboard_MyPledges_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\donationdashboard_Pickup&amp;Delivery_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\donation_login_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\donation_signup_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\rescuedashboard_Announcements_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\rescuedashboard_mainlayout_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\rescuedashboard_MyRescueOperations_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\rescuedashboard_MyTeam_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\rescuedashboard_RescueLocations_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\rescue_login_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\rescue_signup_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\start_view.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\fb_logo.png" />
+    <Resource Include="Images\google_logo.png" />
+    <Resource Include="Images\ig_logo.png" />
+    <Resource Include="Images\x_logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\bkp_logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\website icons %282%29.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

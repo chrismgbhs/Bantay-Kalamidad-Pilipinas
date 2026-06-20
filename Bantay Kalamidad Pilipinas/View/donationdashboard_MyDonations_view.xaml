@@ -1,0 +1,155 @@
+﻿<UserControl x:Class="Bantay_Kalamidad_Pilipinas.View.donationdashboard_MyDonations_view"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Width="700"
+             Height="430"
+             Background="Transparent">
+
+    <Grid Background="#2C2C2C">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="34"/>
+            <RowDefinition Height="42"/>
+            <RowDefinition Height="28"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="My Donations"
+                   FontSize="18"
+                   FontWeight="Black"
+                   Foreground="White"
+                   VerticalAlignment="Center"
+                   Margin="8,0,0,0"/>
+
+        <Grid Grid.Row="1"
+              Margin="8,0,8,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="190"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="260"/>
+            </Grid.ColumnDefinitions>
+
+            <ComboBox Grid.Column="0"
+                      Height="28"
+                      Background="#D9D9D9"
+                      Foreground="Black"
+                      FontSize="12"
+                      FontWeight="Bold"
+                      BorderThickness="0"
+                      Padding="10,0"
+                      VerticalAlignment="Bottom"
+                      SelectedItem="{Binding SelectedDonationFilter, Mode=TwoWay}">
+                <ComboBoxItem Content="All Donations"/>
+                <ComboBoxItem Content="Pending"/>
+                <ComboBoxItem Content="Received"/>
+                <ComboBoxItem Content="Completed"/>
+            </ComboBox>
+
+            <Border Grid.Column="2"
+                    Height="28"
+                    Background="#D9D9D9"
+                    VerticalAlignment="Bottom">
+
+                <Grid>
+                    <TextBox Text="{Binding DonationSearchText}"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             FontSize="12"
+                             FontWeight="Bold"
+                             Foreground="Black"
+                             Padding="10,0,34,0"
+                             VerticalContentAlignment="Center"/>
+
+                    <Viewbox Width="15"
+                             Height="15"
+                             HorizontalAlignment="Right"
+                             VerticalAlignment="Center"
+                             Margin="0,0,10,0">
+                        <Canvas Width="18" Height="18">
+                            <Ellipse Canvas.Left="2"
+                                     Canvas.Top="2"
+                                     Width="10"
+                                     Height="10"
+                                     Stroke="Black"
+                                     StrokeThickness="2"
+                                     Fill="Transparent"/>
+                            <Path Data="M10,10 L16,16"
+                                  Stroke="Black"
+                                  StrokeThickness="2.4"
+                                  StrokeStartLineCap="Round"
+                                  StrokeEndLineCap="Round"/>
+                        </Canvas>
+                    </Viewbox>
+                </Grid>
+
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="2"
+                Background="#D9D9D9"
+                Margin="8,0,8,0">
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.15*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1.2*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="Donation ID" FontSize="11" FontWeight="Black" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="1" Text="Event" FontSize="11" FontWeight="Black" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="2" Text="Item" FontSize="11" FontWeight="Black" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="3" Text="Date Received" FontSize="11" FontWeight="Black" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="4" Text="Status" FontSize="11" FontWeight="Black" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Grid>
+
+        </Border>
+
+        <Border Grid.Row="3"
+                Background="White"
+                Margin="8,0,8,8"
+                ClipToBounds="True">
+
+            <DataGrid ItemsSource="{Binding MyDonations}"
+                      AutoGenerateColumns="False"
+                      HeadersVisibility="None"
+                      CanUserAddRows="False"
+                      CanUserResizeRows="False"
+                      CanUserResizeColumns="False"
+                      GridLinesVisibility="None"
+                      Background="White"
+                      RowBackground="White"
+                      AlternatingRowBackground="#F2F2F2"
+                      Foreground="Black"
+                      BorderThickness="0"
+                      RowHeight="28"
+                      FontSize="11"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+
+                <DataGrid.CellStyle>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="Foreground" Value="Black"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    </Style>
+                </DataGrid.CellStyle>
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding DonationId}" Width="1.15*"/>
+                    <DataGridTextColumn Binding="{Binding Event}" Width="1*"/>
+                    <DataGridTextColumn Binding="{Binding Item}" Width="1*"/>
+                    <DataGridTextColumn Binding="{Binding DateReceived}" Width="1.2*"/>
+                    <DataGridTextColumn Binding="{Binding Status}" Width="1*"/>
+                </DataGrid.Columns>
+
+            </DataGrid>
+
+        </Border>
+
+    </Grid>
+</UserControl>

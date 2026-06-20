@@ -1,0 +1,36 @@
+# ============================================================
+# Secrets — never commit these
+# ============================================================
+google-auth.local.json
+*.local.json
+
+# ============================================================
+# Visual Studio / .NET build output
+# ============================================================
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio cache/options directory
+.vs/
+
+# NuGet
+packages/
+*.nupkg
+
+# Build results
+[Bb]uild/
+[Bb]uilds/
+
+# Rider / ReSharper
+.idea/
+*.DotSettings.user
+
+# Windows / OS noise
+Thumbs.db
+desktop.ini
