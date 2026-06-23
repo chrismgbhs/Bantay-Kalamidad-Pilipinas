@@ -31,8 +31,8 @@
             <ComboBox Grid.Column="0"
                       Style="{StaticResource Combo1}"
                       VerticalAlignment="Bottom"
-                      SelectedItem="{Binding SelectedTeamFilter}">
-                <ComboBoxItem Content="Filter"/>
+                      SelectedValuePath="Content"
+                      SelectedValue="{Binding SelectedTeamFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <ComboBoxItem Content="All Teams"/>
                 <ComboBoxItem Content="Active"/>
                 <ComboBoxItem Content="On Standby"/>
@@ -45,7 +45,7 @@
                     VerticalAlignment="Bottom">
 
                 <Grid>
-                    <TextBox Text="{Binding TeamSearchText}"
+                    <TextBox Text="{Binding TeamSearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              Style="{StaticResource Searchbox}"/>
 
                     <TextBlock Text="Search"
@@ -95,8 +95,12 @@
                 ClipToBounds="True">
 
             <DataGrid ItemsSource="{Binding Teams}"
-                      SelectedItem="{Binding SelectedTeam}"
+                      SelectedItem="{Binding SelectedTeam, Mode=TwoWay}"
                       AutoGenerateColumns="False"
+                      HeadersVisibility="None"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      IsReadOnly="{Binding IsTableReadOnly}"
                       Style="{StaticResource Table}">
 
                 <DataGrid.CellStyle>
@@ -110,11 +114,11 @@
                 </DataGrid.CellStyle>
 
                 <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding TeamOperation}" Width="1.35*"/>
-                    <DataGridTextColumn Binding="{Binding Event}" Width="1*"/>
-                    <DataGridTextColumn Binding="{Binding Location}" Width="1*"/>
-                    <DataGridTextColumn Binding="{Binding Members}" Width="1*"/>
-                    <DataGridTextColumn Binding="{Binding Status}" Width="1*"/>
+                    <DataGridTextColumn Binding="{Binding TeamOperation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="1.35*"/>
+                    <DataGridTextColumn Binding="{Binding Event, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="1*"/>
+                    <DataGridTextColumn Binding="{Binding Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="1*"/>
+                    <DataGridTextColumn Binding="{Binding Members}" Width="1*" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Status, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="1*"/>
                 </DataGrid.Columns>
 
             </DataGrid>

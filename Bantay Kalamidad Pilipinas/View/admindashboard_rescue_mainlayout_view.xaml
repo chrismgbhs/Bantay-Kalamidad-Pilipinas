@@ -77,9 +77,11 @@
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="0"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Cursor="Hand">
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Cursor="Hand"
+                    Command="{Binding BackToAdminMenuCommand}">
+                    
                     <Viewbox Width="34" Height="34">
                         <Canvas Width="34" Height="34">
                             <Path Data="M21,8 L12,17 L21,26"

@@ -1,17 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Bantay_Kalamidad_Pilipinas.ViewModel;
 
 namespace Bantay_Kalamidad_Pilipinas.Model
 {
-    internal class UserModel : ViewModel.ObservableObject
+    public class UserModel : ObservableObject
     {
+
         //DECLARATION OF OBJECT ELEMENTS
+        private int _userID;
         private string _username = string.Empty;
         private string _password = string.Empty;
         private string _role = string.Empty;
+
+        public int UserID
+        {
+            get => _userID;
+            set
+            {
+                if (_userID != value)
+                {
+                    _userID = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         //REFERENCE USERNAME TO PROPERTY CHANGE
         public string Username
@@ -22,7 +33,7 @@ namespace Bantay_Kalamidad_Pilipinas.Model
                 if (_username != value)
                 {
                     _username = value;
-                    OnPropertyChanged(nameof(Username));
+                    OnPropertyChanged();
                 }
             }
         }
@@ -36,7 +47,7 @@ namespace Bantay_Kalamidad_Pilipinas.Model
                 if (_password != value)
                 {
                     _password = value;
-                    OnPropertyChanged(nameof(Password));
+                    OnPropertyChanged();
                 }
             }
         }
@@ -49,7 +60,7 @@ namespace Bantay_Kalamidad_Pilipinas.Model
                 if (_role != value)
                 {
                     _role = value;
-                    OnPropertyChanged(nameof(Role));
+                    OnPropertyChanged();
                 }
             }
         }

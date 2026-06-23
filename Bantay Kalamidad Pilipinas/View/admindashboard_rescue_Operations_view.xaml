@@ -31,7 +31,8 @@
             <ComboBox Grid.Column="0"
                       Style="{StaticResource Combo1}"
                       VerticalAlignment="Bottom"
-                      SelectedItem="{Binding SelectedOperationFilter}">
+                      SelectedValuePath="Content"
+                      SelectedValue="{Binding SelectedOperationFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <ComboBoxItem Content="All Operations"/>
                 <ComboBoxItem Content="Active"/>
                 <ComboBoxItem Content="Pending"/>
@@ -43,7 +44,7 @@
                     Background="White"
                     VerticalAlignment="Bottom">
                 <Grid>
-                    <TextBox Text="{Binding OperationSearchText}"
+                    <TextBox Text="{Binding OperationSearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              Style="{StaticResource Searchbox}"/>
 
                     <TextBlock Text="Search"
@@ -87,10 +88,16 @@
                 Background="White"
                 Margin="8,0,8,0"
                 ClipToBounds="True">
+
             <DataGrid ItemsSource="{Binding Operations}"
-                      SelectedItem="{Binding SelectedOperation}"
+                      SelectedItem="{Binding SelectedOperation, Mode=TwoWay}"
                       AutoGenerateColumns="False"
+                      HeadersVisibility="None"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      IsReadOnly="{Binding IsTableReadOnly}"
                       Style="{StaticResource Table}">
+
                 <DataGrid.CellStyle>
                     <Style TargetType="DataGridCell">
                         <Setter Property="Foreground" Value="Black"/>
@@ -102,11 +109,11 @@
                 </DataGrid.CellStyle>
 
                 <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding OperationId}" Width="1.1*"/>
-                    <DataGridTextColumn Binding="{Binding Event}" Width="1*"/>
-                    <DataGridTextColumn Binding="{Binding Location}" Width="1.1*"/>
-                    <DataGridTextColumn Binding="{Binding DateStarted}" Width="1.2*"/>
-                    <DataGridTextColumn Binding="{Binding Status}" Width="1*"/>
+                    <DataGridTextColumn Binding="{Binding OperationId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="1.1*"/>
+                    <DataGridTextColumn Binding="{Binding Event, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="1*"/>
+                    <DataGridTextColumn Binding="{Binding Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="1.1*"/>
+                    <DataGridTextColumn Binding="{Binding DateStarted, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=yyyy-MM-dd}" Width="1.2*"/>
+                    <DataGridTextColumn Binding="{Binding Status, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="1*"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
@@ -119,17 +126,17 @@
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
                         Margin="0,0,8,0">
-                
-                <Button Content="SAVE" 
-                        Style="{StaticResource CRUDbtn}" 
+
+                <Button Content="SAVE"
+                        Style="{StaticResource CRUDbtn}"
                         Command="{Binding SaveCommand}"/>
 
-                <Button Content="UPDATE" 
-                        Style="{StaticResource CRUDbtn}" 
+                <Button Content="UPDATE"
+                        Style="{StaticResource CRUDbtn}"
                         Command="{Binding UpdateCommand}"/>
 
-                <Button Content="DELETE" 
-                        Style="{StaticResource CRUDbtn}" 
+                <Button Content="DELETE"
+                        Style="{StaticResource CRUDbtn}"
                         Command="{Binding DeleteCommand}"/>
             </StackPanel>
         </Grid>

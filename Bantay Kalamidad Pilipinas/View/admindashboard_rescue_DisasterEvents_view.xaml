@@ -31,7 +31,8 @@
             <ComboBox Grid.Column="0"
                       Style="{StaticResource Combo1}"
                       VerticalAlignment="Bottom"
-                      SelectedItem="{Binding SelectedDisasterEventFilter}">
+                      SelectedValuePath="Content"
+                      SelectedValue="{Binding SelectedDisasterEventFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <ComboBoxItem Content="All Events"/>
                 <ComboBoxItem Content="Active"/>
                 <ComboBoxItem Content="Upcoming"/>
@@ -43,7 +44,7 @@
                     Background="White"
                     VerticalAlignment="Bottom">
                 <Grid>
-                    <TextBox Text="{Binding DisasterEventSearchText}"
+                    <TextBox Text="{Binding DisasterEventSearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              Style="{StaticResource Searchbox}"/>
 
                     <TextBlock Text="Search"
@@ -87,10 +88,16 @@
                 Background="White"
                 Margin="8,0,8,0"
                 ClipToBounds="True">
+
             <DataGrid ItemsSource="{Binding DisasterEvents}"
-                      SelectedItem="{Binding SelectedDisasterEvent}"
+                      SelectedItem="{Binding SelectedDisasterEvent, Mode=TwoWay}"
                       AutoGenerateColumns="False"
+                      HeadersVisibility="None"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      IsReadOnly="{Binding IsTableReadOnly}"
                       Style="{StaticResource Table}">
+
                 <DataGrid.CellStyle>
                     <Style TargetType="DataGridCell">
                         <Setter Property="Foreground" Value="Black"/>
@@ -102,11 +109,11 @@
                 </DataGrid.CellStyle>
 
                 <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding EventId}" Width="1*"/>
-                    <DataGridTextColumn Binding="{Binding EventName}" Width="1.4*"/>
-                    <DataGridTextColumn Binding="{Binding StartDate}" Width="1.1*"/>
-                    <DataGridTextColumn Binding="{Binding EndDate}" Width="1.1*"/>
-                    <DataGridTextColumn Binding="{Binding Status}" Width="1*"/>
+                    <DataGridTextColumn Binding="{Binding EventId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="1*"/>
+                    <DataGridTextColumn Binding="{Binding EventName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="1.4*"/>
+                    <DataGridTextColumn Binding="{Binding StartDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=yyyy-MM-dd}" Width="1.1*"/>
+                    <DataGridTextColumn Binding="{Binding EndDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=yyyy-MM-dd}" Width="1.1*"/>
+                    <DataGridTextColumn Binding="{Binding Status}" Width="1*" IsReadOnly="True"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
@@ -119,17 +126,17 @@
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
                         Margin="0,0,8,0">
-                
-                <Button Content="SAVE" 
+
+                <Button Content="SAVE"
                         Style="{StaticResource CRUDbtn}"
                         Command="{Binding SaveCommand}"/>
 
-                <Button Content="UPDATE" 
-                        Style="{StaticResource CRUDbtn}" 
+                <Button Content="UPDATE"
+                        Style="{StaticResource CRUDbtn}"
                         Command="{Binding UpdateCommand}"/>
 
-                <Button Content="DELETE" 
-                        Style="{StaticResource CRUDbtn}" 
+                <Button Content="DELETE"
+                        Style="{StaticResource CRUDbtn}"
                         Command="{Binding DeleteCommand}"/>
             </StackPanel>
         </Grid>

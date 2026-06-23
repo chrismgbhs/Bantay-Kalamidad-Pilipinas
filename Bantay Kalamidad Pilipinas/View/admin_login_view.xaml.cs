@@ -12,25 +12,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Bantay_Kalamidad_Pilipinas.ViewModel;
 
 namespace Bantay_Kalamidad_Pilipinas.View
 {
-    /// <summary>
-    /// Interaction logic for admin_login_view.xaml
-    /// </summary>
     public partial class admin_login_view : UserControl
     {
         public admin_login_view()
         {
             InitializeComponent();
-            this.DataContext = new ViewModel.admin_login_ViewModel();
+            DataContext = new admin_login_ViewModel();
         }
-
-        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
-        {
-            // Assign to ViewModel or use directly
-            ViewModel.admin_login_ViewModel.CurrentUser.Password = passwordBox.Password;
-        }
-
     }
 }

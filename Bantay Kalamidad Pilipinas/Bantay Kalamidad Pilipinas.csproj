@@ -70,6 +70,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\AdminDisasterEvent.cs" />
+    <Compile Include="Model\AdminOperationAssignment.cs" />
+    <Compile Include="Model\AdminRescueOperation.cs" />
+    <Compile Include="Model\AdminRescuer.cs" />
+    <Compile Include="Model\AdminRescueTeam.cs" />
     <Compile Include="Model\AssignedOperation.cs" />
     <Compile Include="Model\CurrentRescueOperationSummary.cs" />
     <Compile Include="Model\DeliveryStatus.cs" />
@@ -83,8 +88,16 @@
     <Compile Include="Model\RescueLocation.cs" />
     <Compile Include="Model\RescueOperation.cs" />
     <Compile Include="Model\UserModel.cs" />
+    <Compile Include="ViewModel\admindashboard_rescue_Assignments_viewModel.cs" />
+    <Compile Include="ViewModel\admindashboard_rescue_DisasterEvents_viewModel.cs" />
+    <Compile Include="ViewModel\admindashboard_rescue_mainlayout_viewModel.cs" />
+    <Compile Include="ViewModel\admindashboard_rescue_Operations_viewModel.cs" />
+    <Compile Include="ViewModel\admindashboard_rescue_Rescuers_viewModel.cs" />
+    <Compile Include="ViewModel\admindashboard_rescue_Teams_viewModel.cs" />
     <Compile Include="ViewModel\admin_login_ViewModel.cs" />
     <Compile Include="Converters\Converters.cs" />
+    <Compile Include="ViewModel\Admin_Menu_ViewModel.cs" />
+    <Compile Include="ViewModel\AsyncRelayCommand.cs" />
     <Compile Include="ViewModel\DatabaseManager.cs" />
     <Compile Include="ViewModel\donationdashboard_mainlayout_ViewModel.cs" />
     <Compile Include="ViewModel\donationdashboard_MakeAPledge_ViewModel.cs" />
@@ -95,9 +108,11 @@
     <Compile Include="ViewModel\donation_signup_ViewModel.cs" />
     <Compile Include="ViewModel\GoogleAuthConfig.cs" />
     <Compile Include="ViewModel\GoogleAuthHelper.cs" />
+    <Compile Include="ViewModel\IAdminRescueModuleViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\NavigationStack.cs" />
     <Compile Include="ViewModel\ObservableObject.cs" />
+    <Compile Include="ViewModel\PasswordBoxHelper.cs" />
     <Compile Include="ViewModel\passwordHelper.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
     <Compile Include="ViewModel\rescuedashboard_Announcements_ViewModel.cs" />
