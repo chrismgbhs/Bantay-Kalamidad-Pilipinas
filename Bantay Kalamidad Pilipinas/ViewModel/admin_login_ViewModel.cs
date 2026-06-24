@@ -44,6 +44,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             }
         }
 
+        // testing
         public string StatusMessage
         {
             get => _statusMessage;
