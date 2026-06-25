@@ -71,7 +71,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Model\AdminDisasterEvent.cs" />
+    <Compile Include="Model\AdminDonations.cs" />
+    <Compile Include="Model\AdminLogistics.cs" />
     <Compile Include="Model\AdminOperationAssignment.cs" />
+    <Compile Include="Model\AdminPledges.cs" />
     <Compile Include="Model\AdminRescueOperation.cs" />
     <Compile Include="Model\AdminRescuer.cs" />
     <Compile Include="Model\AdminRescueTeam.cs" />
@@ -88,6 +91,7 @@
     <Compile Include="Model\RescueLocation.cs" />
     <Compile Include="Model\RescueOperation.cs" />
     <Compile Include="Model\UserModel.cs" />
+    <Compile Include="ViewModel\admindashboard_donation_mainlayout_viewModel.cs" />
     <Compile Include="ViewModel\admindashboard_rescue_Assignments_viewModel.cs" />
     <Compile Include="ViewModel\admindashboard_rescue_DisasterEvents_viewModel.cs" />
     <Compile Include="ViewModel\admindashboard_rescue_mainlayout_viewModel.cs" />
