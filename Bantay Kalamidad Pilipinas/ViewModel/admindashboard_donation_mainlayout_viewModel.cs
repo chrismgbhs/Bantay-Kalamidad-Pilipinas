@@ -98,7 +98,8 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 DataContext = viewModel
             };
 
-            
+            LoadModule(view, viewModel);
+
         }
 
         private void ShowPledges()
@@ -111,6 +112,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 DataContext = viewModel
             };
 
+            LoadModule(view, viewModel);
         }
 
         private void ShowLogistics()
@@ -123,6 +125,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 DataContext = viewModel
             };
 
+            LoadModule(view, viewModel);
         }
 
         private void LoadModule(object view, IAdminDonationModuleViewModel viewModel)
