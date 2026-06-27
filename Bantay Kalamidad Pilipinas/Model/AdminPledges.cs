@@ -16,7 +16,7 @@ namespace Bantay_Kalamidad_Pilipinas.Model
 
         private string _pledgeItemId;
         private string _itemName;
-        private string _quantity;
+        private int _quantity;
         private DateTime? _expectedDelivery;
 
         public string PledgeId
@@ -97,7 +97,7 @@ namespace Bantay_Kalamidad_Pilipinas.Model
             }
         }
 
-        public string Quantity
+        public int Quantity
         {
             get => _quantity;
             set

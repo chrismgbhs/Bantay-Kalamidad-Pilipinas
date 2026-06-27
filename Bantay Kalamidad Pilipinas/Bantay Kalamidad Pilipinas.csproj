@@ -91,7 +91,10 @@
     <Compile Include="Model\RescueLocation.cs" />
     <Compile Include="Model\RescueOperation.cs" />
     <Compile Include="Model\UserModel.cs" />
+    <Compile Include="ViewModel\admindashboard_donation_Donations_viewModel.cs" />
+    <Compile Include="ViewModel\admindashboard_donation_Logistics_viewModel.cs" />
     <Compile Include="ViewModel\admindashboard_donation_mainlayout_viewModel.cs" />
+    <Compile Include="ViewModel\admindashboard_donation_Pledges_viewModel.cs" />
     <Compile Include="ViewModel\admindashboard_rescue_Assignments_viewModel.cs" />
     <Compile Include="ViewModel\admindashboard_rescue_DisasterEvents_viewModel.cs" />
     <Compile Include="ViewModel\admindashboard_rescue_mainlayout_viewModel.cs" />
@@ -112,6 +115,7 @@
     <Compile Include="ViewModel\donation_signup_ViewModel.cs" />
     <Compile Include="ViewModel\GoogleAuthConfig.cs" />
     <Compile Include="ViewModel\GoogleAuthHelper.cs" />
+    <Compile Include="ViewModel\IAdminDonationModuleViewModel.cs" />
     <Compile Include="ViewModel\IAdminRescueModuleViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\NavigationStack.cs" />

@@ -1362,5 +1362,1009 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             }
         }
 
+        public static async Task<ObservableCollection<AdminDonations>> GetAdminDonationsAsync(string filter, string searchText)
+        {
+            ObservableCollection<AdminDonations> donations = new ObservableCollection<AdminDonations>();
+
+            string selectedFilter = string.IsNullOrWhiteSpace(filter) ? "All Donations" : filter;
+            string searchPattern = "%" + (searchText ?? string.Empty).Trim() + "%";
+
+            using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+            {
+                string query = @"
+            SELECT 
+                d.Donation_ID,
+                do.Donor_Name,
+                de.Event_Name,
+                d.Date_Received,
+                
+            FROM Donation d
+            INNER JOIN Donor do ON d.Donor_ID = do.Donor_ID
+            INNER JOIN Event de ON d.Event_ID = de.Event_ID
+            WHERE
+                (
+                    @searchText = '%%'
+                    OR d.Donation_ID LIKE @searchText
+                    OR ISNULL(d.Donor_Name, '') LIKE @searchText
+                    OR ISNULL(de.Event_Name, '') LIKE @searchText
+                    OR CONVERT(VARCHAR(10), d.Date_Received, 120) LIKE @searchText)
+                AND
+                (
+                    @filter = 'All Donations'
+                     OR (@filter = 'Pending' AND d.Date_Received IS NULL)
+                     OR (@filter = 'Received' AND d.Date_Received IS NOT NULL AND d.Event_ID IS NULL)
+                     OR (@filter = 'Completed' AND d.Date_Received IS NOT NULL AND d.Event_ID IS NOT NULL)
+                )
+            ORDER BY d.Donation_ID;";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@searchText", SqlDbType.VarChar, 255).Value = searchPattern;
+                    command.Parameters.Add("@filter", SqlDbType.VarChar, 50).Value = selectedFilter;
+
+                    await connection.OpenAsync();
+
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            donations.Add(new AdminDonations
+                            {
+                                DonationId = reader["Donation_ID"] == DBNull.Value ? string.Empty : reader["Donation_ID"].ToString(),
+                                Donor = reader["Donor_Name"] == DBNull.Value ? string.Empty : reader["Donor_Name"].ToString(),
+                                Event = reader["Event_Name"] == DBNull.Value ? string.Empty : reader["Event_Name"].ToString(),
+                                DateReceived = reader["Date_Received"] == DBNull.Value ? (DateTime?)null
+                                : Convert.ToDateTime(reader["Date_Received"]),
+                            });
+                        }
+                    }
+                }
+            }
+
+
+            return donations;
+        }
+
+        private static async Task<string> ResolveDonorIdAsync(SqlConnection connection, string donorInput)
+        {
+            string input = donorInput == null ? string.Empty : donorInput.Trim();
+
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                throw new Exception("Donor name or Donor ID is required.");
+            }
+
+            string query = @"
+            SELECT TOP 1 Donor_ID
+            FROM Donor
+            WHERE Donor_ID = @donorInput
+               OR Donor_Name = @donorInput
+            ORDER BY 
+                CASE WHEN Donor_ID = @donorInput THEN 0 ELSE 1 END;";
+
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.Add("@donorInput", SqlDbType.VarChar, 255).Value = input;
+
+                object result = await command.ExecuteScalarAsync();
+
+                if (result == null || result == DBNull.Value)
+                {
+                    throw new Exception("The donor was not found. Enter an existing Donor ID or exact Donor Name.");
+                }
+
+                return result.ToString();
+            }
+        }
+
+        public static async Task AddAdminDonationsAsync(AdminDonations donations)
+        {
+            using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+            {
+                await connection.OpenAsync();
+
+                string donorId = await ResolveDonorIdAsync(connection, donations.Donor);
+
+                string query = @"
+            INSERT INTO Donation
+                (Donation_ID, Donor_ID, Event_ID, Date_Received)
+            VALUES
+                (@donationId, @donorId, @eventId, @dateReceived);";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@donationId", SqlDbType.VarChar, 10).Value = donations.DonationId.Trim();
+                    command.Parameters.Add("@donorId", SqlDbType.VarChar, 10).Value = donorId;
+                    command.Parameters.Add("@eventId", SqlDbType.VarChar, 10).Value = donations.Event.Trim();
+                    command.Parameters.Add("@dateReceived", SqlDbType.DateTime).Value =
+                        donations.DateReceived == null ? (object)DBNull.Value : donations.DateReceived.Value.Date;
+
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        public static async Task UpdateAdminDonationsAsync(AdminDonations donations)
+        {
+            using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+            {
+                await connection.OpenAsync();
+
+                string donorId = await ResolveDonorIdAsync(connection, donations.Donor);
+
+                string query = @"
+                UPDATE Donation
+                SET
+                    Donation_ID = @donationId,
+                    Donor_ID = @donorId,
+                    Event_ID = @eventId,
+                    Date_Received = @dateReceived
+                WHERE Donation_ID = @donoationId;";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@donationId", SqlDbType.VarChar, 10).Value = donations.DonationId.Trim();
+                    command.Parameters.Add("@donorId", SqlDbType.VarChar, 10).Value = donorId;
+                    command.Parameters.Add("@eventId", SqlDbType.VarChar, 10).Value = donations.Event.Trim();
+                    command.Parameters.Add("@dateReceived", SqlDbType.DateTime).Value =
+                                           donations.DateReceived == null ? (object) DBNull.Value : donations.DateReceived.Value.Date;
+                    int rowsAffected = await command.ExecuteNonQueryAsync();
+
+                    if (rowsAffected == 0)
+                    {
+                        throw new Exception("No donation record was updated. The donation may no longer exist.");
+                    }
+                }
+            }
+        }
+
+        public static async Task DeleteAdminDonationsAsync(string donationId)
+        {
+            using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+            {
+                string query = @"
+                DELETE FROM Donation
+                WHERE Donation_ID = @donoationId;";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@donationId", SqlDbType.VarChar, 10).Value = donationId.Trim();
+
+                    await connection.OpenAsync();
+
+                    int rowsAffected = await command.ExecuteNonQueryAsync();
+
+                    if (rowsAffected == 0)
+                    {
+                        throw new Exception("No donation record was deleted. The donation may no longer exist.");
+                    }
+                }
+            }
+        }
+
+        private static async Task<string> ResolveDonationIdAsync(SqlConnection connection, string donationInput)
+        {
+            string input = donationInput == null ? string.Empty : donationInput.Trim();
+
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                throw new Exception("Donation ID is required.");
+            }
+
+            string query = @"
+            SELECT TOP 1 Donation_ID
+            FROM Donation
+            WHERE Donation_ID = @donationInput
+            ORDER BY 
+                CASE WHEN Donation_ID = @donationInput THEN 0 ELSE 1 END;";
+
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.Add("@donationInput", SqlDbType.VarChar, 255).Value = input;
+
+                object result = await command.ExecuteScalarAsync();
+
+                if (result == null || result == DBNull.Value)
+                {
+                    throw new Exception("The donation was not found. Enter an existing Donation ID.");
+                }
+
+                return result.ToString();
+            }
+        }
+
+        public static async Task<ObservableCollection<AdminDonations>> GetAdminDonatedItemsAsync(string filter, string searchText)
+        {
+            ObservableCollection<AdminDonations> donatedItem = new ObservableCollection<AdminDonations>();
+
+            string selectedFilter = string.IsNullOrWhiteSpace(filter) ? "All Items" : filter;
+            string searchPattern = "%" + (searchText ?? string.Empty).Trim() + "%";
+
+            using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+            {
+                string query = @"
+            SELECT 
+                di.DonatedItem_ID,
+                di.Donation_ID,
+                di.Item_Name,
+                di.Quantity_Received,
+                
+            FROM [Donated Items] di
+            INNER JOIN Donation d ON di.Donation_ID = d.Donation_ID
+            WHERE
+                (
+                    @searchText = '%%'
+                    OR di.DonatedItem_ID @searchText
+                    OR di.Donation_ID @searchText
+                    OR di.Item_Name LIKE @searchText                    
+                AND
+                (
+                    @filter = 'All Items'
+                    OR (@filter = 'Food' AND di.Item_Name IN ('Rice','Canned Goods'))
+                    OR (@filter = 'Water' AND di.Item_Name LIKE '%Water%')
+                    OR (@filter = 'Clothing' AND di.Item_Name IN ('Blankets'))
+                    OR (@filter = 'Medical' AND di.Item_Name IN ('Medicines','First Aid Kit'))
+                )
+            ORDER BY di.DonatedItem_ID;";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@searchText", SqlDbType.VarChar, 255).Value = searchPattern;
+                    command.Parameters.Add("@filter", SqlDbType.VarChar, 50).Value = selectedFilter;
+
+                    await connection.OpenAsync();
+
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            donatedItem.Add(new AdminDonations
+                            {
+                                DonatedItemID = reader["DonatedItem_ID"] == DBNull.Value ? string.Empty : reader["Donation_ID"].ToString(),
+                                DonationId = reader["Donation_ID"] == DBNull.Value ? string.Empty : reader["Donor_Name"].ToString(),
+                                ItemName = reader["Item_Name"] == DBNull.Value ? string.Empty : reader["Item_Name"].ToString(),
+                                Quantity = reader["Quantity_Received"] == DBNull.Value ? 0 : Convert.ToInt32(reader["Quantity_Received"]),
+                            });
+                        }
+                    }
+                }
+            }
+
+
+            return donatedItem;
+        }
+
+        public static async Task AddAdminDonatedItemsAsync(AdminDonations donatedItems)
+        {
+            using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+            {
+                await connection.OpenAsync();
+
+                string donationId = await ResolveDonationIdAsync(connection, donatedItems.DonationId);
+
+                string query = @"
+            INSERT INTO [Donated Items]
+                (DonatedItem_ID, Donation_ID, Item_Name, Quantity_Received)
+            VALUES
+                (@donateditemId, @donationId, @itemName, @quantityReceived);";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@donateditemId", SqlDbType.VarChar, 10).Value = donatedItems.DonatedItemID.Trim();
+                    command.Parameters.Add("@donationId", SqlDbType.VarChar, 10).Value = donationId;
+                    command.Parameters.Add("@itemName", SqlDbType.VarChar, 50).Value = donatedItems.ItemName.Trim();
+                    command.Parameters.Add("@quantityReceived", SqlDbType.Int).Value = donatedItems.Quantity;
+
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        public static async Task UpdateAdminDonatedItemsAsync(AdminDonations donatedItems)
+        {
+            using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+            {
+                await connection.OpenAsync();
+
+                string donationId = await ResolveDonationIdAsync(connection, donatedItems.DonationId);
+
+                string query = @"
+            UPDATE [Donated Items]
+            SET
+                DonatedItem_ID = @donateditemId,
+                Donation_ID = @donationId,                
+                Item_Name = @itemName,
+                Quantity_Received = @quantityReceived
+            WHERE DonatedItem_ID = @donateditemId;";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@donateditemId", SqlDbType.VarChar, 10).Value = donatedItems.DonatedItemID.Trim();
+                    command.Parameters.Add("@donationId", SqlDbType.VarChar, 10).Value = donationId;
+                    command.Parameters.Add("@itemName", SqlDbType.VarChar, 10).Value = donatedItems.ItemName.Trim();
+                    command.Parameters.Add("@quantityReceived", SqlDbType.Int).Value = donatedItems.Quantity;
+
+                    int rowsAffected = await command.ExecuteNonQueryAsync();
+
+                    if (rowsAffected == 0)
+                    {
+                        throw new Exception("No donated item record was updated. The donated item may no longer exist.");
+                    }
+                }
+            }
+        }
+
+        public static async Task DeleteAdminDonatedItemAsync(string donatedItems)
+        {
+            using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+            {
+                string query = @"
+            DELETE FROM [Donated Items]
+            WHERE DonatedItem_ID = @donateditemId;";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@donateditemId", SqlDbType.VarChar, 10).Value = donatedItems.Trim();
+
+                    await connection.OpenAsync();
+
+                    int rowsAffected = await command.ExecuteNonQueryAsync();
+
+                    if (rowsAffected == 0)
+                    {
+                        throw new Exception("No donated item record was deleted. The donated item may no longer exist.");
+                    }
+                }
+            }
+        }
+
+        public static async Task<ObservableCollection<AdminPledges>> GetAdminPledgesAsync(string filter, string searchText)
+        {
+            ObservableCollection<AdminPledges> pledges = new ObservableCollection<AdminPledges>();
+
+            string selectedFilter = string.IsNullOrWhiteSpace(filter) ? "All Pledges" : filter;
+            string searchPattern = "%" + (searchText ?? string.Empty).Trim() + "%";
+
+            using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+            {
+                string query = @"
+            SELECT 
+                p.Pledge_ID,
+                p.Donor_ID,
+                p.Date_Pledge,
+                p.Pledge_Status,
+                
+            FROM Pledge p
+            INNER JOIN Donor do ON p.Donor_ID = do.Donor_ID
+            WHERE
+                (
+                    @searchText = '%%'
+                    OR p.Pledge_ID LIKE @searchText                    
+                    OR p.Donor_ID LIKE @searchText                   
+                AND
+                (
+                    @filter = 'All Pledges'
+                    OR (@filter = 'Approved' AND p.Pledge_Status = 'Approved')
+                    OR (@filter = 'Fulfilled' AND p.Pledge_Status = 'Fulfilled')
+                    OR (@filter = 'Cancelled' AND p.Pledge_Status = 'Cancelled')
+                )
+            ORDER BY p.Pledge_ID;";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@searchText", SqlDbType.VarChar, 255).Value = searchPattern;
+                    command.Parameters.Add("@filter", SqlDbType.VarChar, 50).Value = selectedFilter;
+
+                    await connection.OpenAsync();
+
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            pledges.Add(new AdminPledges
+                            {
+                                PledgeId = reader["Pledge_ID"] == DBNull.Value ? string.Empty : reader["Pledge_ID"].ToString(),
+                                DonorId = reader["Donor_ID"] == DBNull.Value ? string.Empty : reader["Donor_ID"].ToString(),
+                                DatePledge = reader["Date_Pledge"] == DBNull.Value ? (DateTime?)null
+                                : Convert.ToDateTime(reader["Date_Pledge"]),
+                                PledgeStatus = reader["Pledge_Status"] == DBNull.Value ? string.Empty : reader["Pledge_Status"].ToString(),
+
+                            });
+                        }
+                    }
+                }
+
+                return pledges;
+
+            }
+        }
+
+        public static async Task AddAdminPledgeAsync(AdminPledges pledges)
+        {
+            using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+            {
+                await connection.OpenAsync();
+
+                string donorId = await ResolveDonorIdAsync(connection, pledges.DonorId);
+
+                string query = @"
+            INSERT INTO Pledge
+                (Pledge_ID, Donor_ID, Date_Pledge, Pledge_Status)
+            VALUES
+                (@pledgeId, @donorId, @datePledge, @pledgeStatus);";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@pledgeId", SqlDbType.VarChar, 10).Value = pledges.PledgeId.Trim();
+                    command.Parameters.Add("@Donor_ID", SqlDbType.VarChar, 10).Value = donorId;
+                    command.Parameters.Add("@dateReceived", SqlDbType.DateTime).Value =
+                       pledges.DatePledge == null ? (object)DBNull.Value : pledges.DatePledge.Value.Date;
+                    command.Parameters.Add("@Pledge_Status", SqlDbType.VarChar, 50).Value = pledges.PledgeStatus.Trim();
+
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        public static async Task UpdateAdminPledgeAsync(AdminPledges pledges)
+        {
+            using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+            {
+                await connection.OpenAsync();
+
+                string donorId = await ResolveDonorIdAsync(connection, pledges.DonorId);
+
+                string query = @"
+            UPDATE Pledge
+            SET
+                Pledge_ID = @pledgeId,
+                Donor_ID = @donorId,
+                Date_Pledge = @datePledge,
+                Pledge_Status = @pledgeStatus
+            WHERE Pledge_ID = @pledgeId;";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@pledgeId", SqlDbType.VarChar, 10).Value = pledges.PledgeId.Trim();
+                    command.Parameters.Add("@donorId", SqlDbType.VarChar, 10).Value = donorId;
+                    command.Parameters.Add("@datePledge", SqlDbType.DateTime).Value =
+                                           pledges.DatePledge == null ? (object)DBNull.Value : pledges.DatePledge.Value.Date;
+                    command.Parameters.Add("@pledgeStatus", SqlDbType.VarChar, 10).Value = pledges.PledgeStatus.Trim();
+                    int rowsAffected = await command.ExecuteNonQueryAsync();
+
+                    if (rowsAffected == 0)
+                    {
+                        throw new Exception("No pledge record was updated. The pledge may no longer exist.");
+                    }
+                }
+            }
+        }
+
+        public static async Task DeleteAdminPledgeAsync(string pledges)
+        {
+            using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+            {
+                string query = @"
+            DELETE FROM Pledge
+            WHERE Pledge_ID = @pledgeId;";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@pledgeId", SqlDbType.VarChar, 10).Value = pledges.Trim();
+
+                    await connection.OpenAsync();
+
+                    int rowsAffected = await command.ExecuteNonQueryAsync();
+
+                    if (rowsAffected == 0)
+                    {
+                        throw new Exception("No pledge record was deleted. The pledge may no longer exist.");
+                    }
+                }
+            }
+        }
+
+        public static async Task<ObservableCollection<AdminPledges>> GetAdminPledgeItemsAsync(string filter, string searchText)
+        {
+            ObservableCollection<AdminPledges> pledgeItem = new ObservableCollection<AdminPledges>();
+
+            string selectedFilter = string.IsNullOrWhiteSpace(filter) ? "All Items" : filter;
+            string searchPattern = "%" + (searchText ?? string.Empty).Trim() + "%";
+
+            using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+            {
+                string query = @"
+            SELECT 
+                pi.PledgeItem_ID,
+                pi.Pledge_ID,
+                pi.Item_Name,
+                pi.Quantity,
+                pi.ExpectedDelivery_Date
+                
+            FROM [Pledge Item] pi
+            INNER JOIN Pledge p ON pi.Pledge_ID = p.Pledge_ID
+            WHERE
+                (
+                    @searchText = '%%'
+                    OR di.PledgeItem_ID @searchText
+                    OR di.Pledge_ID @searchText
+                    OR di.Item_Name LIKE @searchText                    
+                AND
+                (
+                    @filter = 'All Items'
+                    OR (@filter = 'Food' AND di.Item_Name IN ('Rice','Canned Goods','eggs'))
+                    OR (@filter = 'Water' AND di.Item_Name LIKE '%Water%')
+                    OR (@filter = 'Clothing' AND di.Item_Name IN ('Blankets'))
+                    OR (@filter = 'Medical' AND di.Item_Name IN ('Medicines','First Aid Kit'))
+                )
+            ORDER BY pi.PledgeItem_ID;";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@searchText", SqlDbType.VarChar, 255).Value = searchPattern;
+                    command.Parameters.Add("@filter", SqlDbType.VarChar, 50).Value = selectedFilter;
+
+                    await connection.OpenAsync();
+
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            pledgeItem.Add(new AdminPledges
+                            {
+                                PledgeItemId = reader["PledgeItem_ID"] == DBNull.Value ? string.Empty : reader["PledgeItem_ID"].ToString(),
+                                PledgeId = reader["Pledge_ID"] == DBNull.Value ? string.Empty : reader["Pledge_ID"].ToString(),
+                                ItemName = reader["Item_Name"] == DBNull.Value ? string.Empty : reader["Item_Name"].ToString(),
+                                Quantity = reader["Quantity"] == DBNull.Value ? 0 : Convert.ToInt32(reader["Quantity"]),
+                                ExpectedDelivery = reader["ExpectedDelivery_Date"] == DBNull.Value ? (DateTime?)null
+                                : Convert.ToDateTime(reader["ExpectedDelivery_Date"]),
+                            });
+                        }
+                    }
+                }
+            }
+
+
+            return pledgeItem;
+        }
+        private static async Task<string> ResolvePledgeIdAsync(SqlConnection connection, string pledgeInput)
+        {
+            string input = pledgeInput == null ? string.Empty : pledgeInput.Trim();
+
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                throw new Exception("Pledge ID is required.");
+            }
+
+            string query = @"
+        SELECT TOP 1 Pledge_ID
+        FROM Pledge
+        WHERE Pledge_ID = @pledgeInput
+        ORDER BY 
+            CASE WHEN Pledge_ID = @pledgeInput THEN 0 ELSE 1 END;";
+
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.Add("@pledgeInput", SqlDbType.VarChar, 255).Value = input;
+
+                object result = await command.ExecuteScalarAsync();
+
+                if (result == null || result == DBNull.Value)
+                {
+                    throw new Exception("The pledge was not found. Enter an existing Pledge ID.");
+                }
+
+                return result.ToString();
+            }
+        }
+        public static async Task AddAdminPledgeItemsAsync(AdminPledges pledgeItems)
+        {
+            using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+            {
+                await connection.OpenAsync();
+
+                string pledgeId = await ResolvePledgeIdAsync(connection, pledgeItems.PledgeId);
+
+                string query = @"
+            INSERT INTO [Pledge Item]
+                (PledgeItem_ID, Pledge_ID, Item_Name, Quantity, ExpectedDelivery_Date)
+            VALUES
+                (@pledgeitemId, @pledgeId, @itemName, @quantity, @expectedDeliveryDate);";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@pledgeitemId", SqlDbType.VarChar, 10).Value = pledgeItems.PledgeItemId.Trim();
+                    command.Parameters.Add("@pledgeId", SqlDbType.VarChar, 10).Value = pledgeId;
+                    command.Parameters.Add("@itemName", SqlDbType.VarChar, 50).Value = pledgeItems.ItemName.Trim();
+                    command.Parameters.Add("@quantity", SqlDbType.Int).Value = pledgeItems.Quantity;
+                    command.Parameters.Add("@expectedDeliveryDate", SqlDbType.DateTime).Value =
+                        pledgeItems.ExpectedDelivery == null ? (object)DBNull.Value : pledgeItems.ExpectedDelivery.Value.Date;
+
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
+        public static async Task UpdateAdminPledgeItemsAsync(AdminPledges pledgeItems)
+        {
+            using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+            {
+                await connection.OpenAsync();
+
+                string pledgeId = await ResolvePledgeIdAsync(connection, pledgeItems.PledgeId);
+
+                string query = @"
+            UPDATE [Pledge Item]
+            SET
+                PledgeItem_ID = @pledgeitemId,
+                Pledge_ID = @pledgeId,                
+                Item_Name = @itemName,
+                Quantity = @quantity,
+                ExpectedDelivery_Date = @expectedDeliveryDate
+            WHERE PledgeItem_ID = @pledgeitemId;";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@pledgeitemId", SqlDbType.VarChar, 10).Value = pledgeItems.PledgeItemId.Trim();
+                    command.Parameters.Add("@pledgeId", SqlDbType.VarChar, 10).Value = pledgeId;
+                    command.Parameters.Add("@itemName", SqlDbType.VarChar, 10).Value = pledgeItems.ItemName.Trim();
+                    command.Parameters.Add("@quantity", SqlDbType.Int).Value = pledgeItems.Quantity;
+                    command.Parameters.Add("@expectedDeliveryDate", SqlDbType.DateTime).Value =
+                       pledgeItems.ExpectedDelivery == null ? (object)DBNull.Value : pledgeItems.ExpectedDelivery.Value.Date;
+
+                    int rowsAffected = await command.ExecuteNonQueryAsync();
+
+                    if (rowsAffected == 0)
+                    {
+                        throw new Exception("No pledge item record was updated. The pledge item may no longer exist.");
+                    }
+                }
+            }
+        }
+
+        public static async Task DeleteAdminPledgeItemAsync(string pledgeItems)
+        {
+            using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+            {
+                string query = @"
+            DELETE FROM [Pledge Item]
+            WHERE PledgeItem_ID = @pledgeitemId;";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@pledgeitemId", SqlDbType.VarChar, 10).Value = pledgeItems.Trim();
+
+                    await connection.OpenAsync();
+
+                    int rowsAffected = await command.ExecuteNonQueryAsync();
+
+                    if (rowsAffected == 0)
+                    {
+                        throw new Exception("No pledge item record was deleted. The pledge item may no longer exist.");
+                    }
+                }
+            }
+        }
+
+        public static async Task<ObservableCollection<AdminLogistics>> GetAdminDeliveriesAsync(string filter, string searchText)
+        {
+            ObservableCollection<AdminLogistics> deliveries = new ObservableCollection<AdminLogistics>();
+
+            string selectedFilter = string.IsNullOrWhiteSpace(filter) ? "All Deliveries" : filter;
+            string searchPattern = "%" + (searchText ?? string.Empty).Trim() + "%";
+
+            using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+            {
+                string query = @"
+            SELECT 
+                dv.Delivery_ID,
+                dv.Distribution_ID,
+                dv.Delivery_Date,
+                dv.Delivery_Status,
+                
+            FROM [Delivery Schedule] dv
+            INNER JOIN Distribution dt ON dv.Distribution_ID = dt.Distribution_ID
+            WHERE
+                (
+                    @searchText = '%%'
+                    OR dv.Delivery_ID LIKE @searchText
+                    OR dv.Distribution_ID LIKE @searchText
+
+                AND
+                (
+                    @filter = 'All Deliveries'
+                    OR (@filter = 'Pending' AND dv.Delivery_Status = 'Pending')
+                    OR (@filter = 'In Transit' AND dv.Delivery_Status = 'In Transit')
+                    OR (@filter = 'Delivered' AND dv.Delivery_Status = 'Delivered')
+                )
+            ORDER BY dv.Delivery_ID;";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@searchText", SqlDbType.VarChar, 255).Value = searchPattern;
+                    command.Parameters.Add("@filter", SqlDbType.VarChar, 50).Value = selectedFilter;
+
+                    await connection.OpenAsync();
+
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            deliveries.Add(new AdminLogistics
+                            {
+                                DeliveryId = reader["Delivery_ID"] == DBNull.Value ? string.Empty : reader["Delivery_ID"].ToString(),
+                                Distribution = reader["Distribution_ID"] == DBNull.Value ? string.Empty : reader["Distribution_ID"].ToString(),
+                                DeliveryDate = reader["Delivery_Date"] == DBNull.Value ? (DateTime?)null
+                                : Convert.ToDateTime(reader["Delivery_Date"]),
+                                Status = reader["Delivery_Status"] == DBNull.Value ? string.Empty : reader["Delivery_Status"].ToString(),
+
+                            });
+                        }
+                    }
+                }
+            }
+
+            return deliveries;
+        }
+        private static async Task<string> ResolveDistributionIdAsync(SqlConnection connection, string distributionInput)
+        {
+            string input = distributionInput == null ? string.Empty : distributionInput.Trim();
+
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                throw new Exception("Distribution ID is required.");
+            }
+
+            string query = @"
+        SELECT TOP 1 Distribution_ID
+        FROM Distribution
+        WHERE Distribution_ID = @distributionInput
+        ORDER BY 
+            CASE WHEN Distribution_ID = @distributionInput THEN 0 ELSE 1 END;";
+
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.Add("@distributionInput", SqlDbType.VarChar, 255).Value = input;
+
+                object result = await command.ExecuteScalarAsync();
+
+                if (result == null || result == DBNull.Value)
+                {
+                    throw new Exception("The distribution was not found. Enter an existing Distribution ID.");
+                }
+
+                return result.ToString();
+            }
+        }
+
+        public static async Task AddAdminDeliveriesAsync(AdminLogistics deliveries)
+        {
+            using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+            {
+                await connection.OpenAsync();
+
+                string distributionId = await ResolveDistributionIdAsync(connection, deliveries.Distribution);
+
+                string query = @"
+            INSERT INTO [Delivery Schedule]
+                (Delivery_ID, Distribution_ID, Delivery_Date, Delivery_Status)
+            VALUES
+                (@deliveryId, @distributionId, @deliveryDate, @deliveryStatus);";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@deliveryId", SqlDbType.VarChar, 10).Value = deliveries.DeliveryId.Trim();
+                    command.Parameters.Add("@distributionId", SqlDbType.VarChar, 10).Value = distributionId;
+                    command.Parameters.Add("@deliveryDate", SqlDbType.DateTime).Value =
+                       deliveries.DeliveryDate == null ? (object)DBNull.Value : deliveries.DeliveryDate.Value.Date;
+                    command.Parameters.Add("@deliveryStatus", SqlDbType.VarChar, 50).Value = deliveries.Status.Trim();
+
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        public static async Task UpdateAdminDeliveriesAsync(AdminLogistics deliveries)
+        {
+            using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+            {
+                await connection.OpenAsync();
+
+                string distributionId = await ResolveDistributionIdAsync(connection, deliveries.Distribution);
+
+                string query = @"
+                UPDATE [Delivery Schedule]
+                SET
+                    Delivery_ID = @deliveryId,
+                    Distribution_ID = @distributionId,
+                    Delivery_Date = @deliveryDate,
+                    Delivery_Status = @deliveryStatus
+                WHERE Delivery_ID = @deliveryId;";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@deliveryId", SqlDbType.VarChar, 10).Value = deliveries.DeliveryId.Trim();
+                    command.Parameters.Add("@distributionId", SqlDbType.VarChar, 10).Value = distributionId;
+                    command.Parameters.Add("@deliveryDate", SqlDbType.DateTime).Value =
+                                           deliveries.DeliveryDate == null ? (object)DBNull.Value : deliveries.DeliveryDate.Value.Date;
+                    command.Parameters.Add("@deliveryStatus", SqlDbType.VarChar, 50).Value = deliveries.Status.Trim();
+                    int rowsAffected = await command.ExecuteNonQueryAsync();
+
+                    if (rowsAffected == 0)
+                    {
+                        throw new Exception("No delivery record was updated. The delivery may no longer exist.");
+                    }
+                }
+            }
+        }
+
+        public static async Task DeleteAdminDeliveriesAsync(string deliveries)
+        {
+            using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+            {
+                string query = @"
+            DELETE FROM [Delivery Schedule]
+            WHERE Delivery_ID = @deliveryId;";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@deliveryId", SqlDbType.VarChar, 10).Value = deliveries.Trim();
+
+                    await connection.OpenAsync();
+
+                    int rowsAffected = await command.ExecuteNonQueryAsync();
+
+                    if (rowsAffected == 0)
+                    {
+                        throw new Exception("No delivery record was deleted. The delivery may no longer exist.");
+                    }
+                }
+            }
+        }
+
+        public static async Task<ObservableCollection<AdminLogistics>> GetAdminPickupAsync(string filter, string searchText)
+        {
+            ObservableCollection<AdminLogistics> pickups = new ObservableCollection<AdminLogistics>();
+
+            string selectedFilter = string.IsNullOrWhiteSpace(filter) ? "All Pickups" : filter;
+            string searchPattern = "%" + (searchText ?? string.Empty).Trim() + "%";
+
+            using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+            {
+                string query = @"
+            SELECT 
+                pc.Pickup_ID,
+                pc.Donation_ID,
+                pc.Pickup_Date,
+                pc.Pickup_Status,
+                
+            FROM [Pickup Schedule] pc
+            INNER JOIN Donation d ON pc.Donation_ID = d.Donation_ID
+            WHERE
+                (
+                    @searchText = '%%'
+                    OR dv.Pickup_ID LIKE @searchText
+                    OR dv.Donation_ID LIKE @searchText
+
+                AND
+                (
+                    @filter = 'All Pickups'
+                    OR (@filter = 'Scheduled' AND pc.Pickup_Status = 'Scheduled')
+                    OR (@filter = 'Completed' AND pc.Pickup_Status = 'Completed')
+                    OR (@filter = 'Cancelled' AND pc.Pickup_Status = 'Cancelled')
+                )
+            ORDER BY pc.Pickup_ID;";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@searchText", SqlDbType.VarChar, 255).Value = searchPattern;
+                    command.Parameters.Add("@filter", SqlDbType.VarChar, 50).Value = selectedFilter;
+
+                    await connection.OpenAsync();
+
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            pickups.Add(new AdminLogistics
+                            {
+                                PickupId = reader["Pickup_ID"] == DBNull.Value ? string.Empty : reader["Pickup_ID"].ToString(),
+                                Donation = reader["Donation_ID"] == DBNull.Value ? string.Empty : reader["Donation_ID"].ToString(),
+                                PickupDate = reader["Pickup_Date"] == DBNull.Value ? (DateTime?)null
+                                : Convert.ToDateTime(reader["Pickup_Date"]),
+                                Status = reader["Pickup_Status"] == DBNull.Value ? string.Empty : reader["Pickup_Status"].ToString(),
+
+                            });
+                        }
+                    }
+                }
+            }
+
+            return pickups;
+        }
+        public static async Task AddAdminPickupsAsync(AdminLogistics pickups)
+        {
+            using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+            {
+                await connection.OpenAsync();
+
+                string donationId = await ResolveDonationIdAsync(connection, pickups.Donation);
+
+                string query = @"
+            INSERT INTO [Pickup Schedule]
+                (Pickup_ID, Donation_ID, Pickup_Date, Pickup_Status)
+            VALUES
+                (@pickupId, @donationId, @pickupDate, @pickupStatus);";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@pickupId", SqlDbType.VarChar, 10).Value = pickups.PickupId.Trim();
+                    command.Parameters.Add("@donationId", SqlDbType.VarChar, 10).Value = donationId;
+                    command.Parameters.Add("@pickupDate", SqlDbType.DateTime).Value =
+                       pickups.PickupDate == null ? (object)DBNull.Value : pickups.PickupDate.Value.Date;
+                    command.Parameters.Add("@pickupStatus", SqlDbType.VarChar, 50).Value = pickups.Status.Trim();
+
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        public static async Task UpdateAdminPickupsAsync(AdminLogistics pickups)
+        {
+            using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+            {
+                await connection.OpenAsync();
+
+                string donationId = await ResolveDonationIdAsync(connection, pickups.Donation);
+
+                string query = @"
+            UPDATE [Pickup Schedule]
+            SET
+                Pickup_ID = @pickupId,
+                Donation_ID = @donationId,
+                Pickup_Date = @pickupDate,
+                Pickup_Status = @pickupStatus
+            WHERE Pickup_ID = @pickupId;";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@pickupId", SqlDbType.VarChar, 10).Value = pickups.PickupId.Trim();
+                    command.Parameters.Add("@donationId", SqlDbType.VarChar, 10).Value = donationId;
+                    command.Parameters.Add("@pickupDate", SqlDbType.DateTime).Value =
+                                           pickups.PickupDate == null ?(object) DBNull.Value : pickups.PickupDate.Value.Date;
+                    command.Parameters.Add("@pickupStatus", SqlDbType.VarChar, 50).Value = pickups.Status.Trim();
+                    int rowsAffected = await command.ExecuteNonQueryAsync();
+
+                    if (rowsAffected == 0)
+                    {
+                        throw new Exception("No pickup record was updated. The pickup may no longer exist.");
+                    }
+                }
+            }
+        }
+
+        public static async Task DeleteAdminPickupsAsync(string pickups)
+        {
+            using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+            {
+                string query = @"
+            DELETE FROM [Pickup Schedule]
+            WHERE Pickup_ID = @pickupId;";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@pickupId", SqlDbType.VarChar, 10).Value = pickups.Trim();
+
+                    await connection.OpenAsync();
+
+                    int rowsAffected = await command.ExecuteNonQueryAsync();
+
+                    if (rowsAffected == 0)
+                    {
+                        throw new Exception("No pickup record was deleted. The pickup may no longer exist.");
+                    }
+                }
+            }
+        }
+
     }
 }

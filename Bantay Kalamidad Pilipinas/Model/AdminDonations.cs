@@ -10,6 +10,7 @@ namespace Bantay_Kalamidad_Pilipinas.Model
     public class AdminDonations : ObservableObject
     {
         private string _donationId;
+        private string _donorId;
         private string _donor;
         private string _events;
         private DateTime? _dataReceived;
@@ -17,7 +18,7 @@ namespace Bantay_Kalamidad_Pilipinas.Model
 
         private string _donatedItemId;
         private string _itemName;
-        private string _quantity;
+        private int _quantity;
 
 
         public string DonationId
@@ -32,7 +33,18 @@ namespace Bantay_Kalamidad_Pilipinas.Model
                 }
             }
         }
-
+        public string DonorId
+        {
+            get => _donorId;
+            set
+            {
+                if (_donorId != value)
+                {
+                    _donorId = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         public string Donor
         {
             get => _donor;
@@ -111,7 +123,7 @@ namespace Bantay_Kalamidad_Pilipinas.Model
             }
         }
 
-        public string Quantity
+        public int Quantity
         {
             get => _quantity;
             set

@@ -10,7 +10,11 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
     internal class SQL
     {
         //my local database thingie
+        //public static string connectionString =
+        //    @"Data Source=LYZZIE;Initial Catalog=""20260621 Bantay Kalamidad Pilipinas"";Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;";
+
         public static string connectionString =
             @"Data Source=LYZZIE;Initial Catalog=""20260621 Bantay Kalamidad Pilipinas"";Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;";
+
     }
 }
