@@ -106,6 +106,7 @@
     <Compile Include="ViewModel\Admin_Menu_ViewModel.cs" />
     <Compile Include="ViewModel\AsyncRelayCommand.cs" />
     <Compile Include="ViewModel\DatabaseManager.cs" />
+    <Compile Include="ViewModel\donationdashboard_ContactUs_ViewModel.cs" />
     <Compile Include="ViewModel\donationdashboard_mainlayout_ViewModel.cs" />
     <Compile Include="ViewModel\donationdashboard_MakeAPledge_ViewModel.cs" />
     <Compile Include="ViewModel\donationdashboard_MyDonations_ViewModel.cs" />

@@ -147,6 +147,56 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         public ICommand UpdateCommand { get; }
         public ICommand DeleteCommand { get; }
 
+        // ---------------------------------------------------------------
+        // XAML alias properties — the XAML binds to these names, which
+        // differ from the original backing-property names. These delegate
+        // to the existing properties so no existing logic changes.
+        // ---------------------------------------------------------------
+
+        // First grid (Donations) aliases
+        public ObservableCollection<AdminDonations> DonatedItems
+        {
+            get => Donations;
+            set => Donations = value;
+        }
+
+        public AdminDonations SelectedDonation
+        {
+            get => SelectedDonations;
+            set => SelectedDonations = value;
+        }
+
+        public string SelectedDonationFilter
+        {
+            get => SelectedDonationsFilter;
+            set => SelectedDonationsFilter = value;
+        }
+
+        public string DonationSearchText
+        {
+            get => DonationsSearchText;
+            set => DonationsSearchText = value;
+        }
+
+        // Second grid (Donated Items) aliases
+        public AdminDonations SelectedDonatedItem
+        {
+            get => SelectedDonatedItems;
+            set => SelectedDonatedItems = value;
+        }
+
+        public string SelectedDonatedItemFilter
+        {
+            get => SelectedDonatedItemsFilter;
+            set => SelectedDonatedItemsFilter = value;
+        }
+
+        public string DonatedItemSearchText
+        {
+            get => DonatedItemsSeacrhText;
+            set => DonatedItemsSeacrhText = value;
+        }
+
         public admindashboard_donation_Donations_viewModel()
         {
             Donations = new ObservableCollection<AdminDonations>();

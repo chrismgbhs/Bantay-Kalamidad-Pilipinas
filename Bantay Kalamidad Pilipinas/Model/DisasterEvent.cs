@@ -12,7 +12,10 @@ namespace Bantay_Kalamidad_Pilipinas.Model
         public string Name { get; set; }
         public string EventID { get; set; }
 
-        public DisasterEvent (string name, string eventID)
+        // XAML DisplayMemberPath="Event_Name" — alias for Name
+        public string Event_Name => Name;
+
+        public DisasterEvent(string name, string eventID)
         {
             Name = name;
             EventID = eventID;

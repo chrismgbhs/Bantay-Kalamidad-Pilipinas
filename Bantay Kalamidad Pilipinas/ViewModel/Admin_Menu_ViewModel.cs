@@ -33,10 +33,15 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             currentWindow?.Close();
         }
 
-        //note to guys, need rin ata toh palitan para sa donation admin, but double check nyo nlng
         private void OpenAdminDonationDashboard()
         {
-            Application.Current.MainWindow.Content = new admindashboard_donation_mainlayout_view();
+            Window currentWindow = Application.Current.MainWindow;
+
+            var donationDashboard = new admindashboard_donation_mainlayout_view();
+            donationDashboard.Show();
+
+            Application.Current.MainWindow = donationDashboard;
+            currentWindow?.Close();
         }
 
         private void BackToSignin()

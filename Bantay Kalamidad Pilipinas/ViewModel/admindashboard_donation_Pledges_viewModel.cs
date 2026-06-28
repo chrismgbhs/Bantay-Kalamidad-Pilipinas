@@ -146,6 +146,55 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         public ICommand UpdateCommand { get; }
         public ICommand DeleteCommand { get; }
 
+        // XAML alias properties
+        public ObservableCollection<AdminPledges> Pledges
+        {
+            get => Pledge;
+            set => Pledge = value;
+        }
+
+        public ObservableCollection<AdminPledges> PledgeItems
+        {
+            get => Pledge;
+            set => Pledge = value;
+        }
+
+        public AdminPledges SelectedPledge
+        {
+            get => SelectedPledges;
+            set => SelectedPledges = value;
+        }
+
+        public string SelectedPledgeFilter
+        {
+            get => SelectedPledgesFilter;
+            set => SelectedPledgesFilter = value;
+        }
+
+        public string PledgeSearchText
+        {
+            get => PledgesSearchText;
+            set => PledgesSearchText = value;
+        }
+
+        public AdminPledges SelectedPledgeItem
+        {
+            get => SelectedPledgeItems;
+            set => SelectedPledgeItems = value;
+        }
+
+        public string SelectedPledgeItemFilter
+        {
+            get => SelectedPledgeItemsFilter;
+            set => SelectedPledgeItemsFilter = value;
+        }
+
+        public string PledgeItemSearchText
+        {
+            get => PledgeItemsSeacrhText;
+            set => PledgeItemsSeacrhText = value;
+        }
+
         public admindashboard_donation_Pledges_viewModel()
         {
             Pledge = new ObservableCollection<AdminPledges>();
@@ -274,7 +323,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 else if (!string.IsNullOrWhiteSpace(SelectedPledgeItems.PledgeItemId))
                 {
                     if (!ValidatePledgeItems(SelectedPledgeItems))
-                        return; 
+                        return;
                     await DatabaseManager.AddAdminPledgeItemsAsync(SelectedPledgeItems);
 
                     MessageBox.Show("Pledge Item saved successfully.",
@@ -489,7 +538,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                         PledgeItemsSeacrhText);
 
                 Application.Current.Dispatcher.Invoke(() =>
-                {   
+                {
                     Pledge = loadedPledgeItems;
                 });
             }
@@ -548,7 +597,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 return false;
             }
 
-            
+
             if (pledgeItems.Quantity <= 0)
             {
                 MessageBox.Show("Quantity is required and must be greater than zero.",

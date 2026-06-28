@@ -884,7 +884,9 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             SELECT
                 ro.Operation_ID,
                 ro.Event_ID,
+                ISNULL(de.Event_Name, ro.Event_ID) AS EventDisplay,
                 ro.Location_ID,
+                ISNULL(l.Barangay + ', ' + l.City, ro.Location_ID) AS LocationDisplay,
                 ro.Date_Started,
                 ro.Rescue_Status
             FROM [Rescue Operation] ro
@@ -896,9 +898,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 (
                     @searchText = '%%'
                     OR ro.Operation_ID LIKE @searchText
-                    OR ro.Event_ID LIKE @searchText
                     OR ISNULL(de.Event_Name, '') LIKE @searchText
-                    OR ro.Location_ID LIKE @searchText
                     OR ISNULL(l.Barangay, '') LIKE @searchText
                     OR ISNULL(l.City, '') LIKE @searchText
                     OR ISNULL(l.Province, '') LIKE @searchText
@@ -926,8 +926,10 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                             operations.Add(new AdminRescueOperation
                             {
                                 OperationId = reader["Operation_ID"] == DBNull.Value ? string.Empty : reader["Operation_ID"].ToString(),
-                                Event = reader["Event_ID"] == DBNull.Value ? string.Empty : reader["Event_ID"].ToString(),
-                                Location = reader["Location_ID"] == DBNull.Value ? string.Empty : reader["Location_ID"].ToString(),
+                                EventId = reader["Event_ID"] == DBNull.Value ? string.Empty : reader["Event_ID"].ToString(),
+                                Event = reader["EventDisplay"] == DBNull.Value ? string.Empty : reader["EventDisplay"].ToString(),
+                                LocationId = reader["Location_ID"] == DBNull.Value ? string.Empty : reader["Location_ID"].ToString(),
+                                Location = reader["LocationDisplay"] == DBNull.Value ? string.Empty : reader["LocationDisplay"].ToString(),
                                 DateStarted = reader["Date_Started"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader["Date_Started"]),
                                 Status = reader["Rescue_Status"] == DBNull.Value ? string.Empty : reader["Rescue_Status"].ToString(),
                                 IsNew = false
@@ -953,8 +955,8 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     command.Parameters.Add("@operationId", SqlDbType.VarChar, 10).Value = operation.OperationId.Trim();
-                    command.Parameters.Add("@eventId", SqlDbType.VarChar, 10).Value = operation.Event.Trim();
-                    command.Parameters.Add("@locationId", SqlDbType.VarChar, 10).Value = operation.Location.Trim();
+                    command.Parameters.Add("@eventId", SqlDbType.VarChar, 10).Value = operation.EventId.Trim();
+                    command.Parameters.Add("@locationId", SqlDbType.VarChar, 10).Value = operation.LocationId.Trim();
                     command.Parameters.Add("@dateStarted", SqlDbType.Date).Value = operation.DateStarted.Value.Date;
                     command.Parameters.Add("@rescueStatus", SqlDbType.VarChar, 255).Value = operation.Status.Trim();
 
@@ -980,8 +982,8 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     command.Parameters.Add("@operationId", SqlDbType.VarChar, 10).Value = operation.OperationId.Trim();
-                    command.Parameters.Add("@eventId", SqlDbType.VarChar, 10).Value = operation.Event.Trim();
-                    command.Parameters.Add("@locationId", SqlDbType.VarChar, 10).Value = operation.Location.Trim();
+                    command.Parameters.Add("@eventId", SqlDbType.VarChar, 10).Value = operation.EventId.Trim();
+                    command.Parameters.Add("@locationId", SqlDbType.VarChar, 10).Value = operation.LocationId.Trim();
                     command.Parameters.Add("@dateStarted", SqlDbType.Date).Value = operation.DateStarted.Value.Date;
                     command.Parameters.Add("@rescueStatus", SqlDbType.VarChar, 255).Value = operation.Status.Trim();
 
@@ -1221,8 +1223,8 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 string query = @"
             SELECT
                 ro.Operation_ID,
-                ro.Event_ID,
-                ro.Location_ID,
+                ISNULL(de.Event_Name, ro.Event_ID) AS EventDisplay,
+                ISNULL(l.Barangay + ', ' + l.City, ro.Location_ID) AS LocationDisplay,
                 COUNT(oa.Assignment_ID) AS Members,
                 ro.Rescue_Status
             FROM [Rescue Operation] ro
@@ -1236,9 +1238,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 (
                     @searchText = '%%'
                     OR ro.Operation_ID LIKE @searchText
-                    OR ro.Event_ID LIKE @searchText
                     OR ISNULL(de.Event_Name, '') LIKE @searchText
-                    OR ro.Location_ID LIKE @searchText
                     OR ISNULL(l.Barangay, '') LIKE @searchText
                     OR ISNULL(l.City, '') LIKE @searchText
                     OR ISNULL(l.Province, '') LIKE @searchText
@@ -1251,6 +1251,9 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 )
             GROUP BY
                 ro.Operation_ID,
+                de.Event_Name,
+                l.Barangay,
+                l.City,
                 ro.Event_ID,
                 ro.Location_ID,
                 ro.Rescue_Status
@@ -1270,8 +1273,8 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                             teams.Add(new AdminRescueTeam
                             {
                                 TeamOperation = reader["Operation_ID"] == DBNull.Value ? string.Empty : reader["Operation_ID"].ToString(),
-                                Event = reader["Event_ID"] == DBNull.Value ? string.Empty : reader["Event_ID"].ToString(),
-                                Location = reader["Location_ID"] == DBNull.Value ? string.Empty : reader["Location_ID"].ToString(),
+                                Event = reader["EventDisplay"] == DBNull.Value ? string.Empty : reader["EventDisplay"].ToString(),
+                                Location = reader["LocationDisplay"] == DBNull.Value ? string.Empty : reader["LocationDisplay"].ToString(),
                                 Members = reader["Members"] == DBNull.Value ? "0" : reader["Members"].ToString(),
                                 Status = reader["Rescue_Status"] == DBNull.Value ? string.Empty : reader["Rescue_Status"].ToString(),
                                 IsNew = false
@@ -1507,7 +1510,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                     command.Parameters.Add("@donorId", SqlDbType.VarChar, 10).Value = donorId;
                     command.Parameters.Add("@eventId", SqlDbType.VarChar, 10).Value = donations.Event.Trim();
                     command.Parameters.Add("@dateReceived", SqlDbType.DateTime).Value =
-                                           donations.DateReceived == null ? (object) DBNull.Value : donations.DateReceived.Value.Date;
+                                           donations.DateReceived == null ? (object)DBNull.Value : donations.DateReceived.Value.Date;
                     int rowsAffected = await command.ExecuteNonQueryAsync();
 
                     if (rowsAffected == 0)
@@ -2330,7 +2333,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                     command.Parameters.Add("@pickupId", SqlDbType.VarChar, 10).Value = pickups.PickupId.Trim();
                     command.Parameters.Add("@donationId", SqlDbType.VarChar, 10).Value = donationId;
                     command.Parameters.Add("@pickupDate", SqlDbType.DateTime).Value =
-                                           pickups.PickupDate == null ?(object) DBNull.Value : pickups.PickupDate.Value.Date;
+                                           pickups.PickupDate == null ? (object)DBNull.Value : pickups.PickupDate.Value.Date;
                     command.Parameters.Add("@pickupStatus", SqlDbType.VarChar, 50).Value = pickups.Status.Trim();
                     int rowsAffected = await command.ExecuteNonQueryAsync();
 
@@ -2364,6 +2367,237 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                     }
                 }
             }
+        }
+
+        /* ================================================================
+           ID GENERATORS — all use MAX+1 pattern consistent with the
+           existing usp_AddDonor / usp_AddPledge stored procedures.
+           ================================================================ */
+
+        public static async Task<string> GenerateRescuerIdAsync()
+        {
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                string q = @"
+                    SELECT ISNULL(MAX(CAST(SUBSTRING(Volunteer_ID, 2, LEN(Volunteer_ID)) AS INT)), 0) + 1
+                    FROM Volunteer
+                    WHERE Volunteer_ID LIKE 'V[0-9]%'";
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    await conn.OpenAsync();
+                    int next = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+                    return "V" + next.ToString("D4");
+                }
+            }
+        }
+
+        public static async Task<string> GenerateEventIdAsync()
+        {
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                string q = @"
+                    SELECT ISNULL(MAX(CAST(SUBSTRING(Event_ID, 2, LEN(Event_ID)) AS INT)), 0) + 1
+                    FROM [Disaster Event]
+                    WHERE Event_ID LIKE 'E[0-9]%'";
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    await conn.OpenAsync();
+                    int next = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+                    return "E" + next.ToString("D4");
+                }
+            }
+        }
+
+        public static async Task<string> GenerateOperationIdAsync()
+        {
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                // Seed data uses format RO0001
+                string q = @"
+                    SELECT ISNULL(MAX(CAST(SUBSTRING(Operation_ID, 3, LEN(Operation_ID)) AS INT)), 0) + 1
+                    FROM [Rescue Operation]
+                    WHERE Operation_ID LIKE 'RO[0-9]%'";
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    await conn.OpenAsync();
+                    int next = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+                    return "RO" + next.ToString("D4");
+                }
+            }
+        }
+
+        public static async Task<string> GenerateAssignmentIdAsync()
+        {
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                string q = @"
+                    SELECT ISNULL(MAX(CAST(SUBSTRING(Assignment_ID, 2, LEN(Assignment_ID)) AS INT)), 0) + 1
+                    FROM [Operation Assignment]
+                    WHERE Assignment_ID LIKE 'A[0-9]%'";
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    await conn.OpenAsync();
+                    int next = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+                    return "A" + next.ToString("D4");
+                }
+            }
+        }
+
+        public static async Task<string> GenerateLocationIdAsync()
+        {
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                string q = @"
+                    SELECT ISNULL(MAX(CAST(SUBSTRING(Location_ID, 2, LEN(Location_ID)) AS INT)), 0) + 1
+                    FROM Location
+                    WHERE Location_ID LIKE 'L[0-9]%'";
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    await conn.OpenAsync();
+                    int next = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+                    return "L" + next.ToString("D4");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the next available integer User_ID. Used when creating a
+        /// Volunteer account that is not yet linked to a Users row, matching
+        /// the existing usp_AddVolunteer pattern.
+        /// </summary>
+        public static async Task<string> GenerateUserIdAsync()
+        {
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                string q = "SELECT ISNULL(MAX(User_ID), 0) + 1 FROM Users";
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    await conn.OpenAsync();
+                    int next = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+                    return next.ToString();
+                }
+            }
+        }
+
+        /* ================================================================
+           DROPDOWN DATA SOURCES — used by Operations, Assignments, and
+           Rescuers admin screens for ComboBox / selection lists.
+           ================================================================ */
+
+        /// <summary>Returns all disaster events as (Event_ID, Event_Name) pairs for dropdowns.</summary>
+        public static async Task<List<(string Id, string Name)>> GetAvailableDisasterEventsAsync()
+        {
+            var list = new List<(string, string)>();
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                string q = "SELECT Event_ID, Event_Name FROM [Disaster Event] ORDER BY Event_Name";
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    await conn.OpenAsync();
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                            list.Add((reader["Event_ID"].ToString(), reader["Event_Name"].ToString()));
+                    }
+                }
+            }
+            return list;
+        }
+
+        /// <summary>Returns all locations as (Location_ID, display string) pairs for dropdowns.</summary>
+        public static async Task<List<(string Id, string Display)>> GetAvailableLocationsAsync()
+        {
+            var list = new List<(string, string)>();
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                string q = @"
+                    SELECT Location_ID,
+                           Barangay + ', ' + City + ', ' + Province AS Display
+                    FROM Location ORDER BY Province, City, Barangay";
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    await conn.OpenAsync();
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                            list.Add((reader["Location_ID"].ToString(), reader["Display"].ToString()));
+                    }
+                }
+            }
+            return list;
+        }
+
+        /// <summary>Returns all volunteers as (Volunteer_ID, Volunteer_Name) pairs for dropdowns.</summary>
+        public static async Task<List<(string Id, string Name)>> GetAvailableRescuersAsync()
+        {
+            var list = new List<(string, string)>();
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                string q = "SELECT Volunteer_ID, ISNULL(Volunteer_Name, Volunteer_ID) AS Volunteer_Name FROM Volunteer ORDER BY Volunteer_Name";
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    await conn.OpenAsync();
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                            list.Add((reader["Volunteer_ID"].ToString(), reader["Volunteer_Name"].ToString()));
+                    }
+                }
+            }
+            return list;
+        }
+
+        /// <summary>Returns all operations as (Operation_ID, display string with event name) for dropdowns.</summary>
+        public static async Task<List<(string Id, string Display)>> GetAvailableOperationsAsync()
+        {
+            var list = new List<(string, string)>();
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                string q = @"
+                    SELECT ro.Operation_ID,
+                           ro.Operation_ID + ' — ' + ISNULL(de.Event_Name, 'Unknown Event') AS Display
+                    FROM [Rescue Operation] ro
+                    LEFT JOIN [Disaster Event] de ON ro.Event_ID = de.Event_ID
+                    ORDER BY ro.Operation_ID";
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    await conn.OpenAsync();
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                            list.Add((reader["Operation_ID"].ToString(), reader["Display"].ToString()));
+                    }
+                }
+            }
+            return list;
+        }
+
+        /* ================================================================
+           LOCATION — add new location with generated ID.
+           ================================================================ */
+
+        public static async Task<string> AddLocationAsync(string barangay, string city, string province)
+        {
+            string newId = await GenerateLocationIdAsync();
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                string q = @"
+                    INSERT INTO Location (Location_ID, Barangay, City, Province)
+                    VALUES (@id, @barangay, @city, @province)";
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    cmd.Parameters.Add("@id", SqlDbType.VarChar, 10).Value = newId;
+                    cmd.Parameters.Add("@barangay", SqlDbType.VarChar, 255).Value =
+                        string.IsNullOrWhiteSpace(barangay) ? (object)DBNull.Value : barangay.Trim();
+                    cmd.Parameters.Add("@city", SqlDbType.VarChar, 255).Value =
+                        string.IsNullOrWhiteSpace(city) ? (object)DBNull.Value : city.Trim();
+                    cmd.Parameters.Add("@province", SqlDbType.VarChar, 255).Value =
+                        string.IsNullOrWhiteSpace(province) ? (object)DBNull.Value : province.Trim();
+                    await conn.OpenAsync();
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+            return newId;
         }
 
     }

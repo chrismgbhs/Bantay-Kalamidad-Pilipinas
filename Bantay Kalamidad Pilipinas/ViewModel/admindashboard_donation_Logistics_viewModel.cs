@@ -146,6 +146,55 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         public ICommand UpdateCommand { get; }
         public ICommand DeleteCommand { get; }
 
+        // XAML alias properties
+        public ObservableCollection<AdminLogistics> Deliveries
+        {
+            get => Logistics;
+            set => Logistics = value;
+        }
+
+        public ObservableCollection<AdminLogistics> Pickups
+        {
+            get => Logistics;
+            set => Logistics = value;
+        }
+
+        public AdminLogistics SelectedDelivery
+        {
+            get => SelectedDeliveries;
+            set => SelectedDeliveries = value;
+        }
+
+        public string SelectedDeliveryFilter
+        {
+            get => SelectedDeliveriesFilter;
+            set => SelectedDeliveriesFilter = value;
+        }
+
+        public string DeliverySearchText
+        {
+            get => DeliveriesSearchText;
+            set => DeliveriesSearchText = value;
+        }
+
+        public AdminLogistics SelectedPickup
+        {
+            get => SelectedPickups;
+            set => SelectedPickups = value;
+        }
+
+        public string SelectedPickupFilter
+        {
+            get => SelectedPickupsFilter;
+            set => SelectedPickupsFilter = value;
+        }
+
+        public string PickupSearchText
+        {
+            get => PickupsSeacrhText;
+            set => PickupsSeacrhText = value;
+        }
+
         public admindashboard_donation_Logistics_viewModel()
         {
             Logistics = new ObservableCollection<AdminLogistics>();

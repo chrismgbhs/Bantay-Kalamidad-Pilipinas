@@ -22,6 +22,11 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         private bool _isTableReadOnly = true;
         private Visibility _actionButtonsVisibility = Visibility.Collapsed;
 
+        // Tracks the highest pending sequence number so multiple "Add" clicks
+        // before saving don't all get the same ID from the database.
+        // Reset to -1 whenever rows are saved or the grid is reloaded.
+        private int _pendingIdSequence = -1;
+
         public ObservableCollection<AdminRescuer> Rescuers
         {
             get => _rescuers;
@@ -123,18 +128,53 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             IsTableReadOnly = false;
             ActionButtonsVisibility = Visibility.Visible;
 
-            AdminRescuer newRescuer = new AdminRescuer
-            {
-                RescuerId = string.Empty,
-                Name = string.Empty,
-                ContactNumber = string.Empty,
-                UserId = string.Empty,
-                Status = "New",
-                IsNew = true
-            };
+            // IDs and Status are auto-generated — admin only provides Name, ContactNumber, and optionally User_ID
+            _ = AddNewRescuerRowAsync();
+        }
 
-            Rescuers.Add(newRescuer);
-            SelectedRescuer = newRescuer;
+        private async Task AddNewRescuerRowAsync()
+        {
+            try
+            {
+                // On the first Add click, fetch the current DB max so we know where to start.
+                // On subsequent clicks before saving, increment the in-memory counter instead
+                // of re-querying — this ensures each pending row gets a unique ID even if
+                // none have been saved to the DB yet.
+                if (_pendingIdSequence < 0)
+                {
+                    string firstId = await DatabaseManager.GenerateRescuerIdAsync();
+                    // Extract the numeric part from e.g. "V0005"
+                    _pendingIdSequence = int.Parse(firstId.Substring(1));
+                }
+                else
+                {
+                    _pendingIdSequence++;
+                }
+
+                string newRescuerId = "V" + _pendingIdSequence.ToString("D4");
+                string newUserId = await DatabaseManager.GenerateUserIdAsync();
+
+                AdminRescuer newRescuer = new AdminRescuer
+                {
+                    RescuerId = newRescuerId,
+                    Name = string.Empty,
+                    ContactNumber = string.Empty,
+                    UserId = newUserId,
+                    Status = "Active",
+                    IsNew = true
+                };
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Rescuers.Add(newRescuer);
+                    SelectedRescuer = newRescuer;
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Could not generate new rescuer ID.\n\n" + ex.Message,
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         public void EnterManageMode()
@@ -161,6 +201,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     Rescuers = loadedRescuers;
+                    _pendingIdSequence = -1; // reset so next Add re-queries the DB
                 });
             }
             catch (SqlException)

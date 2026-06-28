@@ -19,6 +19,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         private string _disasterEventSearchText;
         private bool _isTableReadOnly = true;
         private Visibility _actionButtonsVisibility = Visibility.Collapsed;
+        private int _pendingIdSequence = -1;
 
         public ObservableCollection<AdminDisasterEvent> DisasterEvents
         {
@@ -121,18 +122,46 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             IsTableReadOnly = false;
             ActionButtonsVisibility = Visibility.Visible;
 
-            AdminDisasterEvent newEvent = new AdminDisasterEvent
-            {
-                EventId = string.Empty,
-                EventName = string.Empty,
-                StartDate = DateTime.Today,
-                EndDate = DateTime.Today,
-                Status = "New",
-                IsNew = true
-            };
+            _ = AddNewEventRowAsync();
+        }
 
-            DisasterEvents.Add(newEvent);
-            SelectedDisasterEvent = newEvent;
+        private async Task AddNewEventRowAsync()
+        {
+            try
+            {
+                if (_pendingIdSequence < 0)
+                {
+                    string firstId = await DatabaseManager.GenerateEventIdAsync();
+                    _pendingIdSequence = int.Parse(firstId.Substring(1));
+                }
+                else
+                {
+                    _pendingIdSequence++;
+                }
+
+                string newEventId = "E" + _pendingIdSequence.ToString("D4");
+
+                AdminDisasterEvent newEvent = new AdminDisasterEvent
+                {
+                    EventId = newEventId,
+                    EventName = string.Empty,
+                    StartDate = null,
+                    EndDate = null,
+                    Status = "Upcoming",
+                    IsNew = true
+                };
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    DisasterEvents.Add(newEvent);
+                    SelectedDisasterEvent = newEvent;
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Could not generate new event ID.\n\n" + ex.Message,
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         public void EnterManageMode()
@@ -159,6 +188,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     DisasterEvents = loadedEvents;
+                    _pendingIdSequence = -1;
                 });
             }
             catch (SqlException)

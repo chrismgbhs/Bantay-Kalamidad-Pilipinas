@@ -118,27 +118,24 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
 
         public void EnterAddMode()
         {
-            IsTableReadOnly = false;
-            ActionButtonsVisibility = Visibility.Visible;
-
-            AdminRescueTeam newTeam = new AdminRescueTeam
-            {
-                TeamOperation = string.Empty,
-                Event = string.Empty,
-                Location = string.Empty,
-                Members = "0",
-                Status = "On Standby",
-                IsNew = true
-            };
-
-            Teams.Add(newTeam);
-            SelectedTeam = newTeam;
+            // Teams are derived from Assignments — they cannot be directly added.
+            MessageBox.Show(
+                "Teams are automatically derived from operation assignments and cannot be added manually.\n\n" +
+                "To add a team member, add an Assignment instead.",
+                "Read-Only",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
         }
 
         public void EnterManageMode()
         {
-            IsTableReadOnly = false;
-            ActionButtonsVisibility = Visibility.Visible;
+            // Teams are read-only — editing is done through Assignments.
+            MessageBox.Show(
+                "Teams are automatically derived from operation assignments and cannot be edited directly.\n\n" +
+                "To change team composition, update Assignments instead.",
+                "Read-Only",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
         }
 
         public void EnterViewMode()

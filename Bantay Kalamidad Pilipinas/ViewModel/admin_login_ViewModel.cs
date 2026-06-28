@@ -5,7 +5,6 @@ using System.Text;
 using Bantay_Kalamidad_Pilipinas.Model;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Windows.Forms;
 using System.Windows;
 using Bantay_Kalamidad_Pilipinas.View;
 using System.Data.SqlClient;

@@ -20,30 +20,22 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         private bool _isTableReadOnly = true;
         private Visibility _actionButtonsVisibility = Visibility.Collapsed;
 
+        private ObservableCollection<DropdownItem> _availableOperations;
+        private ObservableCollection<DropdownItem> _availableRescuers;
+        private DropdownItem _selectedOperationDropdown;
+        private DropdownItem _selectedRescuerDropdown;
+        private Visibility _dropdownPanelVisibility = Visibility.Collapsed;
+
         public ObservableCollection<AdminOperationAssignment> Assignments
         {
             get => _assignments;
-            set
-            {
-                if (_assignments != value)
-                {
-                    _assignments = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { if (_assignments != value) { _assignments = value; OnPropertyChanged(); } }
         }
 
         public AdminOperationAssignment SelectedAssignment
         {
             get => _selectedAssignment;
-            set
-            {
-                if (_selectedAssignment != value)
-                {
-                    _selectedAssignment = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { if (_selectedAssignment != value) { _selectedAssignment = value; OnPropertyChanged(); } }
         }
 
         public string SelectedAssignmentFilter
@@ -77,27 +69,64 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         public bool IsTableReadOnly
         {
             get => _isTableReadOnly;
-            set
-            {
-                if (_isTableReadOnly != value)
-                {
-                    _isTableReadOnly = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { if (_isTableReadOnly != value) { _isTableReadOnly = value; OnPropertyChanged(); } }
         }
 
         public Visibility ActionButtonsVisibility
         {
             get => _actionButtonsVisibility;
+            set { if (_actionButtonsVisibility != value) { _actionButtonsVisibility = value; OnPropertyChanged(); } }
+        }
+
+        public ObservableCollection<DropdownItem> AvailableOperations
+        {
+            get => _availableOperations;
+            set { if (_availableOperations != value) { _availableOperations = value; OnPropertyChanged(); } }
+        }
+
+        public ObservableCollection<DropdownItem> AvailableRescuers
+        {
+            get => _availableRescuers;
+            set { if (_availableRescuers != value) { _availableRescuers = value; OnPropertyChanged(); } }
+        }
+
+        public DropdownItem SelectedOperationDropdown
+        {
+            get => _selectedOperationDropdown;
             set
             {
-                if (_actionButtonsVisibility != value)
+                if (_selectedOperationDropdown != value)
                 {
-                    _actionButtonsVisibility = value;
+                    _selectedOperationDropdown = value;
                     OnPropertyChanged();
+                    if (SelectedAssignment != null && value != null)
+                        SelectedAssignment.Operation = value.Id; // store the ID, show the display name
                 }
             }
+        }
+
+        public DropdownItem SelectedRescuerDropdown
+        {
+            get => _selectedRescuerDropdown;
+            set
+            {
+                if (_selectedRescuerDropdown != value)
+                {
+                    _selectedRescuerDropdown = value;
+                    OnPropertyChanged();
+                    if (SelectedAssignment != null && value != null)
+                    {
+                        SelectedAssignment.VolunteerId = value.Id;
+                        SelectedAssignment.RescuerName = value.Display;
+                    }
+                }
+            }
+        }
+
+        public Visibility DropdownPanelVisibility
+        {
+            get => _dropdownPanelVisibility;
+            set { if (_dropdownPanelVisibility != value) { _dropdownPanelVisibility = value; OnPropertyChanged(); } }
         }
 
         public ICommand SaveCommand { get; }
@@ -107,6 +136,8 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         public admindashboard_rescue_Assignments_viewModel()
         {
             Assignments = new ObservableCollection<AdminOperationAssignment>();
+            AvailableOperations = new ObservableCollection<DropdownItem>();
+            AvailableRescuers = new ObservableCollection<DropdownItem>();
             SelectedAssignmentFilter = "All Assignments";
 
             SaveCommand = new AsyncRelayCommand(SaveAsync);
@@ -120,63 +151,92 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         {
             IsTableReadOnly = false;
             ActionButtonsVisibility = Visibility.Visible;
+            DropdownPanelVisibility = Visibility.Visible;
+            _ = PrepareAddModeAsync();
+        }
 
-            AdminOperationAssignment newAssignment = new AdminOperationAssignment
+        private async Task PrepareAddModeAsync()
+        {
+            try
             {
-                AssignmentId = string.Empty,
-                Operation = string.Empty,
-                RescuerName = string.Empty,
-                VolunteerId = string.Empty,
-                Role = string.Empty,
-                Status = "Pending",
-                IsNew = true
-            };
+                await LoadDropdownsAsync();
+                string newId = await DatabaseManager.GenerateAssignmentIdAsync();
 
-            Assignments.Add(newAssignment);
-            SelectedAssignment = newAssignment;
+                var newAssignment = new AdminOperationAssignment
+                {
+                    AssignmentId = newId,
+                    Operation = string.Empty,
+                    VolunteerId = string.Empty,
+                    RescuerName = string.Empty,
+                    Role = string.Empty,
+                    Status = "Pending",
+                    IsNew = true
+                };
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Assignments.Add(newAssignment);
+                    SelectedAssignment = newAssignment;
+                    SelectedOperationDropdown = null;
+                    SelectedRescuerDropdown = null;
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Could not prepare add mode.\n\n" + ex.Message,
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         public void EnterManageMode()
         {
             IsTableReadOnly = false;
             ActionButtonsVisibility = Visibility.Visible;
+            DropdownPanelVisibility = Visibility.Visible;
+            _ = LoadDropdownsAsync();
         }
 
         public void EnterViewMode()
         {
             IsTableReadOnly = true;
             ActionButtonsVisibility = Visibility.Collapsed;
+            DropdownPanelVisibility = Visibility.Collapsed;
+        }
+
+        private async Task LoadDropdownsAsync()
+        {
+            var operations = await DatabaseManager.GetAvailableOperationsAsync();
+            var rescuers = await DatabaseManager.GetAvailableRescuersAsync();
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                AvailableOperations.Clear();
+                foreach (var op in operations)
+                    AvailableOperations.Add(new DropdownItem { Id = op.Id, Display = op.Display });
+
+                AvailableRescuers.Clear();
+                foreach (var r in rescuers)
+                    AvailableRescuers.Add(new DropdownItem { Id = r.Id, Display = r.Name });
+            });
         }
 
         private async Task LoadAssignmentsAsync()
         {
             try
             {
-                ObservableCollection<AdminOperationAssignment> loadedAssignments =
-                    await DatabaseManager.GetAdminOperationAssignmentsAsync(
-                        SelectedAssignmentFilter,
-                        AssignmentSearchText);
-
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    Assignments = loadedAssignments;
-                });
+                var loaded = await DatabaseManager.GetAdminOperationAssignmentsAsync(
+                    SelectedAssignmentFilter, AssignmentSearchText);
+                Application.Current.Dispatcher.Invoke(() => { Assignments = loaded; });
             }
             catch (SqlException)
             {
-                MessageBox.Show(
-                    "Could not load operation assignments from the database.",
-                    "Database Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                MessageBox.Show("Could not load assignments from the database.",
+                    "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    "An unexpected error occurred while loading assignments.\n\n" + ex.Message,
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                MessageBox.Show("An unexpected error occurred.\n\n" + ex.Message,
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -196,30 +256,33 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 return;
             }
 
-            if (!ValidateAssignment(SelectedAssignment))
-                return;
+            // Sync dropdown selections into the model
+            if (SelectedOperationDropdown != null)
+                SelectedAssignment.Operation = SelectedOperationDropdown.Id;
+            if (SelectedRescuerDropdown != null)
+            {
+                SelectedAssignment.VolunteerId = SelectedRescuerDropdown.Id;
+                SelectedAssignment.RescuerName = SelectedRescuerDropdown.Display;
+            }
+
+            if (!ValidateAssignment(SelectedAssignment)) return;
 
             try
             {
                 await DatabaseManager.AddAdminOperationAssignmentAsync(SelectedAssignment);
-
-                MessageBox.Show("Assignment saved successfully.",
-                    "Saved", MessageBoxButton.OK, MessageBoxImage.Information);
-
+                MessageBox.Show("Assignment saved successfully.", "Saved",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
                 await LoadAssignmentsAsync();
             }
             catch (SqlException ex) when (ex.Number == 2627 || ex.Number == 2601)
             {
                 MessageBox.Show("An assignment with this ID already exists.",
-                    "Duplicate Assignment ID", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    "Duplicate ID", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             catch (SqlException ex) when (ex.Number == 547)
             {
-                MessageBox.Show(
-                    "Could not save assignment.\n\nThe Operation ID or Rescuer does not exist in the database.",
-                    "Foreign Key Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
+                MessageBox.Show("The Operation ID or Rescuer does not exist in the database.",
+                    "Foreign Key Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             catch (Exception ex)
             {
@@ -236,7 +299,6 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                     "No Row Selected", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-
             if (SelectedAssignment.IsNew)
             {
                 MessageBox.Show("This is a new row. Use SAVE instead.",
@@ -244,25 +306,22 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 return;
             }
 
-            if (!ValidateAssignment(SelectedAssignment))
-                return;
+            if (SelectedOperationDropdown != null)
+                SelectedAssignment.Operation = SelectedOperationDropdown.Id;
+            if (SelectedRescuerDropdown != null)
+            {
+                SelectedAssignment.VolunteerId = SelectedRescuerDropdown.Id;
+                SelectedAssignment.RescuerName = SelectedRescuerDropdown.Display;
+            }
+
+            if (!ValidateAssignment(SelectedAssignment)) return;
 
             try
             {
                 await DatabaseManager.UpdateAdminOperationAssignmentAsync(SelectedAssignment);
-
-                MessageBox.Show("Assignment updated successfully.",
-                    "Updated", MessageBoxButton.OK, MessageBoxImage.Information);
-
+                MessageBox.Show("Assignment updated successfully.", "Updated",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
                 await LoadAssignmentsAsync();
-            }
-            catch (SqlException ex) when (ex.Number == 547)
-            {
-                MessageBox.Show(
-                    "Could not update assignment.\n\nThe Operation ID or Rescuer does not exist in the database.",
-                    "Foreign Key Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
             }
             catch (Exception ex)
             {
@@ -287,22 +346,15 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 return;
             }
 
-            MessageBoxResult confirm = MessageBox.Show(
-                "Are you sure you want to delete this assignment?",
-                "Confirm Delete",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Warning);
-
-            if (confirm != MessageBoxResult.Yes)
+            if (MessageBox.Show("Are you sure you want to delete this assignment?",
+                "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
                 return;
 
             try
             {
                 await DatabaseManager.DeleteAdminOperationAssignmentAsync(SelectedAssignment.AssignmentId);
-
-                MessageBox.Show("Assignment deleted successfully.",
-                    "Deleted", MessageBoxButton.OK, MessageBoxImage.Information);
-
+                MessageBox.Show("Assignment deleted successfully.", "Deleted",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
                 await LoadAssignmentsAsync();
             }
             catch (Exception ex)
@@ -312,71 +364,32 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             }
         }
 
-        private bool ValidateAssignment(AdminOperationAssignment assignment)
+        private bool ValidateAssignment(AdminOperationAssignment a)
         {
-            if (string.IsNullOrWhiteSpace(assignment.AssignmentId))
+            if (string.IsNullOrWhiteSpace(a.AssignmentId))
             {
-                MessageBox.Show("Assignment ID is required.",
-                    "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Assignment ID is required.", "Validation Error",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
-
-            if (assignment.AssignmentId.Length > 10)
+            if (string.IsNullOrWhiteSpace(a.Operation))
             {
-                MessageBox.Show("Assignment ID must be 10 characters or less.",
-                    "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Please select an Operation.", "Validation Error",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
-
-            if (string.IsNullOrWhiteSpace(assignment.Operation))
+            if (string.IsNullOrWhiteSpace(a.VolunteerId) && string.IsNullOrWhiteSpace(a.RescuerName))
             {
-                MessageBox.Show("Operation ID is required.",
-                    "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Please select a Rescuer.", "Validation Error",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
-
-            if (assignment.Operation.Length > 10)
+            if (string.IsNullOrWhiteSpace(a.Role))
             {
-                MessageBox.Show("Operation ID must be 10 characters or less.",
-                    "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Role is required.", "Validation Error",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
-
-            if (string.IsNullOrWhiteSpace(assignment.RescuerName))
-            {
-                MessageBox.Show("Rescuer name or Volunteer ID is required.",
-                    "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-
-            if (string.IsNullOrWhiteSpace(assignment.Role))
-            {
-                MessageBox.Show("Role is required.",
-                    "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-
-            if (assignment.Role.Length > 255)
-            {
-                MessageBox.Show("Role must be 255 characters or less.",
-                    "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-
-            if (string.IsNullOrWhiteSpace(assignment.Status))
-            {
-                MessageBox.Show("Status is required.",
-                    "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-
-            if (assignment.Status.Length > 255)
-            {
-                MessageBox.Show("Status must be 255 characters or less.",
-                    "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-
             return true;
         }
     }

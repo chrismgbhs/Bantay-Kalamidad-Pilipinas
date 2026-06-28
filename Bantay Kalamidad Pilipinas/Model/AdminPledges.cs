@@ -58,6 +58,13 @@ namespace Bantay_Kalamidad_Pilipinas.Model
             }
         }
 
+        // XAML alias — DataGrid column binds to DatePledged, model has DatePledge
+        public DateTime? DatePledged
+        {
+            get => DatePledge;
+            set => DatePledge = value;
+        }
+
         public string PledgeStatus
         {
             get => _pledgeStatus;

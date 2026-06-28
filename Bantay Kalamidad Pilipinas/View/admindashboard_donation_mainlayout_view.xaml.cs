@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Bantay_Kalamidad_Pilipinas.ViewModel;
 
 namespace Bantay_Kalamidad_Pilipinas.View
 {
@@ -22,6 +23,7 @@ namespace Bantay_Kalamidad_Pilipinas.View
         public admindashboard_donation_mainlayout_view()
         {
             InitializeComponent();
+            DataContext = new admindashboard_donation_mainlayout_viewModel();
         }
     }
 }
