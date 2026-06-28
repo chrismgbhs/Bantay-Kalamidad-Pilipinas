@@ -1,0 +1,60 @@
+﻿<UserControl x:Class="Bantay_Kalamidad_Pilipinas.View.admin_menu_view"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:Bantay_Kalamidad_Pilipinas.ViewModel"
+             Background="White">
+
+    <Viewbox Stretch="Uniform">
+        <Grid Width="1200" Height="800" Background="White">
+
+            <StackPanel HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Margin="0,0,0,45">
+
+                    <Image Source="/Images/bkp_logo.png"
+                           Width="85"
+                           Height="85"
+                           Margin="0,0,20,0"/>
+
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Style="{StaticResource OrgName}"/>
+                        <TextBlock Style="{StaticResource SystemName}"/>
+                    </StackPanel>
+
+                </StackPanel>
+
+                <TextBlock Text="ADMIN MENU"
+                           Style="{StaticResource LoginHeader}"
+                           Margin="0,0,0,42"/>
+
+                <Button Content="RESCUE"
+                        Style="{StaticResource Optionbtn}"
+                        Background="{StaticResource RescuePrimary}"
+                        BorderBrush="{StaticResource RescueSecond}"
+                        Foreground="White"
+                        Command="{Binding OpenAdminRescueDashboardCommand}"
+                        Margin="0,0,0,42"/>
+
+                <Button Content="DONATION"
+                        Style="{StaticResource Optionbtn}"
+                        Background="{StaticResource DonorPrimary}"
+                        BorderBrush="{StaticResource DonorSecond}"
+                        Foreground="White"
+                        Command="{Binding OpenAdminDonationDashboardCommand}"
+                        Margin="0,0,0,42"/>
+
+                <Button Content="BACK TO SIGN IN"
+                        Style="{StaticResource Optionbtn}"
+                        Background="{StaticResource AdminSecond}"
+                        BorderBrush="{StaticResource AdminBorder}"
+                        Foreground="White"
+                        Command="{Binding BackToSigninCommand}"/>
+
+            </StackPanel>
+
+        </Grid>
+    </Viewbox>
+</UserControl>

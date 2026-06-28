@@ -1,0 +1,178 @@
+﻿<UserControl x:Class="Bantay_Kalamidad_Pilipinas.View.rescue_login_view"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="White">
+
+    <Viewbox Stretch="Uniform">
+        <Grid Width="1200" Height="800" Background="White">
+
+            <StackPanel HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+
+                <!-- Header Logo and Title -->
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Margin="0,0,0,40">
+
+                    <Image Source="/Images/bkp_logo.png"
+                           Width="85"
+                           Height="85"
+                           Margin="0,0,20,0"/>
+
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Style="{StaticResource OrgName}"/>
+                        <TextBlock Style="{StaticResource SystemName}"/>
+                    </StackPanel>
+
+                </StackPanel>
+
+                <!-- Login Card -->
+                <Border Style="{StaticResource LoginBorder}"
+                        BorderBrush="{StaticResource RescueBorder}">
+
+                    <Grid>
+                        <!-- Back Button -->
+                        <Button Style="{StaticResource Arrow}"
+                                Margin="18,14,0,0"
+                                Command="{Binding BackCommand}">
+                            <TextBlock Text="&#xE72B;"
+                                       Style="{StaticResource ArrowText}"/>
+                        </Button>
+
+                        <StackPanel Margin="55,45,55,0">
+
+                            <TextBlock Text="RESCUER SIGN IN"
+                                       Style="{StaticResource LoginHeader}"/>
+
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center"
+                                        Margin="0,6,0,30">
+
+                                <TextBlock Text="New to BKP? "
+                                           FontSize="12"
+                                           Foreground="#777"/>
+
+                                <Button Content="Sign up"
+                                        Style="{StaticResource Transitionbtn}"
+                                        Command="{Binding OpenSignupCommand}">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <TextBlock Text="{TemplateBinding Content}"
+                                                       TextDecorations="Underline"/>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </StackPanel>
+
+                            <!-- Email Input -->
+                            <TextBlock Text="Email Address or Username"
+                                       Style="{StaticResource LoginSub}"
+                                       Margin="0,0,0,6"/>
+                            <Border Margin="0,0,0,20">
+                                <TextBox Style="{StaticResource RoundedTextBoxStyle}"
+                                         Text="{Binding CurrentUser.Username}"/>
+                            </Border>
+
+                            <!-- Password Input Header & Toggle -->
+                            <Grid Margin="0,0,0,6">
+                                <TextBlock Text="Password"
+                                           Style="{StaticResource LoginSub}"
+                                           HorizontalAlignment="Left"/>
+
+                                <!-- Toggle button -->
+                                <Button Content="{Binding IsPasswordVisible, Converter={StaticResource BoolToTextConverter}}"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Foreground="#777"
+                                        FontSize="11"
+                                        HorizontalAlignment="Right"
+                                        Cursor="Hand"
+                                        Command="{Binding TogglePasswordVisibilityCommand}">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <TextBlock Text="{TemplateBinding Content}"
+                                                       Foreground="{TemplateBinding Foreground}"
+                                                       FontSize="{TemplateBinding FontSize}"/>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </Grid>
+
+                            <!-- Password Fields Overlapped to Prevent 3-Box Bug -->
+                            <Border CornerRadius="6" Height="36" Margin="0,0,0,10">
+                                <Grid>
+                                    <!-- Masked password -->
+                                    <PasswordBox x:Name="passwordBox"
+                                                 PasswordChanged="PasswordBox_PasswordChanged"
+                                                 Style="{StaticResource Passbox}"
+                                                 Visibility="{Binding IsPasswordVisible, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
+
+                                    <!-- Visible password -->
+                                    <TextBox Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             Padding="12,0"
+                                             FontSize="13"
+                                             VerticalContentAlignment="Center"
+                                             Background="Transparent"
+                                             BorderThickness="0"
+                                             Visibility="{Binding IsPasswordVisible, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Forgot Password Link -->
+                            <Button Content="Forgot password?"
+                                    Style="{StaticResource ForgetPassbtn}"
+                                    Command="{Binding ForgotPasswordCommand}"
+                                    Margin="0,0,0,25">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <TextBlock Text="{TemplateBinding Content}"
+                                                   TextDecorations="Underline"/>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+
+                            <!-- Sign In Button -->
+                            <Button Content="Sign in"
+                                    Style="{StaticResource Signinbtn}"
+                                    Background="{StaticResource RescueBorder}"
+                                    Foreground="White"
+                                    Margin="0,0,0,25"
+                                    Command="{Binding LoginCommand}"/>
+
+
+                            <!-- Sign in with Google Button (Matching Target Mockup) -->
+                            <Button Style="{StaticResource Googlebtn}"
+                                    Margin="50,0,50,0"
+                                    Command="{Binding GoogleLoginCommand}">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="21">
+                                            <!-- Fully rounded pill shape -->
+                                            <StackPanel Orientation="Horizontal" 
+                                                        HorizontalAlignment="Center" 
+                                                        VerticalAlignment="Center">
+                                                <Image Source="/Images/website icons (2).png" 
+                                                       Width="20" 
+                                                       Margin="0,0,10,0"/>
+                                                <TextBlock Text="Sign in with Google" 
+                                                           Style="{StaticResource Google}"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+
+                        </StackPanel>
+
+                    </Grid>
+
+                </Border>
+
+            </StackPanel>
+
+        </Grid>
+    </Viewbox>
+</UserControl>

@@ -1,0 +1,155 @@
+﻿<UserControl x:Class="Bantay_Kalamidad_Pilipinas.View.admindashboard_rescue_Teams_view"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Width="700"
+             Height="430"
+             Background="Transparent">
+
+    <Grid Background="#2C2C2C"
+          Margin="0,0,0,10">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="34"/>
+            <RowDefinition Height="42"/>
+            <RowDefinition Height="26"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="34"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Teams"
+                   FontSize="18"
+                   Style="{StaticResource TableH1}"/>
+
+        <Grid Grid.Row="1"
+              Margin="8,0,8,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="170"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="230"/>
+            </Grid.ColumnDefinitions>
+
+            <ComboBox Grid.Column="0"
+                      Style="{StaticResource Combo1}"
+                      VerticalAlignment="Bottom"
+                      SelectedValuePath="Content"
+                      SelectedValue="{Binding SelectedTeamFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <ComboBoxItem Content="All Teams"/>
+                <ComboBoxItem Content="Active"/>
+                <ComboBoxItem Content="On Standby"/>
+                <ComboBoxItem Content="Unavailable"/>
+            </ComboBox>
+
+            <Border Grid.Column="2"
+                    Height="28"
+                    Background="White"
+                    VerticalAlignment="Bottom">
+
+                <Grid>
+                    <TextBox Text="{Binding TeamSearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource Searchbox}"/>
+
+                    <TextBlock Text="Search"
+                               Style="{StaticResource Search}"/>
+
+                    <Viewbox Width="14"
+                             Height="14"
+                             HorizontalAlignment="Right"
+                             VerticalAlignment="Center"
+                             Margin="0,0,10,0">
+                        <Canvas Width="18" Height="18">
+                            <Ellipse Style="{StaticResource Ellipse1}"/>
+                            <Path Data="M10,10 L16,16"
+                                  Style="{StaticResource Path1}"/>
+                        </Canvas>
+                    </Viewbox>
+                </Grid>
+
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="2"
+                Background="#D9D9D9"
+                Margin="8,0,8,0">
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.35*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="Team (Operation)" Style="{StaticResource TableSub1}"/>
+                <TextBlock Grid.Column="1" Text="Event" Style="{StaticResource TableSub1}"/>
+                <TextBlock Grid.Column="2" Text="Location" Style="{StaticResource TableSub1}"/>
+                <TextBlock Grid.Column="3" Text="Members" Style="{StaticResource TableSub1}"/>
+                <TextBlock Grid.Column="4" Text="Status" Style="{StaticResource TableSub1}"/>
+            </Grid>
+
+        </Border>
+
+        <Border Grid.Row="3"
+                Background="White"
+                Margin="8,0,8,0"
+                ClipToBounds="True">
+
+            <DataGrid ItemsSource="{Binding Teams}"
+                      SelectedItem="{Binding SelectedTeam, Mode=TwoWay}"
+                      AutoGenerateColumns="False"
+                      HeadersVisibility="None"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      IsReadOnly="{Binding IsTableReadOnly}"
+                      Style="{StaticResource Table}">
+
+                <DataGrid.CellStyle>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="Foreground" Value="Black"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    </Style>
+                </DataGrid.CellStyle>
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding TeamOperation}" Width="1.35*" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Event}" Width="1*" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Location}" Width="1*" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Members}" Width="1*" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Status}" Width="1*" IsReadOnly="True"/>
+                </DataGrid.Columns>
+
+            </DataGrid>
+
+        </Border>
+
+        <Grid Grid.Row="4"
+              Background="#7F7F7F"
+              Margin="8,0,8,0"
+              Visibility="Collapsed">
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Margin="0,0,10,0">
+
+                <Button Content="SAVE"
+                        Style="{StaticResource CRUDbtn}"
+                        Command="{Binding SaveCommand}"/>
+
+                <Button Content="UPDATE"
+                        Style="{StaticResource CRUDbtn}"
+                        Command="{Binding UpdateCommand}"/>
+
+                <Button Content="DELETE"
+                        Style="{StaticResource CRUDbtn}"
+                        Command="{Binding DeleteCommand}"/>
+
+            </StackPanel>
+
+        </Grid>
+
+    </Grid>
+</UserControl>

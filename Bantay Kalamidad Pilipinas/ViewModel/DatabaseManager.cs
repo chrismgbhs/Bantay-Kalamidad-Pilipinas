@@ -585,7 +585,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             FROM Volunteer v
             WHERE
                 (
-                    @searchText = '%%'
+                    @searchText = '%'
                     OR v.Volunteer_ID LIKE @searchText
                     OR ISNULL(v.Volunteer_Name, '') LIKE @searchText
                     OR ISNULL(v.Contact_Number, '') LIKE @searchText
@@ -747,7 +747,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             FROM [Disaster Event] de
             WHERE
                 (
-                    @searchText = '%%'
+                    @searchText = '%'
                     OR de.Event_ID LIKE @searchText
                     OR ISNULL(de.Event_Name, '') LIKE @searchText
                     OR CONVERT(VARCHAR(10), de.Start_Date, 120) LIKE @searchText
@@ -896,7 +896,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 ON ro.Location_ID = l.Location_ID
             WHERE
                 (
-                    @searchText = '%%'
+                    @searchText = '%'
                     OR ro.Operation_ID LIKE @searchText
                     OR ISNULL(de.Event_Name, '') LIKE @searchText
                     OR ISNULL(l.Barangay, '') LIKE @searchText
@@ -1046,7 +1046,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 ON oa.Volunteer_ID = v.Volunteer_ID
             WHERE
                 (
-                    @searchText = '%%'
+                    @searchText = '%'
                     OR oa.Assignment_ID LIKE @searchText
                     OR oa.Operation_ID LIKE @searchText
                     OR oa.Volunteer_ID LIKE @searchText
@@ -1236,7 +1236,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 ON ro.Location_ID = l.Location_ID
             WHERE
                 (
-                    @searchText = '%%'
+                    @searchText = '%'
                     OR ro.Operation_ID LIKE @searchText
                     OR ISNULL(de.Event_Name, '') LIKE @searchText
                     OR ISNULL(l.Barangay, '') LIKE @searchText
@@ -1369,7 +1369,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         {
             ObservableCollection<AdminDonations> donations = new ObservableCollection<AdminDonations>();
 
-            string selectedFilter = string.IsNullOrWhiteSpace(filter) ? "All Donations" : filter;
+            string selectedFilter = string.IsNullOrWhiteSpace(filter) || filter == "Filter" ? "All Donations" : filter;
             string searchPattern = "%" + (searchText ?? string.Empty).Trim() + "%";
 
             using (SqlConnection connection = new SqlConnection(SQL.connectionString))
@@ -1378,25 +1378,30 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             SELECT 
                 d.Donation_ID,
                 do.Donor_Name,
-                de.Event_Name,
+                ISNULL(de.Event_Name, '') AS Event_Name,
                 d.Date_Received,
-                
+                CASE
+                    WHEN d.Date_Received IS NULL THEN 'Pending'
+                    WHEN d.Event_ID IS NULL THEN 'Received'
+                    ELSE 'Completed'
+                END AS Status
             FROM Donation d
             INNER JOIN Donor do ON d.Donor_ID = do.Donor_ID
-            INNER JOIN Event de ON d.Event_ID = de.Event_ID
+            LEFT JOIN [Disaster Event] de ON d.Event_ID = de.Event_ID
             WHERE
                 (
-                    @searchText = '%%'
+                    @searchText = '%'
                     OR d.Donation_ID LIKE @searchText
-                    OR ISNULL(d.Donor_Name, '') LIKE @searchText
+                    OR ISNULL(do.Donor_Name, '') LIKE @searchText
                     OR ISNULL(de.Event_Name, '') LIKE @searchText
-                    OR CONVERT(VARCHAR(10), d.Date_Received, 120) LIKE @searchText)
+                    OR CONVERT(VARCHAR(10), d.Date_Received, 120) LIKE @searchText
+                )
                 AND
                 (
                     @filter = 'All Donations'
-                     OR (@filter = 'Pending' AND d.Date_Received IS NULL)
-                     OR (@filter = 'Received' AND d.Date_Received IS NOT NULL AND d.Event_ID IS NULL)
-                     OR (@filter = 'Completed' AND d.Date_Received IS NOT NULL AND d.Event_ID IS NOT NULL)
+                    OR (@filter = 'Pending'   AND d.Date_Received IS NULL)
+                    OR (@filter = 'Received'  AND d.Date_Received IS NOT NULL AND d.Event_ID IS NULL)
+                    OR (@filter = 'Completed' AND d.Date_Received IS NOT NULL AND d.Event_ID IS NOT NULL)
                 )
             ORDER BY d.Donation_ID;";
 
@@ -1416,8 +1421,8 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                                 DonationId = reader["Donation_ID"] == DBNull.Value ? string.Empty : reader["Donation_ID"].ToString(),
                                 Donor = reader["Donor_Name"] == DBNull.Value ? string.Empty : reader["Donor_Name"].ToString(),
                                 Event = reader["Event_Name"] == DBNull.Value ? string.Empty : reader["Event_Name"].ToString(),
-                                DateReceived = reader["Date_Received"] == DBNull.Value ? (DateTime?)null
-                                : Convert.ToDateTime(reader["Date_Received"]),
+                                DateReceived = reader["Date_Received"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader["Date_Received"]),
+                                Status = reader["Status"] == DBNull.Value ? string.Empty : reader["Status"].ToString(),
                             });
                         }
                     }
@@ -1478,7 +1483,8 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 {
                     command.Parameters.Add("@donationId", SqlDbType.VarChar, 10).Value = donations.DonationId.Trim();
                     command.Parameters.Add("@donorId", SqlDbType.VarChar, 10).Value = donorId;
-                    command.Parameters.Add("@eventId", SqlDbType.VarChar, 10).Value = donations.Event.Trim();
+                    command.Parameters.Add("@eventId", SqlDbType.VarChar, 10).Value =
+                        string.IsNullOrWhiteSpace(donations.EventId) ? (object)DBNull.Value : donations.EventId.Trim();
                     command.Parameters.Add("@dateReceived", SqlDbType.DateTime).Value =
                         donations.DateReceived == null ? (object)DBNull.Value : donations.DateReceived.Value.Date;
 
@@ -1580,7 +1586,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         {
             ObservableCollection<AdminDonations> donatedItem = new ObservableCollection<AdminDonations>();
 
-            string selectedFilter = string.IsNullOrWhiteSpace(filter) ? "All Items" : filter;
+            string selectedFilter = string.IsNullOrWhiteSpace(filter) || filter == "Filter" ? "All Items" : filter;
             string searchPattern = "%" + (searchText ?? string.Empty).Trim() + "%";
 
             using (SqlConnection connection = new SqlConnection(SQL.connectionString))
@@ -1590,16 +1596,16 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 di.DonatedItem_ID,
                 di.Donation_ID,
                 di.Item_Name,
-                di.Quantity_Received,
-                
+                di.Quantity_Received
             FROM [Donated Items] di
             INNER JOIN Donation d ON di.Donation_ID = d.Donation_ID
             WHERE
                 (
-                    @searchText = '%%'
-                    OR di.DonatedItem_ID @searchText
-                    OR di.Donation_ID @searchText
-                    OR di.Item_Name LIKE @searchText                    
+                    @searchText = '%'
+                    OR di.DonatedItem_ID LIKE @searchText
+                    OR di.Donation_ID LIKE @searchText
+                    OR di.Item_Name LIKE @searchText
+                )
                 AND
                 (
                     @filter = 'All Items'
@@ -1623,8 +1629,8 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                         {
                             donatedItem.Add(new AdminDonations
                             {
-                                DonatedItemID = reader["DonatedItem_ID"] == DBNull.Value ? string.Empty : reader["Donation_ID"].ToString(),
-                                DonationId = reader["Donation_ID"] == DBNull.Value ? string.Empty : reader["Donor_Name"].ToString(),
+                                DonatedItemID = reader["DonatedItem_ID"] == DBNull.Value ? string.Empty : reader["DonatedItem_ID"].ToString(),
+                                DonationId = reader["Donation_ID"] == DBNull.Value ? string.Empty : reader["Donation_ID"].ToString(),
                                 ItemName = reader["Item_Name"] == DBNull.Value ? string.Empty : reader["Item_Name"].ToString(),
                                 Quantity = reader["Quantity_Received"] == DBNull.Value ? 0 : Convert.ToInt32(reader["Quantity_Received"]),
                             });
@@ -1725,7 +1731,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         {
             ObservableCollection<AdminPledges> pledges = new ObservableCollection<AdminPledges>();
 
-            string selectedFilter = string.IsNullOrWhiteSpace(filter) ? "All Pledges" : filter;
+            string selectedFilter = string.IsNullOrWhiteSpace(filter) || filter == "Filter" ? "All Pledges" : filter;
             string searchPattern = "%" + (searchText ?? string.Empty).Trim() + "%";
 
             using (SqlConnection connection = new SqlConnection(SQL.connectionString))
@@ -1735,19 +1741,20 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 p.Pledge_ID,
                 p.Donor_ID,
                 p.Date_Pledge,
-                p.Pledge_Status,
-                
+                p.Pledge_Status
             FROM Pledge p
-            INNER JOIN Donor do ON p.Donor_ID = do.Donor_ID
+            LEFT JOIN Donor do ON p.Donor_ID = do.Donor_ID
             WHERE
                 (
-                    @searchText = '%%'
+                    @searchText = '%'
                     OR p.Pledge_ID LIKE @searchText                    
-                    OR p.Donor_ID LIKE @searchText                   
+                    OR p.Donor_ID LIKE @searchText
+                )
                 AND
                 (
                     @filter = 'All Pledges'
-                    OR (@filter = 'Approved' AND p.Pledge_Status = 'Approved')
+                    OR (@filter = 'Pending'   AND p.Pledge_Status = 'Pending')
+                    OR (@filter = 'Approved'  AND p.Pledge_Status = 'Approved')
                     OR (@filter = 'Fulfilled' AND p.Pledge_Status = 'Fulfilled')
                     OR (@filter = 'Cancelled' AND p.Pledge_Status = 'Cancelled')
                 )
@@ -1871,7 +1878,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         {
             ObservableCollection<AdminPledges> pledgeItem = new ObservableCollection<AdminPledges>();
 
-            string selectedFilter = string.IsNullOrWhiteSpace(filter) ? "All Items" : filter;
+            string selectedFilter = string.IsNullOrWhiteSpace(filter) || filter == "Filter" ? "All Items" : filter;
             string searchPattern = "%" + (searchText ?? string.Empty).Trim() + "%";
 
             using (SqlConnection connection = new SqlConnection(SQL.connectionString))
@@ -1888,17 +1895,18 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             INNER JOIN Pledge p ON pi.Pledge_ID = p.Pledge_ID
             WHERE
                 (
-                    @searchText = '%%'
-                    OR di.PledgeItem_ID @searchText
-                    OR di.Pledge_ID @searchText
-                    OR di.Item_Name LIKE @searchText                    
+                    @searchText = '%'
+                    OR pi.PledgeItem_ID LIKE @searchText
+                    OR pi.Pledge_ID LIKE @searchText
+                    OR pi.Item_Name LIKE @searchText
+                )
                 AND
                 (
                     @filter = 'All Items'
-                    OR (@filter = 'Food' AND di.Item_Name IN ('Rice','Canned Goods','eggs'))
-                    OR (@filter = 'Water' AND di.Item_Name LIKE '%Water%')
-                    OR (@filter = 'Clothing' AND di.Item_Name IN ('Blankets'))
-                    OR (@filter = 'Medical' AND di.Item_Name IN ('Medicines','First Aid Kit'))
+                    OR (@filter = 'Food' AND pi.Item_Name IN ('Rice','Canned Goods','eggs'))
+                    OR (@filter = 'Water' AND pi.Item_Name LIKE '%Water%')
+                    OR (@filter = 'Clothing' AND pi.Item_Name IN ('Blankets'))
+                    OR (@filter = 'Medical' AND pi.Item_Name IN ('Medicines','First Aid Kit'))
                 )
             ORDER BY pi.PledgeItem_ID;";
 
@@ -2048,11 +2056,324 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             }
         }
 
+        /// <summary>Update only the Pledge_Status column — admin can only change status, not donor data.</summary>
+        public static async Task UpdateAdminPledgeStatusAsync(string pledgeId, string newStatus)
+        {
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                string q = "UPDATE Pledge SET Pledge_Status = @status WHERE Pledge_ID = @id";
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    cmd.Parameters.Add("@status", SqlDbType.VarChar, 50).Value = newStatus;
+                    cmd.Parameters.Add("@id", SqlDbType.VarChar, 10).Value = pledgeId;
+                    await conn.OpenAsync();
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Called when a pledge is marked Fulfilled and the item is already received.
+        /// Adds a donation record using usp_AddDonation, linked to the donor.
+        /// Event_ID is left null since the fulfilled pledge donation may not be event-linked.
+        /// </summary>
+        public static async Task AddDonationFromPledgeAsync(string donorId)
+        {
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("usp_AddDonation", conn))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@donorID", SqlDbType.VarChar, 10).Value = donorId;
+                    cmd.Parameters.Add("@eventID", SqlDbType.VarChar, 10).Value = DBNull.Value;
+                    cmd.Parameters.Add("@dateReceived", SqlDbType.DateTime).Value = DateTime.Today;
+                    await conn.OpenAsync();
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        /// <summary>Generate next pickup ID using PU prefix with 4-digit zero-padding.</summary>
+        public static async Task<string> GeneratePickupIdAsync()
+        {
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                string q = @"SELECT ISNULL(MAX(CAST(SUBSTRING(Pickup_ID, 3, LEN(Pickup_ID)) AS INT)), 0) + 1
+                             FROM [Pickup Schedule] WHERE Pickup_ID LIKE 'PU[0-9]%'";
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    await conn.OpenAsync();
+                    int next = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+                    return "PU" + next.ToString("D4");
+                }
+            }
+        }
+
+        /// <summary>Add a pickup schedule row directly.</summary>
+        public static async Task AddPickupScheduleAsync(string pickupId, string donationId, DateTime pickupDate, string status)
+        {
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                string q = @"INSERT INTO [Pickup Schedule] (Pickup_ID, Donation_ID, Pickup_Date, Pickup_Status)
+                             VALUES (@id, @donationId, @pickupDate, @status)";
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    cmd.Parameters.Add("@id", SqlDbType.VarChar, 10).Value = pickupId;
+                    cmd.Parameters.Add("@donationId", SqlDbType.VarChar, 10).Value = donationId;
+                    cmd.Parameters.Add("@pickupDate", SqlDbType.Date).Value = pickupDate.Date;
+                    cmd.Parameters.Add("@status", SqlDbType.VarChar, 50).Value = status;
+                    await conn.OpenAsync();
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        /// <summary>Link an existing donation to a distribution by inserting a distribution item or just validating the relationship.</summary>
+        public static async Task LinkDonationToDistributionAsync(string donationId, string distributionId)
+        {
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                await conn.OpenAsync();
+                using (SqlCommand check = new SqlCommand(
+                    "SELECT COUNT(1) FROM Distribution WHERE Distribution_ID = @did", conn))
+                {
+                    check.Parameters.Add("@did", SqlDbType.VarChar, 10).Value = distributionId;
+                    int count = Convert.ToInt32(await check.ExecuteScalarAsync());
+                    if (count == 0)
+                        throw new Exception($"Distribution {distributionId} does not exist.");
+                }
+            }
+        }
+
+        /// <summary>Returns all distributions as (ID, display) pairs for dropdown selection.</summary>
+        public static async Task<List<(string Id, string Display)>> GetAvailableDistributionsAsync()
+        {
+            var list = new List<(string, string)>();
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                string q = @"
+                    SELECT d.Distribution_ID,
+                           d.Distribution_ID + ISNULL(' — ' + de.Event_Name, '') AS Display
+                    FROM Distribution d
+                    LEFT JOIN [Disaster Event] de ON d.Event_ID = de.Event_ID
+                    ORDER BY d.Distribution_ID";
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    await conn.OpenAsync();
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                        while (await reader.ReadAsync())
+                            list.Add((reader["Distribution_ID"].ToString(), reader["Display"].ToString()));
+                }
+            }
+            return list;
+        }
+
+        /// <summary>Generate next delivery ID using DL prefix (matches usp_AddDeliverySchedule).</summary>
+        public static async Task<string> GenerateDeliveryIdAsync()
+        {
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                // usp_AddDeliverySchedule uses 'DL' prefix
+                string q = @"SELECT ISNULL(MAX(CAST(SUBSTRING(Delivery_ID, 3, LEN(Delivery_ID)) AS INT)), 0) + 1
+                             FROM [Delivery Schedule] WHERE Delivery_ID LIKE 'DL[0-9]%'";
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    await conn.OpenAsync();
+                    int next = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+                    return "DL" + next.ToString("D4");
+                }
+            }
+        }
+
+        /// <summary>Add a delivery schedule using usp_AddDeliverySchedule stored procedure.</summary>
+        public static async Task AddDeliveryViaSpAsync(string distributionId, DateTime deliveryDate, string status)
+        {
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("usp_AddDeliverySchedule", conn))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@distributionID", SqlDbType.VarChar, 10).Value = distributionId;
+                    cmd.Parameters.Add("@deliveryDate", SqlDbType.Date).Value = deliveryDate.Date;
+                    cmd.Parameters.Add("@deliveryStatus", SqlDbType.VarChar, 50).Value = status;
+                    await conn.OpenAsync();
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Add a distribution. Accepts a typed beneficiary name — finds or creates the Beneficiary row.
+        /// Uses usp_AddDistribution stored procedure.
+        /// </summary>
+        public static async Task AddDistributionViaSpAsync(string beneficiaryName, string eventId, string centerId, DateTime? dateDistributed)
+        {
+            string beneficiaryId = await FindOrCreateBeneficiaryAsync(beneficiaryName);
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("usp_AddDistribution", conn))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@beneficiaryID", SqlDbType.VarChar, 10).Value = beneficiaryId;
+                    cmd.Parameters.Add("@eventID", SqlDbType.VarChar, 10).Value = eventId;
+                    cmd.Parameters.Add("@centerID", SqlDbType.VarChar, 10).Value = centerId;
+                    cmd.Parameters.Add("@dateDistributed", SqlDbType.Date).Value =
+                        dateDistributed.HasValue ? (object)dateDistributed.Value.Date : DBNull.Value;
+                    await conn.OpenAsync();
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Finds an existing Beneficiary by name (case-insensitive) or creates a new one.
+        /// Returns the Beneficiary_ID.
+        /// </summary>
+        public static async Task<string> FindOrCreateBeneficiaryAsync(string name, string category = "General")
+        {
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                await conn.OpenAsync();
+                using (SqlCommand find = new SqlCommand(
+                    "SELECT TOP 1 Benificiary_ID FROM Benificiary WHERE LOWER(Name) = LOWER(@name)", conn))
+                {
+                    find.Parameters.Add("@name", SqlDbType.VarChar, 255).Value = name.Trim();
+                    object r = await find.ExecuteScalarAsync();
+                    if (r != null && r != DBNull.Value) return r.ToString();
+                }
+                using (SqlCommand create = new SqlCommand("usp_AddBenificiary", conn))
+                {
+                    create.CommandType = System.Data.CommandType.StoredProcedure;
+                    create.Parameters.Add("@name", SqlDbType.VarChar, 255).Value = name.Trim();
+                    create.Parameters.Add("@category", SqlDbType.VarChar, 100).Value = category;
+                    create.Parameters.Add("@centerID", SqlDbType.VarChar, 10).Value = DBNull.Value;
+                    await create.ExecuteNonQueryAsync();
+                }
+                using (SqlCommand get = new SqlCommand(
+                    "SELECT TOP 1 Benificiary_ID FROM Benificiary WHERE LOWER(Name)=LOWER(@name) ORDER BY Benificiary_ID DESC", conn))
+                {
+                    get.Parameters.Add("@name", SqlDbType.VarChar, 255).Value = name.Trim();
+                    return (await get.ExecuteScalarAsync())?.ToString() ?? string.Empty;
+                }
+            }
+        }
+
+        /// <summary>
+        /// When a pickup is completed, add its donation to Inventory via usp_AddDonatedItem.
+        /// Gets the Donation_ID from the pickup, then calls the stored procedure.
+        /// </summary>
+        public static async Task AddPickupToInventoryAsync(string pickupId, string itemName, int quantity, string unit, string category)
+        {
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                await conn.OpenAsync();
+                // First get the donation ID for this pickup
+                string donationId;
+                using (SqlCommand cmd = new SqlCommand("SELECT Donation_ID FROM [Pickup Schedule] WHERE Pickup_ID = @id", conn))
+                {
+                    cmd.Parameters.Add("@id", SqlDbType.VarChar, 10).Value = pickupId;
+                    donationId = (await cmd.ExecuteScalarAsync())?.ToString();
+                }
+                if (string.IsNullOrEmpty(donationId))
+                    throw new Exception("No donation linked to this pickup.");
+
+                // usp_AddDonatedItem auto-links to latest donation and creates Inventory row
+                using (SqlCommand cmd = new SqlCommand("usp_AddDonatedItem", conn))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@itemName", SqlDbType.VarChar, 255).Value = itemName;
+                    cmd.Parameters.Add("@quantity", SqlDbType.Int).Value = quantity;
+                    cmd.Parameters.Add("@unit", SqlDbType.VarChar, 50).Value = unit;
+                    cmd.Parameters.Add("@category", SqlDbType.VarChar, 50).Value = category;
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Add a distribution item. Verifies distribution exists, validates inventory quantity,
+        /// uses DSI prefix to avoid collision with DT (Donated Items) and DI (old generator).
+        /// Returns remaining inventory quantity.
+        /// </summary>
+        public static async Task<int> AddDistributionItemAsync(string distributionId, string inventoryId, int quantity)
+        {
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                await conn.OpenAsync();
+
+                // Verify distribution exists
+                using (SqlCommand chk = new SqlCommand(
+                    "SELECT COUNT(1) FROM Distribution WHERE Distribution_ID = @did", conn))
+                {
+                    chk.Parameters.Add("@did", SqlDbType.VarChar, 10).Value = distributionId.Trim();
+                    if (Convert.ToInt32(await chk.ExecuteScalarAsync()) == 0)
+                        throw new Exception($"Distribution '{distributionId}' not found. Select an existing distribution from the grid first.");
+                }
+
+                // Check inventory
+                int available;
+                using (SqlCommand cmd = new SqlCommand(
+                    "SELECT ISNULL(Quantity_Available,0) FROM Inventory WHERE Inventory_ID=@id", conn))
+                {
+                    cmd.Parameters.Add("@id", SqlDbType.VarChar, 10).Value = inventoryId.Trim();
+                    available = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+                }
+                if (quantity > available)
+                    throw new Exception($"Cannot distribute {quantity} — only {available} available.");
+
+                // Look up the DonatedItem_ID linked to this Inventory row.
+                // The live [Distribution Items] table has a FK on DonatedItem_ID
+                // referencing [Donated Items](DonatedItem_ID), so we must supply it.
+                string donatedItemId;
+                using (SqlCommand cmd = new SqlCommand(
+                    "SELECT DonatedItem_ID FROM Inventory WHERE Inventory_ID = @id", conn))
+                {
+                    cmd.Parameters.Add("@id", SqlDbType.VarChar, 10).Value = inventoryId.Trim();
+                    var result = await cmd.ExecuteScalarAsync();
+                    if (result == null || result == DBNull.Value)
+                        throw new Exception($"No DonatedItem_ID found for Inventory '{inventoryId}'. Cannot insert distribution item.");
+                    donatedItemId = result.ToString();
+                }
+
+                // Generate DSI#### ID
+                string newId;
+                using (SqlCommand cmd = new SqlCommand(
+                    @"SELECT ISNULL(MAX(CAST(SUBSTRING(DistributionItem_ID,4,LEN(DistributionItem_ID)) AS INT)),0)+1
+                      FROM [Distribution Items] WHERE DistributionItem_ID LIKE 'DSI[0-9]%'", conn))
+                    newId = "DSI" + Convert.ToInt32(await cmd.ExecuteScalarAsync()).ToString("D3");
+
+                // INSERT uses DonatedItem_ID (FK to Donated Items) + Inventory_ID (FK to Inventory)
+                // Try with both columns first; if the live schema only has DonatedItem_ID, the second
+                // parameter is ignored gracefully via the catch-and-retry below.
+                string q = @"
+                            INSERT INTO [Distribution Items]
+                                (DistributionItem_ID, Distribution_ID, Inventory_ID, Quantity)
+                            VALUES(@itemId, @donatedItemId, @invId, @qty);
+
+                            UPDATE Inventory SET Quantity_Available = Quantity_Available - @qty
+                            WHERE Inventory_ID = @invId AND Quantity_Available >= @qty;";
+
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    cmd.Parameters.Add("@itemId", SqlDbType.VarChar, 10).Value = newId;
+                    cmd.Parameters.Add("@distId", SqlDbType.VarChar, 10).Value = distributionId.Trim();
+                    cmd.Parameters.Add("@donatedItemId", SqlDbType.VarChar, 10).Value = donatedItemId;
+                    cmd.Parameters.Add("@qty", SqlDbType.Int).Value = quantity;
+                    cmd.Parameters.Add("@invId", SqlDbType.VarChar, 10).Value = inventoryId.Trim();
+                    int rows = await cmd.ExecuteNonQueryAsync();
+                    if (rows < 2)
+                        throw new Exception("Inventory deduction failed — quantity may have changed. Please retry.");
+                }
+                return available - quantity;
+            }
+        }
+
+
         public static async Task<ObservableCollection<AdminLogistics>> GetAdminDeliveriesAsync(string filter, string searchText)
         {
             ObservableCollection<AdminLogistics> deliveries = new ObservableCollection<AdminLogistics>();
 
-            string selectedFilter = string.IsNullOrWhiteSpace(filter) ? "All Deliveries" : filter;
+            string selectedFilter = string.IsNullOrWhiteSpace(filter) || filter == "Filter" ? "All Deliveries" : filter;
             string searchPattern = "%" + (searchText ?? string.Empty).Trim() + "%";
 
             using (SqlConnection connection = new SqlConnection(SQL.connectionString))
@@ -2062,16 +2383,15 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 dv.Delivery_ID,
                 dv.Distribution_ID,
                 dv.Delivery_Date,
-                dv.Delivery_Status,
-                
+                dv.Delivery_Status
             FROM [Delivery Schedule] dv
             INNER JOIN Distribution dt ON dv.Distribution_ID = dt.Distribution_ID
             WHERE
                 (
-                    @searchText = '%%'
+                    @searchText = '%'
                     OR dv.Delivery_ID LIKE @searchText
                     OR dv.Distribution_ID LIKE @searchText
-
+                )
                 AND
                 (
                     @filter = 'All Deliveries'
@@ -2228,7 +2548,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         {
             ObservableCollection<AdminLogistics> pickups = new ObservableCollection<AdminLogistics>();
 
-            string selectedFilter = string.IsNullOrWhiteSpace(filter) ? "All Pickups" : filter;
+            string selectedFilter = string.IsNullOrWhiteSpace(filter) || filter == "Filter" ? "All Pickups" : filter;
             string searchPattern = "%" + (searchText ?? string.Empty).Trim() + "%";
 
             using (SqlConnection connection = new SqlConnection(SQL.connectionString))
@@ -2238,16 +2558,15 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 pc.Pickup_ID,
                 pc.Donation_ID,
                 pc.Pickup_Date,
-                pc.Pickup_Status,
-                
+                pc.Pickup_Status
             FROM [Pickup Schedule] pc
             INNER JOIN Donation d ON pc.Donation_ID = d.Donation_ID
             WHERE
                 (
-                    @searchText = '%%'
-                    OR dv.Pickup_ID LIKE @searchText
-                    OR dv.Donation_ID LIKE @searchText
-
+                    @searchText = '%'
+                    OR pc.Pickup_ID LIKE @searchText
+                    OR pc.Donation_ID LIKE @searchText
+                )
                 AND
                 (
                     @filter = 'All Pickups'
@@ -2370,18 +2689,432 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         }
 
         /* ================================================================
-           ID GENERATORS — all use MAX+1 pattern consistent with the
-           existing usp_AddDonor / usp_AddPledge stored procedures.
+           INVENTORY — read-only view of donated items in stock
            ================================================================ */
+
+        public static async Task<List<AdminInventory>> GetAdminInventoryAsync(string filter, string searchText)
+        {
+            var list = new List<AdminInventory>();
+            string selectedFilter = string.IsNullOrWhiteSpace(filter) || filter == "Filter" ? "All Inventory" : filter;
+            string searchPattern = "%" + (searchText ?? string.Empty).Trim() + "%";
+
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                string q = @"
+                    SELECT
+                        inv.Inventory_ID,
+                        i.Item_Name,
+                        di.Item_Name AS DonatedItem,
+                        inv.Quantity_Available,
+                        inv.Expiration_Date,
+                        inv.Storage_Location
+                    FROM Inventory inv
+                    LEFT JOIN Item i ON inv.Item_ID = i.Item_ID
+                    LEFT JOIN [Donated Items] di ON inv.DonatedItem_ID = di.DonatedItem_ID
+                    WHERE
+                        inv.Quantity_Available > 0
+                        AND
+                        (
+                            @searchText = '%'
+                            OR inv.Inventory_ID LIKE @searchText
+                            OR ISNULL(i.Item_Name, '') LIKE @searchText
+                            OR ISNULL(di.Item_Name, '') LIKE @searchText
+                            OR ISNULL(inv.Storage_Location, '') LIKE @searchText
+                        )
+                        AND
+                        (
+                            @filter = 'All Inventory'
+                            OR (@filter = 'Available'      AND inv.Quantity_Available > 0
+                                                           AND (inv.Expiration_Date IS NULL OR inv.Expiration_Date > CAST(GETDATE() AS DATE)))
+                            OR (@filter = 'Expiring Soon'  AND inv.Expiration_Date IS NOT NULL
+                                                           AND inv.Expiration_Date > CAST(GETDATE() AS DATE)
+                                                           AND inv.Expiration_Date <= DATEADD(DAY, 30, CAST(GETDATE() AS DATE)))
+                            OR (@filter = 'Low Stock'      AND inv.Quantity_Available > 0
+                                                           AND inv.Quantity_Available <= 10)
+                        )
+                    ORDER BY inv.Inventory_ID";
+
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    cmd.Parameters.Add("@searchText", SqlDbType.VarChar, 255).Value = searchPattern;
+                    cmd.Parameters.Add("@filter", SqlDbType.VarChar, 50).Value = selectedFilter;
+                    await conn.OpenAsync();
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            list.Add(new AdminInventory
+                            {
+                                InventoryId = reader["Inventory_ID"].ToString(),
+                                Item = reader["Item_Name"] == DBNull.Value ? "" : reader["Item_Name"].ToString(),
+                                DonatedItem = reader["DonatedItem"] == DBNull.Value ? "" : reader["DonatedItem"].ToString(),
+                                QuantityAvailable = reader["Quantity_Available"] == DBNull.Value ? "" : reader["Quantity_Available"].ToString(),
+                                ExpirationDate = reader["Expiration_Date"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader["Expiration_Date"]),
+                                StorageLocation = reader["Storage_Location"] == DBNull.Value ? "" : reader["Storage_Location"].ToString(),
+                            });
+                        }
+                    }
+                }
+            }
+            return list;
+        }
+
+        /* ================================================================
+           DISTRIBUTION + DISTRIBUTION ITEMS
+           ================================================================ */
+
+        public static async Task<List<AdminDistribution>> GetAdminDistributionAsync(string filter, string searchText)
+        {
+            var list = new List<AdminDistribution>();
+            string searchPattern = "%" + (searchText ?? string.Empty).Trim() + "%";
+
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                string q = @"
+                    SELECT
+                        dist.Distribution_ID,
+                        b.Name AS Beneficiary,
+                        de.Event_Name,
+                        ec.Center_Name AS DistributionLocation,
+                        dist.Date_Distributed
+                    FROM Distribution dist
+                    LEFT JOIN Benificiary b ON dist.Beneficiary_ID = b.Benificiary_ID
+                    LEFT JOIN [Disaster Event] de ON dist.Event_ID = de.Event_ID
+                    LEFT JOIN [Evacuation Center] ec ON dist.Center_ID = ec.Center_ID
+                    WHERE
+                        (
+                            @searchText = '%'
+                            OR dist.Distribution_ID LIKE @searchText
+                            OR ISNULL(b.Name, '') LIKE @searchText
+                            OR ISNULL(de.Event_Name, '') LIKE @searchText
+                            OR ISNULL(ec.Center_Name, '') LIKE @searchText
+                        )
+                        AND
+                        (
+                            @filter = 'All Distribution'
+                            OR (@filter = 'Ongoing'   AND dist.Date_Distributed IS NULL)
+                            OR (@filter = 'Completed' AND dist.Date_Distributed IS NOT NULL)
+                        )
+                    ORDER BY dist.Distribution_ID";
+
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    cmd.Parameters.Add("@searchText", SqlDbType.VarChar, 255).Value = searchPattern;
+                    cmd.Parameters.Add("@filter", SqlDbType.VarChar, 50).Value = string.IsNullOrWhiteSpace(filter) ? "All Distribution" : filter;
+                    await conn.OpenAsync();
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            list.Add(new AdminDistribution
+                            {
+                                DistributionId = reader["Distribution_ID"].ToString(),
+                                Beneficiary = reader["Beneficiary"] == DBNull.Value ? "" : reader["Beneficiary"].ToString(),
+                                Event = reader["Event_Name"] == DBNull.Value ? "" : reader["Event_Name"].ToString(),
+                                DistributionLocation = reader["DistributionLocation"] == DBNull.Value ? "" : reader["DistributionLocation"].ToString(),
+                                DateDistributed = reader["Date_Distributed"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader["Date_Distributed"]),
+                            });
+                        }
+                    }
+                }
+            }
+            return list;
+        }
+
+        public static async Task<List<AdminDistributionItem>> GetAdminDistributionItemsAsync(string filter, string searchText)
+        {
+            var list = new List<AdminDistributionItem>();
+            string searchPattern = "%" + (searchText ?? string.Empty).Trim() + "%";
+
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                string q = @"
+                    SELECT
+                        ditem.DistributionItem_ID,
+                        ditem.Distribution_ID,
+                        COALESCE(di.Item_Name, i.Item_Name, ditem.Distribution_ID) AS InventoryItem,
+                        ditem.Quantity
+                    FROM [Distribution Items] ditem
+                    LEFT JOIN [Donated Items] di  ON ditem.Inventory_ID = di.DonatedItem_ID
+                    LEFT JOIN Inventory       inv ON di.DonatedItem_ID = inv.DonatedItem_ID
+                    LEFT JOIN Item            i   ON inv.Item_ID          = i.Item_ID
+                    WHERE
+                        @searchText = '%'
+                        OR ditem.Distribution_ID LIKE @searchText
+                        OR ditem.DistributionItem_ID LIKE @searchText
+                        OR ISNULL(di.Item_Name, '')  LIKE @searchText
+                    ORDER BY ditem.DistributionItem_ID";
+
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    cmd.Parameters.Add("@searchText", SqlDbType.VarChar, 255).Value = searchPattern;
+                    await conn.OpenAsync();
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            list.Add(new AdminDistributionItem
+                            {
+                                DistributionItemId = reader["DistributionItem_ID"].ToString(),
+                                DistributionId = reader["Distribution_ID"].ToString(),
+                                InventoryItem = reader["InventoryItem"] == DBNull.Value ? "" : reader["InventoryItem"].ToString(),
+                                Quantity = reader["Quantity"] == DBNull.Value ? "" : reader["Quantity"].ToString(),
+                            });
+                        }
+                    }
+                }
+            }
+            return list;
+        }
+
+        /* ================================================================
+           WASTE TRACKING
+           ================================================================ */
+
+        public static async Task<List<AdminWaste>> GetAdminWasteAsync(string filter, string searchText)
+        {
+            var list = new List<AdminWaste>();
+            string searchPattern = "%" + (searchText ?? string.Empty).Trim() + "%";
+
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                string q = @"
+                    SELECT
+                        wt.Wasted_ID,
+                        i.Item_Name AS InventoryItem,
+                        wt.Quantity_Wasted,
+                        wt.Waste_Reason,
+                        wt.Date_Recorded
+                    FROM [Waste Tracking] wt
+                    LEFT JOIN Inventory inv ON wt.Inventory_ID = inv.Inventory_ID
+                    LEFT JOIN Item i ON inv.Item_ID = i.Item_ID
+                    WHERE
+                        (
+                            @searchText = '%'
+                            OR wt.Wasted_ID LIKE @searchText
+                            OR ISNULL(i.Item_Name, '') LIKE @searchText
+                            OR ISNULL(wt.Waste_Reason, '') LIKE @searchText
+                        )
+                        AND
+                        (
+                            @filter = 'All Records'
+                            OR wt.Waste_Reason = @filter
+                        )
+                    ORDER BY wt.Date_Recorded DESC";
+
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    cmd.Parameters.Add("@searchText", SqlDbType.VarChar, 255).Value = searchPattern;
+                    cmd.Parameters.Add("@filter", SqlDbType.VarChar, 50).Value = string.IsNullOrWhiteSpace(filter) || filter == "Filter" ? "All Records" : filter;
+                    await conn.OpenAsync();
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            list.Add(new AdminWaste
+                            {
+                                WasteId = reader["Wasted_ID"].ToString(),
+                                InventoryItem = reader["InventoryItem"] == DBNull.Value ? "" : reader["InventoryItem"].ToString(),
+                                Quantity = reader["Quantity_Wasted"] == DBNull.Value ? "" : reader["Quantity_Wasted"].ToString(),
+                                Reason = reader["Waste_Reason"] == DBNull.Value ? "" : reader["Waste_Reason"].ToString(),
+                                Date = reader["Date_Recorded"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader["Date_Recorded"]),
+                            });
+                        }
+                    }
+                }
+            }
+            return list;
+        }
+
+        /* ================================================================
+           WASTE — add item to waste tracking (manual + auto-expiry)
+           ================================================================ */
+
+        public static async Task AddToWasteAsync(string inventoryId, int quantity, string reason)
+        {
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                // Generate next Waste ID (W + 4-digit)
+                string genQ = @"SELECT ISNULL(MAX(CAST(SUBSTRING(Wasted_ID, 2, LEN(Wasted_ID)) AS INT)), 0) + 1
+                                FROM [Waste Tracking] WHERE Wasted_ID LIKE 'W[0-9]%'";
+                int nextNum;
+                await conn.OpenAsync();
+                using (SqlCommand genCmd = new SqlCommand(genQ, conn))
+                    nextNum = Convert.ToInt32(await genCmd.ExecuteScalarAsync());
+
+                string newId = "W" + nextNum.ToString("D4");
+
+                string insertQ = @"
+                    INSERT INTO [Waste Tracking] (Wasted_ID, Inventory_ID, Quantity_Wasted, Waste_Reason, Date_Recorded)
+                    VALUES (@id, @inventoryId, @quantity, @reason, GETDATE());
+                    UPDATE Inventory SET Quantity_Available = Quantity_Available - @quantity
+                    WHERE Inventory_ID = @inventoryId AND Quantity_Available >= @quantity";
+
+                using (SqlCommand cmd = new SqlCommand(insertQ, conn))
+                {
+                    cmd.Parameters.Add("@id", SqlDbType.VarChar, 10).Value = newId;
+                    cmd.Parameters.Add("@inventoryId", SqlDbType.VarChar, 10).Value = inventoryId;
+                    cmd.Parameters.Add("@quantity", SqlDbType.Int).Value = quantity;
+                    cmd.Parameters.Add("@reason", SqlDbType.VarChar, 255).Value =
+                        string.IsNullOrWhiteSpace(reason) ? "Manually disposed" : reason;
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Finds all inventory rows whose Expiration_Date has passed and still have
+        /// Quantity_Available > 0, creates a Waste Tracking record for each, and
+        /// zeroes their quantity. Returns the number of items moved to waste.
+        /// </summary>
+        public static async Task<int> MoveExpiredToWasteAsync()
+        {
+            int count = 0;
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                await conn.OpenAsync();
+
+                string findQ = @"
+                    SELECT Inventory_ID, Quantity_Available
+                    FROM Inventory
+                    WHERE Expiration_Date < CAST(GETDATE() AS DATE)
+                      AND Quantity_Available > 0";
+
+                var expired = new List<(string id, int qty)>();
+                using (SqlCommand findCmd = new SqlCommand(findQ, conn))
+                using (var reader = await findCmd.ExecuteReaderAsync())
+                    while (await reader.ReadAsync())
+                        expired.Add((reader["Inventory_ID"].ToString(),
+                                     Convert.ToInt32(reader["Quantity_Available"])));
+
+                foreach (var (invId, qty) in expired)
+                {
+                    string genQ = @"SELECT ISNULL(MAX(CAST(SUBSTRING(Wasted_ID, 2, LEN(Wasted_ID)) AS INT)), 0) + 1
+                                    FROM [Waste Tracking] WHERE Wasted_ID LIKE 'W[0-9]%'";
+                    int nextNum;
+                    using (SqlCommand genCmd = new SqlCommand(genQ, conn))
+                        nextNum = Convert.ToInt32(await genCmd.ExecuteScalarAsync());
+
+                    string newId = "W" + nextNum.ToString("D4");
+
+                    string insertQ = @"
+                        INSERT INTO [Waste Tracking] (Wasted_ID, Inventory_ID, Quantity_Wasted, Waste_Reason, Date_Recorded)
+                        VALUES (@id, @inventoryId, @quantity, 'Expired', GETDATE());
+                        UPDATE Inventory SET Quantity_Available = 0
+                        WHERE Inventory_ID = @inventoryId";
+
+                    using (SqlCommand cmd = new SqlCommand(insertQ, conn))
+                    {
+                        cmd.Parameters.Add("@id", SqlDbType.VarChar, 10).Value = newId;
+                        cmd.Parameters.Add("@inventoryId", SqlDbType.VarChar, 10).Value = invId;
+                        cmd.Parameters.Add("@quantity", SqlDbType.Int).Value = qty;
+                        await cmd.ExecuteNonQueryAsync();
+                    }
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        /// <summary>
+        /// Transfers waste quantity back to inventory.
+        /// Adds the wasted quantity back to Inventory and deletes the waste record.
+        /// </summary>
+        public static async Task TransferWasteToInventoryAsync(string wasteId)
+        {
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                await conn.OpenAsync();
+                using (SqlTransaction tx = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        string inventoryId;
+                        int quantity;
+                        using (SqlCommand cmd = new SqlCommand(
+                            "SELECT Inventory_ID, Quantity_Wasted FROM [Waste Tracking] WHERE Wasted_ID = @id",
+                            conn, tx))
+                        {
+                            cmd.Parameters.Add("@id", SqlDbType.VarChar, 10).Value = wasteId;
+                            using (var reader = await cmd.ExecuteReaderAsync())
+                            {
+                                if (!await reader.ReadAsync())
+                                    throw new Exception($"Waste record '{wasteId}' not found.");
+                                inventoryId = reader["Inventory_ID"].ToString();
+                                quantity    = Convert.ToInt32(reader["Quantity_Wasted"]);
+                            }
+                        }
+
+                        using (SqlCommand cmd = new SqlCommand(
+                            "UPDATE Inventory SET Quantity_Available = Quantity_Available + @qty WHERE Inventory_ID = @invId",
+                            conn, tx))
+                        {
+                            cmd.Parameters.Add("@qty",   SqlDbType.Int).Value         = quantity;
+                            cmd.Parameters.Add("@invId", SqlDbType.VarChar, 10).Value = inventoryId;
+                            int updated = await cmd.ExecuteNonQueryAsync();
+                            if (updated == 0)
+                                throw new Exception($"Inventory row '{inventoryId}' not found. Transfer aborted.");
+                        }
+
+                        using (SqlCommand cmd = new SqlCommand(
+                            "DELETE FROM [Waste Tracking] WHERE Wasted_ID = @wasteId",
+                            conn, tx))
+                        {
+                            cmd.Parameters.Add("@wasteId", SqlDbType.VarChar, 10).Value = wasteId;
+                            await cmd.ExecuteNonQueryAsync();
+                        }
+
+                        tx.Commit();
+                    }
+                    catch
+                    {
+                        tx.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+
+        /* ================================================================
+           ID GENERATORS
+           ================================================================ */
+
+        public static async Task<string> GenerateDonationIdAsync()
+        {
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                string q = @"SELECT ISNULL(MAX(CAST(SUBSTRING(Donation_ID, 3, LEN(Donation_ID)) AS INT)), 0) + 1
+                             FROM Donation WHERE Donation_ID LIKE 'DN[0-9]%'";
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    await conn.OpenAsync();
+                    int next = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+                    return "DN" + next.ToString("D4");
+                }
+            }
+        }
+
+        public static async Task<string> GenerateDonatedItemIdAsync()
+        {
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                string q = @"SELECT ISNULL(MAX(CAST(SUBSTRING(DonatedItem_ID, 3, LEN(DonatedItem_ID)) AS INT)), 0) + 1
+                             FROM [Donated Items] WHERE DonatedItem_ID LIKE 'DI[0-9]%'";
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    await conn.OpenAsync();
+                    int next = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+                    return "DI" + next.ToString("D4");
+                }
+            }
+        }
 
         public static async Task<string> GenerateRescuerIdAsync()
         {
             using (SqlConnection conn = new SqlConnection(SQL.connectionString))
             {
-                string q = @"
-                    SELECT ISNULL(MAX(CAST(SUBSTRING(Volunteer_ID, 2, LEN(Volunteer_ID)) AS INT)), 0) + 1
-                    FROM Volunteer
-                    WHERE Volunteer_ID LIKE 'V[0-9]%'";
+                string q = @"SELECT ISNULL(MAX(CAST(SUBSTRING(Volunteer_ID, 2, LEN(Volunteer_ID)) AS INT)), 0) + 1
+                             FROM Volunteer WHERE Volunteer_ID LIKE 'V[0-9]%'";
                 using (SqlCommand cmd = new SqlCommand(q, conn))
                 {
                     await conn.OpenAsync();
@@ -2395,10 +3128,8 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         {
             using (SqlConnection conn = new SqlConnection(SQL.connectionString))
             {
-                string q = @"
-                    SELECT ISNULL(MAX(CAST(SUBSTRING(Event_ID, 2, LEN(Event_ID)) AS INT)), 0) + 1
-                    FROM [Disaster Event]
-                    WHERE Event_ID LIKE 'E[0-9]%'";
+                string q = @"SELECT ISNULL(MAX(CAST(SUBSTRING(Event_ID, 2, LEN(Event_ID)) AS INT)), 0) + 1
+                             FROM [Disaster Event] WHERE Event_ID LIKE 'E[0-9]%'";
                 using (SqlCommand cmd = new SqlCommand(q, conn))
                 {
                     await conn.OpenAsync();
@@ -2412,11 +3143,8 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         {
             using (SqlConnection conn = new SqlConnection(SQL.connectionString))
             {
-                // Seed data uses format RO0001
-                string q = @"
-                    SELECT ISNULL(MAX(CAST(SUBSTRING(Operation_ID, 3, LEN(Operation_ID)) AS INT)), 0) + 1
-                    FROM [Rescue Operation]
-                    WHERE Operation_ID LIKE 'RO[0-9]%'";
+                string q = @"SELECT ISNULL(MAX(CAST(SUBSTRING(Operation_ID, 3, LEN(Operation_ID)) AS INT)), 0) + 1
+                             FROM [Rescue Operation] WHERE Operation_ID LIKE 'RO[0-9]%'";
                 using (SqlCommand cmd = new SqlCommand(q, conn))
                 {
                     await conn.OpenAsync();
@@ -2430,15 +3158,14 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         {
             using (SqlConnection conn = new SqlConnection(SQL.connectionString))
             {
-                string q = @"
-                    SELECT ISNULL(MAX(CAST(SUBSTRING(Assignment_ID, 2, LEN(Assignment_ID)) AS INT)), 0) + 1
-                    FROM [Operation Assignment]
-                    WHERE Assignment_ID LIKE 'A[0-9]%'";
+                // Format: OP0001, OP0002 (OP prefix, 4-digit zero-padded)
+                string q = @"SELECT ISNULL(MAX(CAST(SUBSTRING(Assignment_ID, 3, LEN(Assignment_ID)) AS INT)), 0) + 1
+                             FROM [Operation Assignment] WHERE Assignment_ID LIKE 'OP[0-9]%'";
                 using (SqlCommand cmd = new SqlCommand(q, conn))
                 {
                     await conn.OpenAsync();
                     int next = Convert.ToInt32(await cmd.ExecuteScalarAsync());
-                    return "A" + next.ToString("D4");
+                    return "OP" + next.ToString("D4");
                 }
             }
         }
@@ -2447,10 +3174,8 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         {
             using (SqlConnection conn = new SqlConnection(SQL.connectionString))
             {
-                string q = @"
-                    SELECT ISNULL(MAX(CAST(SUBSTRING(Location_ID, 2, LEN(Location_ID)) AS INT)), 0) + 1
-                    FROM Location
-                    WHERE Location_ID LIKE 'L[0-9]%'";
+                string q = @"SELECT ISNULL(MAX(CAST(SUBSTRING(Location_ID, 2, LEN(Location_ID)) AS INT)), 0) + 1
+                             FROM Location WHERE Location_ID LIKE 'L[0-9]%'";
                 using (SqlCommand cmd = new SqlCommand(q, conn))
                 {
                     await conn.OpenAsync();
@@ -2460,11 +3185,6 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             }
         }
 
-        /// <summary>
-        /// Returns the next available integer User_ID. Used when creating a
-        /// Volunteer account that is not yet linked to a Users row, matching
-        /// the existing usp_AddVolunteer pattern.
-        /// </summary>
         public static async Task<string> GenerateUserIdAsync()
         {
             using (SqlConnection conn = new SqlConnection(SQL.connectionString))
@@ -2480,11 +3200,9 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         }
 
         /* ================================================================
-           DROPDOWN DATA SOURCES — used by Operations, Assignments, and
-           Rescuers admin screens for ComboBox / selection lists.
+           DROPDOWN DATA SOURCES
            ================================================================ */
 
-        /// <summary>Returns all disaster events as (Event_ID, Event_Name) pairs for dropdowns.</summary>
         public static async Task<List<(string Id, string Name)>> GetAvailableDisasterEventsAsync()
         {
             var list = new List<(string, string)>();
@@ -2495,39 +3213,31 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 {
                     await conn.OpenAsync();
                     using (var reader = await cmd.ExecuteReaderAsync())
-                    {
                         while (await reader.ReadAsync())
                             list.Add((reader["Event_ID"].ToString(), reader["Event_Name"].ToString()));
-                    }
                 }
             }
             return list;
         }
 
-        /// <summary>Returns all locations as (Location_ID, display string) pairs for dropdowns.</summary>
         public static async Task<List<(string Id, string Display)>> GetAvailableLocationsAsync()
         {
             var list = new List<(string, string)>();
             using (SqlConnection conn = new SqlConnection(SQL.connectionString))
             {
-                string q = @"
-                    SELECT Location_ID,
-                           Barangay + ', ' + City + ', ' + Province AS Display
-                    FROM Location ORDER BY Province, City, Barangay";
+                string q = @"SELECT Location_ID, Barangay + ', ' + City + ', ' + Province AS Display
+                             FROM Location ORDER BY Province, City, Barangay";
                 using (SqlCommand cmd = new SqlCommand(q, conn))
                 {
                     await conn.OpenAsync();
                     using (var reader = await cmd.ExecuteReaderAsync())
-                    {
                         while (await reader.ReadAsync())
                             list.Add((reader["Location_ID"].ToString(), reader["Display"].ToString()));
-                    }
                 }
             }
             return list;
         }
 
-        /// <summary>Returns all volunteers as (Volunteer_ID, Volunteer_Name) pairs for dropdowns.</summary>
         public static async Task<List<(string Id, string Name)>> GetAvailableRescuersAsync()
         {
             var list = new List<(string, string)>();
@@ -2538,52 +3248,92 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 {
                     await conn.OpenAsync();
                     using (var reader = await cmd.ExecuteReaderAsync())
-                    {
                         while (await reader.ReadAsync())
                             list.Add((reader["Volunteer_ID"].ToString(), reader["Volunteer_Name"].ToString()));
-                    }
                 }
             }
             return list;
         }
 
-        /// <summary>Returns all operations as (Operation_ID, display string with event name) for dropdowns.</summary>
         public static async Task<List<(string Id, string Display)>> GetAvailableOperationsAsync()
         {
             var list = new List<(string, string)>();
             using (SqlConnection conn = new SqlConnection(SQL.connectionString))
             {
-                string q = @"
-                    SELECT ro.Operation_ID,
-                           ro.Operation_ID + ' — ' + ISNULL(de.Event_Name, 'Unknown Event') AS Display
-                    FROM [Rescue Operation] ro
-                    LEFT JOIN [Disaster Event] de ON ro.Event_ID = de.Event_ID
-                    ORDER BY ro.Operation_ID";
+                string q = @"SELECT ro.Operation_ID,
+                                    ro.Operation_ID + ' — ' + ISNULL(de.Event_Name, 'Unknown Event') AS Display
+                             FROM [Rescue Operation] ro
+                             LEFT JOIN [Disaster Event] de ON ro.Event_ID = de.Event_ID
+                             ORDER BY ro.Operation_ID";
                 using (SqlCommand cmd = new SqlCommand(q, conn))
                 {
                     await conn.OpenAsync();
                     using (var reader = await cmd.ExecuteReaderAsync())
-                    {
                         while (await reader.ReadAsync())
                             list.Add((reader["Operation_ID"].ToString(), reader["Display"].ToString()));
-                    }
                 }
             }
             return list;
         }
 
-        /* ================================================================
-           LOCATION — add new location with generated ID.
-           ================================================================ */
+        public static async Task<List<(string Id, string Name)>> GetAvailableDonorsAsync()
+        {
+            var list = new List<(string, string)>();
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                string q = "SELECT Donor_ID, ISNULL(Donor_Name, Donor_ID) AS Donor_Name FROM Donor ORDER BY Donor_Name";
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    await conn.OpenAsync();
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                        while (await reader.ReadAsync())
+                            list.Add((reader["Donor_ID"].ToString(), reader["Donor_Name"].ToString()));
+                }
+            }
+            return list;
+        }
+
+        public static async Task<List<(string Id, string Name)>> GetAvailableBeneficiariesAsync()
+        {
+            var list = new List<(string, string)>();
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                string q = "SELECT Benificiary_ID, Name FROM Benificiary ORDER BY Name";
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    await conn.OpenAsync();
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                        while (await reader.ReadAsync())
+                            list.Add((reader["Benificiary_ID"].ToString(), reader["Name"].ToString()));
+                }
+            }
+            return list;
+        }
+
+        public static async Task<List<(string Id, string Name)>> GetAvailableEvacuationCentersAsync()
+        {
+            var list = new List<(string, string)>();
+            using (SqlConnection conn = new SqlConnection(SQL.connectionString))
+            {
+                string q = "SELECT Center_ID, Center_Name FROM [Evacuation Center] ORDER BY Center_Name";
+                using (SqlCommand cmd = new SqlCommand(q, conn))
+                {
+                    await conn.OpenAsync();
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                        while (await reader.ReadAsync())
+                            list.Add((reader["Center_ID"].ToString(), reader["Center_Name"].ToString()));
+                }
+            }
+            return list;
+        }
 
         public static async Task<string> AddLocationAsync(string barangay, string city, string province)
         {
             string newId = await GenerateLocationIdAsync();
             using (SqlConnection conn = new SqlConnection(SQL.connectionString))
             {
-                string q = @"
-                    INSERT INTO Location (Location_ID, Barangay, City, Province)
-                    VALUES (@id, @barangay, @city, @province)";
+                string q = @"INSERT INTO Location (Location_ID, Barangay, City, Province)
+                             VALUES (@id, @barangay, @city, @province)";
                 using (SqlCommand cmd = new SqlCommand(q, conn))
                 {
                     cmd.Parameters.Add("@id", SqlDbType.VarChar, 10).Value = newId;

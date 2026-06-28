@@ -72,6 +72,7 @@
     </ApplicationDefinition>
     <Compile Include="Model\AdminDisasterEvent.cs" />
     <Compile Include="Model\AdminDonations.cs" />
+    <Compile Include="Model\Admininventorydistributionwaste ·.cs" />
     <Compile Include="Model\AdminLogistics.cs" />
     <Compile Include="Model\AdminOperationAssignment.cs" />
     <Compile Include="Model\AdminPledges.cs" />
@@ -91,10 +92,13 @@
     <Compile Include="Model\RescueLocation.cs" />
     <Compile Include="Model\RescueOperation.cs" />
     <Compile Include="Model\UserModel.cs" />
+    <Compile Include="ViewModel\admindashboard_donation_Distribution_viewModel.cs" />
     <Compile Include="ViewModel\admindashboard_donation_Donations_viewModel.cs" />
+    <Compile Include="ViewModel\admindashboard_donation_Inventory_viewModel.cs" />
     <Compile Include="ViewModel\admindashboard_donation_Logistics_viewModel.cs" />
     <Compile Include="ViewModel\admindashboard_donation_mainlayout_viewModel.cs" />
     <Compile Include="ViewModel\admindashboard_donation_Pledges_viewModel.cs" />
+    <Compile Include="ViewModel\admindashboard_donation_Waste_viewModel.cs" />
     <Compile Include="ViewModel\admindashboard_rescue_Assignments_viewModel.cs" />
     <Compile Include="ViewModel\admindashboard_rescue_DisasterEvents_viewModel.cs" />
     <Compile Include="ViewModel\admindashboard_rescue_mainlayout_viewModel.cs" />
