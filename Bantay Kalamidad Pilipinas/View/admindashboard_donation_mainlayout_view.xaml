@@ -16,7 +16,7 @@
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0"
-                  Background="#F7F8FA"
+                  Background="White"
                   Margin="14,10,14,0">
 
                 <Grid.ColumnDefinitions>

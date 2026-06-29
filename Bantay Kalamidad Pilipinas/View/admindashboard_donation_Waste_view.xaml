@@ -132,23 +132,5 @@
             </DataGrid>
 
         </Border>
-
-        <Grid Grid.Row="4"
-              Background="#7F7F7F"
-              Margin="8,0,8,0">
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
-                        Margin="0,0,10,0">
-
-                <!-- Transfer back to inventory — always available -->
-                <Button Content="TRANSFER TO INVENTORY"
-                        Style="{StaticResource CRUDbtn}"
-                        Command="{Binding TransferToInventoryCommand}"
-                        ToolTip="Restores the wasted quantity back to available inventory"/>
-
-            </StackPanel>
-        </Grid>
-
     </Grid>
 </UserControl>
