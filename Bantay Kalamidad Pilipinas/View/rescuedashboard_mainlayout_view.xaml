@@ -21,7 +21,7 @@
             <Grid Grid.Row="0" Margin="12,0,12,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="275"/>
+                    <ColumnDefinition Width="350"/>
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Orientation="Horizontal"
@@ -41,7 +41,8 @@
                             Orientation="Horizontal"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center">
-                    <TextBlock Text="Welcome, Rescuer!"
+
+                    <TextBlock Text="{Binding WelcomeText}"
                                FontSize="18"
                                Style="{StaticResource LoginHeader}"
                                Margin="0,0,10,0"/>
@@ -61,7 +62,6 @@
                     Margin="0">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="66"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
@@ -70,16 +70,6 @@
                     </Grid.ColumnDefinitions>
 
                     <Button Grid.Column="0"
-                            Background="#A30000"
-                            BorderThickness="0"
-                            Cursor="Hand">
-                        <Viewbox Width="32" Height="32">
-                            <Path Data="M25,5 L8,16 L25,27 M8,16 L31,16"
-                                  Style="{StaticResource Path3}"/>
-                        </Viewbox>
-                    </Button>
-
-                    <Button Grid.Column="1"
                             Style="{StaticResource Menubtn}"
                             Background="{StaticResource RescueBorder}"
                             Command="{Binding ShowMyRescueOperationsCommand}">
@@ -88,25 +78,25 @@
                                    FontWeight="Black"/>
                     </Button>
 
-                    <Button Grid.Column="2"
+                    <Button Grid.Column="1"
                             Content="My Team"
                             Style="{StaticResource Menubtn}"
                             Background="{StaticResource RescueBorder}"
                             Command="{Binding ShowMyTeamCommand}"/>
 
-                    <Button Grid.Column="3"
+                    <Button Grid.Column="2"
                             Content="Rescue Locations"
                             Style="{StaticResource Menubtn}"
                             Background="{StaticResource RescueBorder}"
                             Command="{Binding ShowRescueLocationsCommand}"/>
 
-                    <Button Grid.Column="4"
+                    <Button Grid.Column="3"
                             Content="Announcements"
                             Style="{StaticResource Menubtn}"
                             Background="{StaticResource RescueBorder}"
                             Command="{Binding ShowAnnouncementsCommand}"/>
 
-                    <Button Grid.Column="5"
+                    <Button Grid.Column="4"
                             Background="{StaticResource RescueBorder}"
                             BorderThickness="0"
                             Cursor="Hand"
@@ -217,20 +207,20 @@
                                                         </TextBlock>
 
                                                         <Border Style="{StaticResource StatusBadgeBorder}" DockPanel.Dock="Right">
-                                                            <TextBlock Text="{Binding ActiveDisasterEventStatus}" 
+                                                            <TextBlock Text="{Binding ActiveDisasterEventStatus}"
                                                                        Style="{StaticResource StatusBadge}"/>
                                                         </Border>
 
                                                     </DockPanel>
 
                                                     <TextBlock Style="{StaticResource InfoLabel}">
-                                                            <Run Text="Event ID: "/>
-                                                            <Run Text="{Binding ActiveDisasterEventId, FallbackValue=''}"/>
+                                                        <Run Text="Event ID: "/>
+                                                        <Run Text="{Binding ActiveDisasterEventId, FallbackValue=''}"/>
                                                     </TextBlock>
 
                                                     <TextBlock Style="{StaticResource InfoLabel}">
-                                                            <Run Text="Start Date: "/>
-                                                            <Run Text="{Binding ActiveDisasterStartDate, FallbackValue=''}"/>
+                                                        <Run Text="Start Date: "/>
+                                                        <Run Text="{Binding ActiveDisasterStartDate, FallbackValue=''}"/>
                                                     </TextBlock>
 
                                                 </StackPanel>

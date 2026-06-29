@@ -9,80 +9,99 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Bantay_Kalamidad_Pilipinas.View;
 
 namespace Bantay_Kalamidad_Pilipinas.ViewModel
 {
     internal class rescue_dashboard_mainlayout_ViewModel : ObservableObject
     {
+        private string _welcomeText;
         private string _ActiveDisasterEvent;
         private int _AssignedOperationsCount;
         private int _CurrentOperationsCount;
+        private ObservableCollection<RescueActiveDisasterEvent> _DisasterEvent;
+        private ObservableCollection<AssignedOperation> _AssignedOperations;
+        private ObservableCollection<CurrentRescueOperationSummary> _CurrentRescueOperations;
+        private object _currentRescueDashboardView;
+
+        public string WelcomeText
+        {
+            get { return _welcomeText; }
+            set
+            {
+                _welcomeText = value;
+                OnPropertyChanged(nameof(WelcomeText));
+            }
+        }
 
         public int CurrentOperationsCount
         {
             get { return _CurrentOperationsCount; }
-            set { _CurrentOperationsCount = value; OnPropertyChanged(nameof(CurrentOperationsCount)); }
+            set
+            {
+                _CurrentOperationsCount = value;
+                OnPropertyChanged(nameof(CurrentOperationsCount));
+            }
         }
 
         public int AssignedOperationsCount
         {
             get { return _AssignedOperationsCount; }
-            set { _AssignedOperationsCount = value; OnPropertyChanged(nameof(AssignedOperationsCount)); }
+            set
+            {
+                _AssignedOperationsCount = value;
+                OnPropertyChanged(nameof(AssignedOperationsCount));
+            }
         }
+
         public string ActiveDisasterEvent
         {
             get { return _ActiveDisasterEvent; }
-            set { _ActiveDisasterEvent = value; OnPropertyChanged(nameof(ActiveDisasterEvent)); }
+            set
+            {
+                _ActiveDisasterEvent = value;
+                OnPropertyChanged(nameof(ActiveDisasterEvent));
+            }
         }
 
-        // ------------------------------------------------------------------
-        // The properties below back rescuedashboard_mainlayout_view.xaml's
-        // three info cards. Same situation as the donation dashboard: the
-        // XAML was written against these exact names, but the ViewModel
-        // never defined most of them, so WPF's bindings failed silently —
-        // nothing displayed even though AssignedOperationsCount and
-        // CurrentOperationsCount (above) were being computed correctly the
-        // whole time. Neither of those two is actually referenced anywhere
-        // in this XAML, which is why the rescue dashboard showed nothing
-        // at all for any of its three cards.
-        // ------------------------------------------------------------------
-
-        // "Active Disaster Event" card — bound via an ItemsControl, so this
-        // needs to be a collection of RescueActiveDisasterEvent, not a
-        // single string. The ItemsControl's ItemsSource binds to
-        // "DisasterEvent" (XAML name, not to be confused with the
-        // Model.DisasterEvent class or this VM's ActiveDisasterEvent string
-        // above, which nothing in the XAML actually reads).
-        private ObservableCollection<RescueActiveDisasterEvent> _DisasterEvent;
         public ObservableCollection<RescueActiveDisasterEvent> DisasterEvent
         {
             get => _DisasterEvent;
-            set { _DisasterEvent = value; OnPropertyChanged(nameof(DisasterEvent)); }
+            set
+            {
+                _DisasterEvent = value;
+                OnPropertyChanged(nameof(DisasterEvent));
+            }
         }
 
-        // "My Assigned Operations" card — now a scrollable list (every
-        // operation this volunteer is assigned to), not just the latest one.
-        private ObservableCollection<AssignedOperation> _AssignedOperations;
         public ObservableCollection<AssignedOperation> AssignedOperations
         {
             get => _AssignedOperations;
-            set { _AssignedOperations = value; OnPropertyChanged(nameof(AssignedOperations)); }
+            set
+            {
+                _AssignedOperations = value;
+                OnPropertyChanged(nameof(AssignedOperations));
+            }
         }
 
-        // "Current Rescue Operations" card — now a scrollable list (one row
-        // per operation), not a single aggregated breakdown string.
-        private ObservableCollection<CurrentRescueOperationSummary> _CurrentRescueOperations;
         public ObservableCollection<CurrentRescueOperationSummary> CurrentRescueOperations
         {
             get => _CurrentRescueOperations;
-            set { _CurrentRescueOperations = value; OnPropertyChanged(nameof(CurrentRescueOperations)); }
+            set
+            {
+                _CurrentRescueOperations = value;
+                OnPropertyChanged(nameof(CurrentRescueOperations));
+            }
         }
 
-        private object _currentRescueDashboardView;
         public object CurrentRescueDashboardView
         {
             get => _currentRescueDashboardView;
-            set { _currentRescueDashboardView = value; OnPropertyChanged(nameof(CurrentRescueDashboardView)); }
+            set
+            {
+                _currentRescueDashboardView = value;
+                OnPropertyChanged(nameof(CurrentRescueDashboardView));
+            }
         }
 
         public ICommand ShowMyRescueOperationsCommand { get; }
@@ -93,31 +112,55 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
 
         public rescue_dashboard_mainlayout_ViewModel()
         {
+            WelcomeText = "Welcome, Rescuer!";
+
             LogoutCommand = new RelayCommand(Logout);
-            ShowMyRescueOperationsCommand = new RelayCommand(() => CurrentRescueDashboardView = new View.rescuedashboard_MyRescueOperations_view());
-            ShowMyTeamCommand = new RelayCommand(() => CurrentRescueDashboardView = new View.rescuedashboard_MyTeam_view());
-            ShowRescueLocationsCommand = new RelayCommand(() => CurrentRescueDashboardView = new View.rescuedashboard_RescueLocations_view());
-            ShowAnnouncementsCommand = new RelayCommand(() => CurrentRescueDashboardView = new View.rescuedashboard_Announcements_view());
+
+            ShowMyRescueOperationsCommand = new RelayCommand(ShowMyRescueOperations);
+            ShowMyTeamCommand = new RelayCommand(ShowMyTeam);
+            ShowRescueLocationsCommand = new RelayCommand(ShowRescueLocations);
+            ShowAnnouncementsCommand = new RelayCommand(ShowAnnouncements);
 
             DisasterEvent = new ObservableCollection<RescueActiveDisasterEvent>();
             AssignedOperations = new ObservableCollection<AssignedOperation>();
             CurrentRescueOperations = new ObservableCollection<CurrentRescueOperationSummary>();
 
-            // default view on load
-            CurrentRescueDashboardView = new View.rescuedashboard_MyRescueOperations_view();
+            CurrentRescueDashboardView = new rescuedashboard_MyRescueOperations_view();
+
+            InitializeWelcomeText();
             RefreshDashboard();
         }
 
-        /// <summary>
-        /// Re-runs every dashboard query. Safe to call multiple times.
-        /// </summary>
+        private void ShowMyRescueOperations()
+        {
+            CurrentRescueDashboardView = new rescuedashboard_MyRescueOperations_view();
+        }
+
+        private void ShowMyTeam()
+        {
+            CurrentRescueDashboardView = new rescuedashboard_MyTeam_view();
+        }
+
+        private void ShowRescueLocations()
+        {
+            CurrentRescueDashboardView = new rescuedashboard_RescueLocations_view();
+        }
+
+        private void ShowAnnouncements()
+        {
+            CurrentRescueDashboardView = new rescuedashboard_Announcements_view();
+        }
+
         public void RefreshDashboard()
         {
-            if (rescue_login_ViewModel.CurrentUser == null || string.IsNullOrWhiteSpace(rescue_login_ViewModel.CurrentUser.Username))
+            if (rescue_login_ViewModel.CurrentUser == null ||
+                string.IsNullOrWhiteSpace(rescue_login_ViewModel.CurrentUser.Username))
             {
+                InitializeWelcomeText();
                 return;
             }
 
+            InitializeWelcomeText();
             InitializeActiveDisasterEvent();
             InitializeAssignedOperationsCount();
             InitializeCurrentOperationsCount();
@@ -125,14 +168,57 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             InitializeCurrentRescueOperationsCardList();
         }
 
-        /// <summary>
-        /// Populates the DisasterEvent collection (the "Active Disaster Event"
-        /// card's ItemsControl source) with every disaster event that still
-        /// has an open rescue operation against it.
-        /// </summary>
+        public void InitializeWelcomeText()
+        {
+            try
+            {
+                if (rescue_login_ViewModel.CurrentUser == null ||
+                    string.IsNullOrWhiteSpace(rescue_login_ViewModel.CurrentUser.Username))
+                {
+                    WelcomeText = "Welcome, Rescuer!";
+                    return;
+                }
+
+                string username = rescue_login_ViewModel.CurrentUser.Username;
+
+                string query = @"
+                    SELECT TOP 1
+                        v.Volunteer_Name
+                    FROM [Users] u
+                    LEFT JOIN [Volunteer] v
+                        ON u.User_ID = v.User_ID
+                    WHERE u.Username = @Username;";
+
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@Username", username)
+                };
+
+                if (DatabaseManager.GetTableData(query, parameters, out DataTable data) &&
+                    data.Rows.Count > 0 &&
+                    data.Rows[0]["Volunteer_Name"] != DBNull.Value)
+                {
+                    string volunteerName = data.Rows[0]["Volunteer_Name"].ToString();
+
+                    if (!string.IsNullOrWhiteSpace(volunteerName))
+                    {
+                        WelcomeText = "Welcome, " + volunteerName + "!";
+                        return;
+                    }
+                }
+
+                WelcomeText = "Welcome, " + username + "!";
+            }
+            catch
+            {
+                WelcomeText = "Welcome, Rescuer!";
+            }
+        }
+
         public void InitializeActiveDisasterEvent()
         {
             DisasterEvent.Clear();
+
             string query = "SELECT * FROM dbo.GetActiveDisasterEvent()";
 
             if (DatabaseManager.GetTableData(query, null, out DataTable data))
@@ -141,7 +227,9 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                     row["Event_Name"].ToString(),
                     row["Status"].ToString(),
                     row["Event_ID"].ToString(),
-                    row["Start_Date"] == DBNull.Value ? "" : Convert.ToDateTime(row["Start_Date"]).ToString("yyyy-MM-dd")
+                    row["Start_Date"] == DBNull.Value
+                        ? ""
+                        : Convert.ToDateTime(row["Start_Date"]).ToString("yyyy-MM-dd")
                 ));
 
                 foreach (var disasterEvent in events)
@@ -149,21 +237,27 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                     DisasterEvent.Add(disasterEvent);
                 }
 
-                // Keep the legacy single-string property in sync too, in case
-                // anything else in the app still reads it directly.
-                ActiveDisasterEvent = DisasterEvent.Count > 0 ? DisasterEvent[0].ActiveDisasterEvent : null;
+                ActiveDisasterEvent = DisasterEvent.Count > 0
+                    ? DisasterEvent[0].ActiveDisasterEvent
+                    : null;
             }
-            // No active events is a normal state (e.g. no ongoing disasters
-            // right now) — not an error, so no MessageBox here.
         }
 
-        /// <summary>
-        /// This method initializes the AssignedOperationsCount property by querying the database for the count of operations assigned to the current user.
-        /// </summary>
         public void InitializeAssignedOperationsCount()
         {
+            if (rescue_login_ViewModel.CurrentUser == null ||
+                string.IsNullOrWhiteSpace(rescue_login_ViewModel.CurrentUser.Username))
+            {
+                AssignedOperationsCount = 0;
+                return;
+            }
+
             string query = "SELECT * FROM dbo.CountRescueOperationsByUsername(@Username)";
-            var parameters = new[] { new SqlParameter("@Username", rescue_login_ViewModel.CurrentUser.Username) };
+
+            SqlParameter[] parameters =
+            {
+                new SqlParameter("@Username", rescue_login_ViewModel.CurrentUser.Username)
+            };
 
             DatabaseManager.GetTableData(query, parameters, out DataTable resultTable);
 
@@ -172,13 +266,21 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 : 0;
         }
 
-        /// <summary>
-        /// This method initializes the CurrentOperationsCount property by querying the database for the count of active operations assigned to the current user.
-        /// </summary>
         public void InitializeCurrentOperationsCount()
         {
+            if (rescue_login_ViewModel.CurrentUser == null ||
+                string.IsNullOrWhiteSpace(rescue_login_ViewModel.CurrentUser.Username))
+            {
+                CurrentOperationsCount = 0;
+                return;
+            }
+
             string query = "SELECT * FROM dbo.GetCurrentOperationsCountByUsername(@Username)";
-            var parameters = new[] { new SqlParameter("@Username", rescue_login_ViewModel.CurrentUser.Username) };
+
+            SqlParameter[] parameters =
+            {
+                new SqlParameter("@Username", rescue_login_ViewModel.CurrentUser.Username)
+            };
 
             DatabaseManager.GetTableData(query, parameters, out DataTable opsTable);
 
@@ -187,17 +289,17 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 : 0;
         }
 
-        /// <summary>
-        /// Populates the "My Assigned Operations" card: every operation this
-        /// volunteer is currently assigned to, newest first. The card scrolls
-        /// in the XAML, so there's no row limit here.
-        /// </summary>
         public void InitializeAssignedOperationsCardList()
         {
             AssignedOperations.Clear();
-            string safeUsername = "'" + rescue_login_ViewModel.CurrentUser.Username.Replace("'", "''") + "'";
 
-            string query = $@"
+            if (rescue_login_ViewModel.CurrentUser == null ||
+                string.IsNullOrWhiteSpace(rescue_login_ViewModel.CurrentUser.Username))
+            {
+                return;
+            }
+
+            string query = @"
                 SELECT
                     oa.Role,
                     l.Barangay + ', ' + l.City AS Location,
@@ -205,82 +307,98 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                     oa.Operation_Status,
                     ro.Date_Started
                 FROM [Operation Assignment] oa
-                JOIN [Volunteer] v ON oa.Volunteer_ID = v.Volunteer_ID
-                JOIN [Users] u ON v.User_ID = u.User_ID
-                JOIN [Rescue Operation] ro ON oa.Operation_ID = ro.Operation_ID
-                JOIN [Location] l ON ro.Location_ID = l.Location_ID
-                WHERE u.Username = {safeUsername}
-                ORDER BY ro.Date_Started DESC";
+                JOIN [Volunteer] v
+                    ON oa.Volunteer_ID = v.Volunteer_ID
+                JOIN [Users] u
+                    ON v.User_ID = u.User_ID
+                JOIN [Rescue Operation] ro
+                    ON oa.Operation_ID = ro.Operation_ID
+                JOIN [Location] l
+                    ON ro.Location_ID = l.Location_ID
+                WHERE u.Username = @Username
+                ORDER BY ro.Date_Started DESC;";
 
-            DatabaseManager.GetTableDataWithCustomizedQuery(query, out DataTable data);
-
-            foreach (DataRow row in data.Rows)
+            SqlParameter[] parameters =
             {
-                AssignedOperations.Add(new AssignedOperation(
-                    row["Role"].ToString(),
-                    row["Location"].ToString(),
-                    row["Operation_ID"].ToString(),
-                    row["Operation_Status"].ToString()));
+                new SqlParameter("@Username", rescue_login_ViewModel.CurrentUser.Username)
+            };
+
+            if (DatabaseManager.GetTableData(query, parameters, out DataTable data))
+            {
+                foreach (DataRow row in data.Rows)
+                {
+                    AssignedOperations.Add(new AssignedOperation(
+                        row["Role"].ToString(),
+                        row["Location"].ToString(),
+                        row["Operation_ID"].ToString(),
+                        row["Operation_Status"].ToString()));
+                }
             }
-            // An empty list here (no assigned operations yet) is a normal
-            // state for a new volunteer — the XAML's scrollable card just
-            // renders empty, no error needed.
         }
 
-        /// <summary>
-        /// Populates the "Current Rescue Operations" card: every operation
-        /// this volunteer is part of, one row per operation, newest first.
-        /// Replaces the old single aggregated "breakdown string" approach
-        /// now that the card scrolls — a real list is more useful than a
-        /// summary once you can see more than one row at a time.
-        /// </summary>
         public void InitializeCurrentRescueOperationsCardList()
         {
             CurrentRescueOperations.Clear();
-            string safeUsername = "'" + rescue_login_ViewModel.CurrentUser.Username.Replace("'", "''") + "'";
 
-            string query = $@"
+            if (rescue_login_ViewModel.CurrentUser == null ||
+                string.IsNullOrWhiteSpace(rescue_login_ViewModel.CurrentUser.Username))
+            {
+                return;
+            }
+
+            string query = @"
                 SELECT DISTINCT
                     ro.Operation_ID,
                     ro.Rescue_Status,
                     l.Barangay + ', ' + l.City AS Location,
                     ro.Date_Started
                 FROM [Rescue Operation] ro
-                JOIN [Operation Assignment] oa ON oa.Operation_ID = ro.Operation_ID
-                JOIN [Volunteer] v ON oa.Volunteer_ID = v.Volunteer_ID
-                JOIN [Users] u ON v.User_ID = u.User_ID
-                JOIN [Location] l ON ro.Location_ID = l.Location_ID
-                WHERE u.Username = {safeUsername}
-                ORDER BY ro.Date_Started DESC";
+                JOIN [Operation Assignment] oa
+                    ON oa.Operation_ID = ro.Operation_ID
+                JOIN [Volunteer] v
+                    ON oa.Volunteer_ID = v.Volunteer_ID
+                JOIN [Users] u
+                    ON v.User_ID = u.User_ID
+                JOIN [Location] l
+                    ON ro.Location_ID = l.Location_ID
+                WHERE u.Username = @Username
+                ORDER BY ro.Date_Started DESC;";
 
-            DatabaseManager.GetTableDataWithCustomizedQuery(query, out DataTable data);
-
-            foreach (DataRow row in data.Rows)
+            SqlParameter[] parameters =
             {
-                CurrentRescueOperations.Add(new CurrentRescueOperationSummary(
-                    row["Operation_ID"].ToString(),
-                    row["Rescue_Status"].ToString(),
-                    row["Location"].ToString(),
-                    row["Date_Started"] == DBNull.Value ? "" : Convert.ToDateTime(row["Date_Started"]).ToString("yyyy-MM-dd")));
+                new SqlParameter("@Username", rescue_login_ViewModel.CurrentUser.Username)
+            };
+
+            if (DatabaseManager.GetTableData(query, parameters, out DataTable data))
+            {
+                foreach (DataRow row in data.Rows)
+                {
+                    CurrentRescueOperations.Add(new CurrentRescueOperationSummary(
+                        row["Operation_ID"].ToString(),
+                        row["Rescue_Status"].ToString(),
+                        row["Location"].ToString(),
+                        row["Date_Started"] == DBNull.Value
+                            ? ""
+                            : Convert.ToDateTime(row["Date_Started"]).ToString("yyyy-MM-dd")));
+                }
             }
-            // Empty list = no operations yet — normal, not an error.
         }
 
-        /// <summary>
-        /// This method handles the logout functionality by creating a new instance of the MainWindow, setting its content to the rescue_login_view, closing the current main window, and showing the new main window. This effectively logs the user out and returns them to the login screen.
-        /// </summary>
         public void Logout()
         {
-            // Clears the cached Google credential so the next "Sign in with
-            // Google" click (on either portal) re-prompts instead of
-            // silently reusing this session's Google account.
             _ = GoogleAuthHelper.SignOutAsync();
 
+            rescue_login_ViewModel.CurrentUser = new UserModel();
+
+            Window currentWindow = Application.Current.MainWindow;
+
             var mainWindow = new MainWindow();
-            mainWindow.Content = new View.rescue_login_view();
-            Application.Current.MainWindow.Close();
-            mainWindow.Show();
+            mainWindow.Content = new rescue_login_view();
+
             Application.Current.MainWindow = mainWindow;
+            mainWindow.Show();
+
+            currentWindow?.Close();
         }
     }
 }

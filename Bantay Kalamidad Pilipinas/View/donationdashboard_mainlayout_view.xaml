@@ -9,7 +9,7 @@
     <Viewbox Stretch="Uniform">
         <Grid Width="1000"
               Height="700"
-              Background="#EDEDED">
+              Background="White">
 
             <Grid Margin="18">
                 <Grid.RowDefinitions>
@@ -22,7 +22,7 @@
                       Background="White">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="275"/>
+                        <ColumnDefinition Width="330"/>
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Orientation="Horizontal"
@@ -44,7 +44,7 @@
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
                                 Margin="0,0,10,0">
-                        <TextBlock Text="Welcome, Donor!"
+                        <TextBlock Text="{Binding WelcomeText}"
                                    FontSize="18"
                                    Style="{StaticResource LoginHeader}"
                                    Margin="0,0,16,0"/>
@@ -63,7 +63,6 @@
                         Background="#07314E">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="58"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
@@ -73,16 +72,6 @@
                         </Grid.ColumnDefinitions>
 
                         <Button Grid.Column="0"
-                                Background="{StaticResource DonorBorder}"
-                                BorderThickness="0"
-                                Cursor="Hand">
-                            <Viewbox Width="31" Height="31">
-                                <Path Data="M25,5 L8,16 L25,27 M8,16 L31,16"
-                                      Style="{StaticResource Path3}"/>
-                            </Viewbox>
-                        </Button>
-
-                        <Button Grid.Column="1"
                                 Style="{StaticResource Menubtn}"
                                 Background="{StaticResource DonorBorder}"
                                 Command="{Binding ShowMyDonationsCommand}">
@@ -91,7 +80,7 @@
                                        FontWeight="Black"/>
                         </Button>
 
-                        <Grid Grid.Column="2">
+                        <Grid Grid.Column="1">
                             <Button Style="{StaticResource Menubtn}"
                                     Background="{StaticResource DonorBorder}"
                                     Command="{Binding TogglePledgeMenuCommand}">
@@ -117,6 +106,7 @@
                                                 BorderThickness="0"
                                                 Cursor="Hand"
                                                 Command="{Binding ShowMakePledgeCommand}"/>
+
                                         <Button Content="My Pledges"
                                                 Height="30"
                                                 Background="#D9D9D9"
@@ -130,7 +120,7 @@
                             </Popup>
                         </Grid>
 
-                        <Button Grid.Column="3"
+                        <Button Grid.Column="2"
                                 Style="{StaticResource Menubtn}"
                                 Background="{StaticResource DonorBorder}"
                                 Command="{Binding ShowPickupDeliveryCommand}">
@@ -138,7 +128,7 @@
                                        FontWeight="Black"/>
                         </Button>
 
-                        <Button Grid.Column="4"
+                        <Button Grid.Column="3"
                                 Style="{StaticResource Menubtn}"
                                 Background="{StaticResource DonorBorder}"
                                 Command="{Binding ShowAboutUsCommand}">
@@ -146,7 +136,7 @@
                                        FontWeight="Black"/>
                         </Button>
 
-                        <Button Grid.Column="5"
+                        <Button Grid.Column="4"
                                 Style="{StaticResource Menubtn}"
                                 Background="{StaticResource DonorBorder}"
                                 Command="{Binding ShowContactUsCommand}">
@@ -154,7 +144,7 @@
                                        FontWeight="Black"/>
                         </Button>
 
-                        <Button Grid.Column="6"
+                        <Button Grid.Column="5"
                                 Background="{StaticResource DonorBorder}"
                                 BorderThickness="0"
                                 Cursor="Hand"

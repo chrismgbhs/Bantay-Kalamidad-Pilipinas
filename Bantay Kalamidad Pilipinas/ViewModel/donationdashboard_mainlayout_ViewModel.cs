@@ -8,13 +8,24 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Bantay_Kalamidad_Pilipinas.View;
 
 namespace Bantay_Kalamidad_Pilipinas.ViewModel
 {
     internal class donationdashboard_mainlayout_ViewModel : ObservableObject
     {
-        private int _TotalDonationsCount;
+        private string _WelcomeText = "Welcome, Donor!";
+        public string WelcomeText
+        {
+            get { return _WelcomeText; }
+            set
+            {
+                _WelcomeText = value;
+                OnPropertyChanged(nameof(WelcomeText));
+            }
+        }
 
+        private int _TotalDonationsCount;
         public int TotalDonationsCount
         {
             get { return _TotalDonationsCount; }
@@ -22,7 +33,6 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         }
 
         private int _ActivePledgesCount;
-
         public int ActivePledgesCount
         {
             get { return _ActivePledgesCount; }
@@ -30,26 +40,11 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         }
 
         private int _ScheduledPickupsCount;
-
         public int ScheduledPickupsCount
         {
             get { return _ScheduledPickupsCount; }
             set { _ScheduledPickupsCount = value; OnPropertyChanged(nameof(ScheduledPickupsCount)); }
         }
-
-        // ------------------------------------------------------------------
-        // The properties below back the dashboard cards in
-        // donationdashboard_mainlayout_view.xaml. The XAML was written
-        // against these exact property names, but the ViewModel never
-        // defined them — WPF bindings to a missing property fail silently
-        // (no exception, the TextBlock just renders blank), which is why
-        // "My Total Donations", "Scheduled Pickups", and most of "Active
-        // Pledges" never showed anything even though TotalDonationsCount
-        // and ScheduledPickupsCount (above) were being computed correctly
-        // the whole time. Only ActivePledgesCount happened to match an
-        // existing XAML binding, which is why that was the one number that
-        // ever appeared.
-        // ------------------------------------------------------------------
 
         private int _TotalItemCount;
         public int TotalItemCount
@@ -100,12 +95,6 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             set { _PickupLocation = value; OnPropertyChanged(nameof(PickupLocation)); }
         }
 
-        // "Scheduled Deliveries" card properties. There is currently no FK
-        // path in the schema from a donor's Donation to a Delivery Schedule
-        // row (Delivery Schedule hangs off Distribution, the outgoing side
-        // — see Day 1 notes on GetDeliveryStatusByUsername). These three
-        // stay at a placeholder value honestly instead of querying a path
-        // that doesn't exist yet.
         private string _NextDropOffDateTime = "Not yet scheduled";
         public string NextDropOffDateTime
         {
@@ -127,14 +116,6 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             set { _DeliveryStatus = value; OnPropertyChanged(nameof(DeliveryStatus)); }
         }
 
-        public ICommand ShowMyDonationsCommand { get; set; }
-        public ICommand TogglePledgeMenuCommand { get; set; }
-        public ICommand ShowMyPledgesCommand { get; set; }
-        public ICommand ShowPickupDeliveryCommand { get; set; }
-        public ICommand ShowAboutUsCommand { get; set; }
-        public ICommand ShowContactUsCommand { get; set; }
-        public ICommand ShowMakePledgeCommand { get; set; }
-        public ICommand LogoutCommand { get; }
         private object _currentDonationDashboardView;
         public object CurrentDonationDashboardView
         {
@@ -153,40 +134,36 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             }
         }
 
+        public ICommand ShowMyDonationsCommand { get; set; }
+        public ICommand TogglePledgeMenuCommand { get; set; }
+        public ICommand ShowMyPledgesCommand { get; set; }
+        public ICommand ShowPickupDeliveryCommand { get; set; }
+        public ICommand ShowAboutUsCommand { get; set; }
+        public ICommand ShowContactUsCommand { get; set; }
+        public ICommand ShowMakePledgeCommand { get; set; }
+        public ICommand LogoutCommand { get; }
+
+        public static event Action DonationDataChanged;
 
         public donationdashboard_mainlayout_ViewModel()
         {
-            ShowMyDonationsCommand = new RelayCommand(() => CurrentDonationDashboardView = new View.donationdashboard_MyDonations_view());
-            ShowMyPledgesCommand = new RelayCommand(() => CurrentDonationDashboardView = new View.donationdashboard_MyPledges_view());
-            ShowPickupDeliveryCommand = new RelayCommand(() => CurrentDonationDashboardView = new View.donationdashboard_Pickup_Delivery_view());
-            ShowAboutUsCommand = new RelayCommand(() => CurrentDonationDashboardView = new View.donationdashboard_AboutUs_view());
-            ShowContactUsCommand = new RelayCommand(() => CurrentDonationDashboardView = new View.donationdashboard_ContactUs_view());
-            ShowMakePledgeCommand = new RelayCommand(() => CurrentDonationDashboardView = new View.donationdashboard_MakeAPledge_view());
+            ShowMyDonationsCommand = new RelayCommand(() => CurrentDonationDashboardView = new donationdashboard_MyDonations_view());
+            ShowMyPledgesCommand = new RelayCommand(() => CurrentDonationDashboardView = new donationdashboard_MyPledges_view());
+            ShowPickupDeliveryCommand = new RelayCommand(() => CurrentDonationDashboardView = new donationdashboard_Pickup_Delivery_view());
+            ShowAboutUsCommand = new RelayCommand(() => CurrentDonationDashboardView = new donationdashboard_AboutUs_view());
+            ShowContactUsCommand = new RelayCommand(() => CurrentDonationDashboardView = new donationdashboard_ContactUs_view());
+            ShowMakePledgeCommand = new RelayCommand(() => CurrentDonationDashboardView = new donationdashboard_MakeAPledge_view());
             TogglePledgeMenuCommand = new RelayCommand(TogglePledgeMenu);
             LogoutCommand = new RelayCommand(Logout);
 
-            // Child ViewModels (MyDonations, MyPledges, MakeAPledge, Pickup&Delivery) are
-            // created fresh by the commands above and have no reference back to this layout
-            // VM. Without this, the dashboard counters go stale after a pledge is submitted
-            // or a donation/pickup status changes elsewhere, until the user logs out and
-            // back in. Subscribing to a static event lets any donation-side ViewModel signal
-            // "something changed" without needing a direct reference to this instance.
+            CurrentDonationDashboardView = new donationdashboard_MyDonations_view();
+
             DonationDataChanged += OnDonationDataChanged;
 
+            InitializeWelcomeText();
             RefreshCounters();
         }
 
-        /// <summary>
-        /// Raised by any donation-side ViewModel after a write that should be reflected
-        /// in the dashboard counters (e.g. submitting a pledge, a pickup being scheduled).
-        /// </summary>
-        public static event Action DonationDataChanged;
-
-        /// <summary>
-        /// Call this from anywhere on the donation side after a successful write
-        /// (e.g. DonationDataChanged?.Invoke(); inside SubmitPledge()) to refresh
-        /// every open dashboard's counters.
-        /// </summary>
         public static void NotifyDonationDataChanged()
         {
             DonationDataChanged?.Invoke();
@@ -194,21 +171,67 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
 
         private void OnDonationDataChanged()
         {
+            InitializeWelcomeText();
             RefreshCounters();
         }
 
-        /// <summary>
-        /// Re-runs all three counter queries. Safe to call multiple times.
-        /// No-ops if there is no logged-in donor yet (defensive — guards against
-        /// the static event firing before CurrentUser is populated).
-        /// </summary>
+        public void InitializeWelcomeText()
+        {
+            try
+            {
+                if (donation_login_ViewModel.CurrentUser == null ||
+                    string.IsNullOrWhiteSpace(donation_login_ViewModel.CurrentUser.Username))
+                {
+                    WelcomeText = "Welcome, Donor!";
+                    return;
+                }
+
+                string username = donation_login_ViewModel.CurrentUser.Username;
+
+                string query = @"
+                    SELECT TOP 1
+                        d.Donor_Name
+                    FROM [Users] u
+                    LEFT JOIN [Donor] d
+                        ON u.User_ID = d.User_ID
+                    WHERE u.Username = @Username;";
+
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@Username", username)
+                };
+
+                if (DatabaseManager.GetTableData(query, parameters, out DataTable data) &&
+                    data.Rows.Count > 0 &&
+                    data.Rows[0]["Donor_Name"] != DBNull.Value)
+                {
+                    string donorName = data.Rows[0]["Donor_Name"].ToString();
+
+                    if (!string.IsNullOrWhiteSpace(donorName))
+                    {
+                        WelcomeText = "Welcome, " + donorName + "!";
+                        return;
+                    }
+                }
+
+                WelcomeText = "Welcome, " + username + "!";
+            }
+            catch
+            {
+                WelcomeText = "Welcome, Donor!";
+            }
+        }
+
         public void RefreshCounters()
         {
-            if (donation_login_ViewModel.CurrentUser == null || string.IsNullOrWhiteSpace(donation_login_ViewModel.CurrentUser.Username))
+            if (donation_login_ViewModel.CurrentUser == null ||
+                string.IsNullOrWhiteSpace(donation_login_ViewModel.CurrentUser.Username))
             {
+                InitializeEmptyDashboardCards();
                 return;
             }
 
+            InitializeWelcomeText();
             InitializeTotalDonationsCount();
             InitializeActivePledgesCount();
             InitializeScheduledPickupsCount();
@@ -217,38 +240,54 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             InitializePickupCardDetails();
         }
 
+        private void InitializeEmptyDashboardCards()
+        {
+            TotalDonationsCount = 0;
+            ActivePledgesCount = 0;
+            ScheduledPickupsCount = 0;
+
+            TotalItemCount = 0;
+            LastDonationDate = "No donations yet";
+            ImpactSummary = "Your contributions will appear here once a donation is recorded.";
+
+            NextPendingItem = "None pending";
+            PledgeCompletionRate = "No pledges yet";
+
+            NextPickupDateTime = "None scheduled";
+            PickupLocation = "Not tracked yet";
+
+            NextDropOffDateTime = "Not yet scheduled";
+            DestinationHub = "—";
+            DeliveryStatus = "—";
+        }
+
         public void Logout()
         {
             DonationDataChanged -= OnDonationDataChanged;
 
-            // Clears the cached Google credential so the next "Sign in with
-            // Google" click (on either portal) re-prompts instead of
-            // silently reusing this session's Google account. Fire-and-forget
-            // is fine here — it's a fast local file delete, and even if it's
-            // still finishing when the new window appears, the worst case is
-            // a fraction-of-a-second-stale cache, not a broken logout.
             _ = GoogleAuthHelper.SignOutAsync();
 
+            donation_login_ViewModel.CurrentUser = new UserModel();
+
+            Window currentWindow = Application.Current.MainWindow;
+
             var mainWindow = new MainWindow();
-            mainWindow.Content = new View.donation_login_view();
-            Application.Current.MainWindow.Close();
-            mainWindow.Show();
+            mainWindow.Content = new donation_login_view();
+
             Application.Current.MainWindow = mainWindow;
+            mainWindow.Show();
+
+            currentWindow?.Close();
         }
 
-        /// <summary>
-        /// This method initializes the TotalDonationsCount property by querying the database for the total count of donations made by the current user. It retrieves the count and assigns it to the TotalDonationsCount property.
-        /// </summary>
         public void InitializeTotalDonationsCount()
         {
             string query = "SELECT * FROM dbo.TotalDonationsCount(@Username)";
-            var parameters = new[] { new SqlParameter("@Username", donation_login_ViewModel.CurrentUser.Username) };
+            var parameters = new[]
+            {
+                new SqlParameter("@Username", donation_login_ViewModel.CurrentUser.Username)
+            };
 
-            // GetTableData returns false both on a real DB error AND when the
-            // query legitimately produces zero rows (see DatabaseManager.GetTableData,
-            // which returns data.Rows.Count > 0). A donor with zero donations is a
-            // normal, expected state — not an error — so we don't show a MessageBox
-            // here; TotalDonationsCount correctly stays at 0.
             DatabaseManager.GetTableData(query, parameters, out DataTable data);
 
             TotalDonationsCount = data.Rows.Count > 0
@@ -256,13 +295,13 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 : 0;
         }
 
-        /// <summary>
-        /// This method initializes the ActivePledgesCount property by querying the database for the count of active pledges made by the current user.
-        /// </summary>
         public void InitializeActivePledgesCount()
         {
             string query = "SELECT * FROM dbo.GetActivePledgesCount(@Username)";
-            var parameters = new[] { new SqlParameter("@Username", donation_login_ViewModel.CurrentUser.Username) };
+            var parameters = new[]
+            {
+                new SqlParameter("@Username", donation_login_ViewModel.CurrentUser.Username)
+            };
 
             DatabaseManager.GetTableData(query, parameters, out DataTable resultTable);
 
@@ -271,13 +310,13 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 : 0;
         }
 
-        /// <summary>
-        /// This method initializes the ScheduledPickupsCount property by querying the database for the count of scheduled pickups for the current user.
-        /// </summary>
         public void InitializeScheduledPickupsCount()
         {
             string query = "SELECT * FROM dbo.GetScheduledPickupCountsByUsername(@Username)";
-            var parameters = new[] { new SqlParameter("@Username", donation_login_ViewModel.CurrentUser.Username) };
+            var parameters = new[]
+            {
+                new SqlParameter("@Username", donation_login_ViewModel.CurrentUser.Username)
+            };
 
             DatabaseManager.GetTableData(query, parameters, out DataTable opsTable);
 
@@ -286,11 +325,6 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 : 0;
         }
 
-        /// <summary>
-        /// Populates the "My Total Donations" card: total donated item count
-        /// across all of this donor's Donation rows, the date of their most
-        /// recent donation, and a one-line impact summary string.
-        /// </summary>
         public void InitializeDonationCardDetails()
         {
             string safeUsername = "'" + donation_login_ViewModel.CurrentUser.Username.Replace("'", "''") + "'";
@@ -321,11 +355,6 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             }
         }
 
-        /// <summary>
-        /// Populates the "Active Pledges" card's two extra fields: the next
-        /// pending pledge item (soonest expected delivery date among
-        /// 'Pending' pledges) and a fulfilled-vs-total completion rate.
-        /// </summary>
         public void InitializePledgeCardDetails()
         {
             string safeUsername = "'" + donation_login_ViewModel.CurrentUser.Username.Replace("'", "''") + "'";
@@ -356,12 +385,14 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
 
             DatabaseManager.GetTableDataWithCustomizedQuery(completionQuery, out DataTable completionData);
 
-            if (completionData.Rows.Count > 0 && Convert.ToInt32(completionData.Rows[0]["TotalPledges"]) > 0)
+            if (completionData.Rows.Count > 0 &&
+                Convert.ToInt32(completionData.Rows[0]["TotalPledges"]) > 0)
             {
                 int total = Convert.ToInt32(completionData.Rows[0]["TotalPledges"]);
                 int fulfilled = completionData.Rows[0]["FulfilledPledges"] == DBNull.Value
                     ? 0
                     : Convert.ToInt32(completionData.Rows[0]["FulfilledPledges"]);
+
                 double rate = (double)fulfilled / total * 100.0;
                 PledgeCompletionRate = $"{rate:0}% ({fulfilled}/{total})";
             }
@@ -371,12 +402,6 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             }
         }
 
-        /// <summary>
-        /// Populates the "Scheduled Pickups" card: date/time of the donor's
-        /// soonest pending pickup. Pickup Location is left as a placeholder
-        /// — Pickup Schedule has no Location/Center column in the current
-        /// schema, so there is nothing real to query for it yet.
-        /// </summary>
         public void InitializePickupCardDetails()
         {
             string safeUsername = "'" + donation_login_ViewModel.CurrentUser.Username.Replace("'", "''") + "'";
@@ -396,9 +421,6 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 ? Convert.ToDateTime(data.Rows[0]["Pickup_Date"]).ToString("yyyy-MM-dd")
                 : "None scheduled";
 
-            // Pickup Schedule has no location column in the current schema —
-            // there is nothing real to show here yet. Left honest rather than
-            // fabricated.
             PickupLocation = "Not tracked yet";
         }
 
