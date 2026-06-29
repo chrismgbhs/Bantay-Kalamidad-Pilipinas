@@ -101,29 +101,7 @@
                                     Margin="0,48,0,0"
                                     Command="{Binding LoginCommand}"/>
 
-                            <Button Style="{StaticResource Googlebtn}"
-                                    Margin="0,30,0,0"
-                                    Command="{Binding GoogleSignInCommand}">
-                                <Button.Template>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border Background="{TemplateBinding Background}"
-                                                BorderBrush="{TemplateBinding BorderBrush}"
-                                                BorderThickness="{TemplateBinding BorderThickness}"
-                                                CornerRadius="18">
-                                            <StackPanel Orientation="Horizontal"
-                                                        HorizontalAlignment="Center"
-                                                        VerticalAlignment="Center">
-                                                <Image Source="/Images/website icons (2).png"
-                                                       Width="20"
-                                                       Margin="0,0,8,0"/>
-                                                <TextBlock Text="Sign in with Google"
-                                                           Style="{StaticResource Google}"/>
-                                            </StackPanel>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Button.Template>
-                            </Button>
-
+           
                         </StackPanel>
 
                     </Grid>

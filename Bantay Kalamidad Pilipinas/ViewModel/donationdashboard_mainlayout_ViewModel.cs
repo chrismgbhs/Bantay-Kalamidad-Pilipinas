@@ -1,19 +1,24 @@
 ﻿using Bantay_Kalamidad_Pilipinas.Model;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using Bantay_Kalamidad_Pilipinas.View;
 
 namespace Bantay_Kalamidad_Pilipinas.ViewModel
 {
     internal class donationdashboard_mainlayout_ViewModel : ObservableObject
     {
+        private const string MyDonationsTab = "MyDonations";
+        private const string PledgeTab = "Pledge";
+        private const string PickupDeliveryTab = "PickupDelivery";
+        private const string AboutUsTab = "AboutUs";
+        private const string ContactUsTab = "ContactUs";
+
+        private string _activeTab;
+
         private string _WelcomeText = "Welcome, Donor!";
         public string WelcomeText
         {
@@ -23,6 +28,56 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 _WelcomeText = value;
                 OnPropertyChanged(nameof(WelcomeText));
             }
+        }
+
+        public TextDecorationCollection MyDonationsUnderline
+        {
+            get { return _activeTab == MyDonationsTab ? TextDecorations.Underline : null; }
+        }
+
+        public TextDecorationCollection PledgeUnderline
+        {
+            get { return _activeTab == PledgeTab ? TextDecorations.Underline : null; }
+        }
+
+        public TextDecorationCollection PickupDeliveryUnderline
+        {
+            get { return _activeTab == PickupDeliveryTab ? TextDecorations.Underline : null; }
+        }
+
+        public TextDecorationCollection AboutUsUnderline
+        {
+            get { return _activeTab == AboutUsTab ? TextDecorations.Underline : null; }
+        }
+
+        public TextDecorationCollection ContactUsUnderline
+        {
+            get { return _activeTab == ContactUsTab ? TextDecorations.Underline : null; }
+        }
+
+        public FontWeight MyDonationsFontWeight
+        {
+            get { return _activeTab == MyDonationsTab ? FontWeights.Black : FontWeights.Bold; }
+        }
+
+        public FontWeight PledgeFontWeight
+        {
+            get { return _activeTab == PledgeTab ? FontWeights.Black : FontWeights.Bold; }
+        }
+
+        public FontWeight PickupDeliveryFontWeight
+        {
+            get { return _activeTab == PickupDeliveryTab ? FontWeights.Black : FontWeights.Bold; }
+        }
+
+        public FontWeight AboutUsFontWeight
+        {
+            get { return _activeTab == AboutUsTab ? FontWeights.Black : FontWeights.Bold; }
+        }
+
+        public FontWeight ContactUsFontWeight
+        {
+            get { return _activeTab == ContactUsTab ? FontWeights.Black : FontWeights.Bold; }
         }
 
         private int _TotalDonationsCount;
@@ -147,21 +202,80 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
 
         public donationdashboard_mainlayout_ViewModel()
         {
-            ShowMyDonationsCommand = new RelayCommand(() => CurrentDonationDashboardView = new donationdashboard_MyDonations_view());
-            ShowMyPledgesCommand = new RelayCommand(() => CurrentDonationDashboardView = new donationdashboard_MyPledges_view());
-            ShowPickupDeliveryCommand = new RelayCommand(() => CurrentDonationDashboardView = new donationdashboard_Pickup_Delivery_view());
-            ShowAboutUsCommand = new RelayCommand(() => CurrentDonationDashboardView = new donationdashboard_AboutUs_view());
-            ShowContactUsCommand = new RelayCommand(() => CurrentDonationDashboardView = new donationdashboard_ContactUs_view());
-            ShowMakePledgeCommand = new RelayCommand(() => CurrentDonationDashboardView = new donationdashboard_MakeAPledge_view());
+            ShowMyDonationsCommand = new RelayCommand(ShowMyDonations);
+            ShowMyPledgesCommand = new RelayCommand(ShowMyPledges);
+            ShowPickupDeliveryCommand = new RelayCommand(ShowPickupDelivery);
+            ShowAboutUsCommand = new RelayCommand(ShowAboutUs);
+            ShowContactUsCommand = new RelayCommand(ShowContactUs);
+            ShowMakePledgeCommand = new RelayCommand(ShowMakePledge);
             TogglePledgeMenuCommand = new RelayCommand(TogglePledgeMenu);
             LogoutCommand = new RelayCommand(Logout);
 
-            CurrentDonationDashboardView = new donationdashboard_MyDonations_view();
-
             DonationDataChanged += OnDonationDataChanged;
+
+            ShowMyDonations();
 
             InitializeWelcomeText();
             RefreshCounters();
+        }
+
+        private void SetActiveTab(string tabName)
+        {
+            _activeTab = tabName;
+
+            OnPropertyChanged(nameof(MyDonationsUnderline));
+            OnPropertyChanged(nameof(PledgeUnderline));
+            OnPropertyChanged(nameof(PickupDeliveryUnderline));
+            OnPropertyChanged(nameof(AboutUsUnderline));
+            OnPropertyChanged(nameof(ContactUsUnderline));
+
+            OnPropertyChanged(nameof(MyDonationsFontWeight));
+            OnPropertyChanged(nameof(PledgeFontWeight));
+            OnPropertyChanged(nameof(PickupDeliveryFontWeight));
+            OnPropertyChanged(nameof(AboutUsFontWeight));
+            OnPropertyChanged(nameof(ContactUsFontWeight));
+        }
+
+        private void ShowMyDonations()
+        {
+            CurrentDonationDashboardView = new donationdashboard_MyDonations_view();
+            IsPledgeMenuOpen = false;
+            SetActiveTab(MyDonationsTab);
+        }
+
+        private void ShowMyPledges()
+        {
+            CurrentDonationDashboardView = new donationdashboard_MyPledges_view();
+            IsPledgeMenuOpen = false;
+            SetActiveTab(PledgeTab);
+        }
+
+        private void ShowMakePledge()
+        {
+            CurrentDonationDashboardView = new donationdashboard_MakeAPledge_view();
+            IsPledgeMenuOpen = false;
+            SetActiveTab(PledgeTab);
+        }
+
+        private void ShowPickupDelivery()
+        {
+            CurrentDonationDashboardView = new donationdashboard_Pickup_Delivery_view();
+            IsPledgeMenuOpen = false;
+            SetActiveTab(PickupDeliveryTab);
+        }
+
+        private void ShowAboutUs()
+        {
+            CurrentDonationDashboardView = new donationdashboard_AboutUs_view();
+            IsPledgeMenuOpen = false;
+            SetActiveTab(AboutUsTab);
+        }
+
+        private void ShowContactUs()
+        {
+            CurrentDonationDashboardView = new donationdashboard_ContactUs_view();
+            IsPledgeMenuOpen = false;
+            SetActiveTab(ContactUsTab);
         }
 
         public static void NotifyDonationDataChanged()

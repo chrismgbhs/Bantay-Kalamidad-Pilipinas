@@ -1,20 +1,24 @@
 ﻿using Bantay_Kalamidad_Pilipinas.Model;
+using Bantay_Kalamidad_Pilipinas.View;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Bantay_Kalamidad_Pilipinas.View;
+using System.Windows.Media;
 
 namespace Bantay_Kalamidad_Pilipinas.ViewModel
 {
     internal class rescue_dashboard_mainlayout_ViewModel : ObservableObject
     {
+        private const string MyRescueOperationsTab = "MyRescueOperations";
+        private const string MyTeamTab = "MyTeam";
+        private const string RescueLocationsTab = "RescueLocations";
+        private const string AnnouncementsTab = "Announcements";
+
+        private string _activeTab;
         private string _welcomeText;
         private string _ActiveDisasterEvent;
         private int _AssignedOperationsCount;
@@ -32,6 +36,46 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
                 _welcomeText = value;
                 OnPropertyChanged(nameof(WelcomeText));
             }
+        }
+
+        public TextDecorationCollection MyRescueOperationsUnderline
+        {
+            get { return _activeTab == MyRescueOperationsTab ? TextDecorations.Underline : null; }
+        }
+
+        public TextDecorationCollection MyTeamUnderline
+        {
+            get { return _activeTab == MyTeamTab ? TextDecorations.Underline : null; }
+        }
+
+        public TextDecorationCollection RescueLocationsUnderline
+        {
+            get { return _activeTab == RescueLocationsTab ? TextDecorations.Underline : null; }
+        }
+
+        public TextDecorationCollection AnnouncementsUnderline
+        {
+            get { return _activeTab == AnnouncementsTab ? TextDecorations.Underline : null; }
+        }
+
+        public FontWeight MyRescueOperationsFontWeight
+        {
+            get { return _activeTab == MyRescueOperationsTab ? FontWeights.Black : FontWeights.Bold; }
+        }
+
+        public FontWeight MyTeamFontWeight
+        {
+            get { return _activeTab == MyTeamTab ? FontWeights.Black : FontWeights.Bold; }
+        }
+
+        public FontWeight RescueLocationsFontWeight
+        {
+            get { return _activeTab == RescueLocationsTab ? FontWeights.Black : FontWeights.Bold; }
+        }
+
+        public FontWeight AnnouncementsFontWeight
+        {
+            get { return _activeTab == AnnouncementsTab ? FontWeights.Black : FontWeights.Bold; }
         }
 
         public int CurrentOperationsCount
@@ -125,30 +169,49 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             AssignedOperations = new ObservableCollection<AssignedOperation>();
             CurrentRescueOperations = new ObservableCollection<CurrentRescueOperationSummary>();
 
-            CurrentRescueDashboardView = new rescuedashboard_MyRescueOperations_view();
+            ShowMyRescueOperations();
 
             InitializeWelcomeText();
             RefreshDashboard();
         }
 
+        private void SetActiveTab(string tabName)
+        {
+            _activeTab = tabName;
+
+            OnPropertyChanged(nameof(MyRescueOperationsUnderline));
+            OnPropertyChanged(nameof(MyTeamUnderline));
+            OnPropertyChanged(nameof(RescueLocationsUnderline));
+            OnPropertyChanged(nameof(AnnouncementsUnderline));
+
+            OnPropertyChanged(nameof(MyRescueOperationsFontWeight));
+            OnPropertyChanged(nameof(MyTeamFontWeight));
+            OnPropertyChanged(nameof(RescueLocationsFontWeight));
+            OnPropertyChanged(nameof(AnnouncementsFontWeight));
+        }
+
         private void ShowMyRescueOperations()
         {
             CurrentRescueDashboardView = new rescuedashboard_MyRescueOperations_view();
+            SetActiveTab(MyRescueOperationsTab);
         }
 
         private void ShowMyTeam()
         {
             CurrentRescueDashboardView = new rescuedashboard_MyTeam_view();
+            SetActiveTab(MyTeamTab);
         }
 
         private void ShowRescueLocations()
         {
             CurrentRescueDashboardView = new rescuedashboard_RescueLocations_view();
+            SetActiveTab(RescueLocationsTab);
         }
 
         private void ShowAnnouncements()
         {
             CurrentRescueDashboardView = new rescuedashboard_Announcements_view();
+            SetActiveTab(AnnouncementsTab);
         }
 
         public void RefreshDashboard()

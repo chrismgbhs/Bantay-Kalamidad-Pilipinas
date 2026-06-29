@@ -2,8 +2,9 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             Width="700"
-             Height="430"
+                          VerticalAlignment="Stretch"
+             MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ContentControl}}"
+             MinHeight="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=ContentControl}}"
              Background="Transparent">
 
     <UserControl.Resources>
@@ -39,7 +40,10 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid Background="#2C2C2C">
+    <Grid Background="#2C2C2C"
+          HorizontalAlignment="Stretch"
+      VerticalAlignment="Stretch"
+          >
 
         <Grid.RowDefinitions>
             <RowDefinition Height="34"/>

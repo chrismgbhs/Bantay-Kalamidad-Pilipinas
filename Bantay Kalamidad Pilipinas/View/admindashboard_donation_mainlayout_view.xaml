@@ -67,7 +67,6 @@
                   Margin="14,0,14,0">
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="72"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -78,56 +77,60 @@
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="0"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Cursor="Hand">
-                    <Viewbox Width="34" Height="34">
-                        <Canvas Width="34" Height="34">
-                            <Path Data="M21,8 L12,17 L21,26"
-                                  Style="{StaticResource Path3}"/>
-                            <Path Data="M13,17 L29,17"
-                                  Style="{StaticResource Path4}"/>
-                        </Canvas>
-                    </Viewbox>
+                        Background="{StaticResource DonorBorder}"
+                        Style="{StaticResource Menubtn}"
+                        Command="{Binding ShowDonationsCommand}">
+                    <TextBlock Text="Donations"
+                               TextDecorations="{Binding DonationsUnderline}"
+                               FontWeight="{Binding DonationsFontWeight}"/>
                 </Button>
 
                 <Button Grid.Column="1"
-                        Content="Donations"
                         Background="{StaticResource DonorBorder}"
                         Style="{StaticResource Menubtn}"
-                        Command="{Binding ShowDonationsCommand}"/>
+                        Command="{Binding ShowPledgesCommand}">
+                    <TextBlock Text="Pledges"
+                               TextDecorations="{Binding PledgesUnderline}"
+                               FontWeight="{Binding PledgesFontWeight}"/>
+                </Button>
 
                 <Button Grid.Column="2"
-                        Content="Pledges"
                         Background="{StaticResource DonorBorder}"
                         Style="{StaticResource Menubtn}"
-                        Command="{Binding ShowPledgesCommand}"/>
+                        Command="{Binding ShowLogisticsCommand}">
+                    <TextBlock Text="Logistics"
+                               TextDecorations="{Binding LogisticsUnderline}"
+                               FontWeight="{Binding LogisticsFontWeight}"/>
+                </Button>
 
                 <Button Grid.Column="3"
-                        Content="Logistics"
                         Background="{StaticResource DonorBorder}"
                         Style="{StaticResource Menubtn}"
-                        Command="{Binding ShowLogisticsCommand}"/>
+                        Command="{Binding ShowInventoryCommand}">
+                    <TextBlock Text="Inventory"
+                               TextDecorations="{Binding InventoryUnderline}"
+                               FontWeight="{Binding InventoryFontWeight}"/>
+                </Button>
 
                 <Button Grid.Column="4"
-                        Content="Inventory"
                         Background="{StaticResource DonorBorder}"
                         Style="{StaticResource Menubtn}"
-                        Command="{Binding ShowInventoryCommand}"/>
+                        Command="{Binding ShowDistributionCommand}">
+                    <TextBlock Text="Distribution"
+                               TextDecorations="{Binding DistributionUnderline}"
+                               FontWeight="{Binding DistributionFontWeight}"/>
+                </Button>
 
                 <Button Grid.Column="5"
-                        Content="Distribution"
                         Background="{StaticResource DonorBorder}"
                         Style="{StaticResource Menubtn}"
-                        Command="{Binding ShowDistributionCommand}"/>
+                        Command="{Binding ShowWasteCommand}">
+                    <TextBlock Text="Waste"
+                               TextDecorations="{Binding WasteUnderline}"
+                               FontWeight="{Binding WasteFontWeight}"/>
+                </Button>
 
                 <Button Grid.Column="6"
-                        Content="Waste"
-                        Background="{StaticResource DonorBorder}"
-                        Style="{StaticResource Menubtn}"
-                        Command="{Binding ShowWasteCommand}"/>
-
-                <Button Grid.Column="7"
                         Background="Transparent"
                         BorderThickness="0"
                         Cursor="Hand"
@@ -170,7 +173,6 @@
                                        FontSize="11"
                                        FontWeight="Black"
                                        VerticalAlignment="Center"/>
-                            
                         </StackPanel>
 
                         <Button Content="+ Add"

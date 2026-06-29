@@ -11,18 +11,16 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Bantay_Kalamidad_Pilipinas.ViewModel;
 
 namespace Bantay_Kalamidad_Pilipinas.View
 {
-    /// <summary>
-    /// Interaction logic for rescuedashboard_mainlayout_view.xaml
-    /// </summary>
     public partial class rescuedashboard_mainlayout_view : Window
     {
         public rescuedashboard_mainlayout_view()
         {
             InitializeComponent();
-            this.DataContext = new ViewModel.rescue_dashboard_mainlayout_ViewModel();
+            DataContext = new rescue_dashboard_mainlayout_ViewModel();
         }
     }
 }

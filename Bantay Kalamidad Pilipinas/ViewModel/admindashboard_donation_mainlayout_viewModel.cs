@@ -1,16 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using Bantay_Kalamidad_Pilipinas.View;
 
 namespace Bantay_Kalamidad_Pilipinas.ViewModel
 {
     public class admindashboard_donation_mainlayout_viewModel : ObservableObject
     {
+        private const string DonationsTab = "Donations";
+        private const string PledgesTab = "Pledges";
+        private const string LogisticsTab = "Logistics";
+        private const string InventoryTab = "Inventory";
+        private const string DistributionTab = "Distribution";
+        private const string WasteTab = "Waste";
+
+        private string _activeTab;
         private object _currentAdminDonationView;
         private IAdminDonationModuleViewModel _currentModuleViewModel;
         private string _selectedDonationModuleTitle;
@@ -55,6 +60,20 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             }
         }
 
+        public TextDecorationCollection DonationsUnderline => _activeTab == DonationsTab ? TextDecorations.Underline : null;
+        public TextDecorationCollection PledgesUnderline => _activeTab == PledgesTab ? TextDecorations.Underline : null;
+        public TextDecorationCollection LogisticsUnderline => _activeTab == LogisticsTab ? TextDecorations.Underline : null;
+        public TextDecorationCollection InventoryUnderline => _activeTab == InventoryTab ? TextDecorations.Underline : null;
+        public TextDecorationCollection DistributionUnderline => _activeTab == DistributionTab ? TextDecorations.Underline : null;
+        public TextDecorationCollection WasteUnderline => _activeTab == WasteTab ? TextDecorations.Underline : null;
+
+        public FontWeight DonationsFontWeight => _activeTab == DonationsTab ? FontWeights.Black : FontWeights.Bold;
+        public FontWeight PledgesFontWeight => _activeTab == PledgesTab ? FontWeights.Black : FontWeights.Bold;
+        public FontWeight LogisticsFontWeight => _activeTab == LogisticsTab ? FontWeights.Black : FontWeights.Bold;
+        public FontWeight InventoryFontWeight => _activeTab == InventoryTab ? FontWeights.Black : FontWeights.Bold;
+        public FontWeight DistributionFontWeight => _activeTab == DistributionTab ? FontWeights.Black : FontWeights.Bold;
+        public FontWeight WasteFontWeight => _activeTab == WasteTab ? FontWeights.Black : FontWeights.Bold;
+
         public ICommand ShowDonationsCommand { get; }
         public ICommand ShowPledgesCommand { get; }
         public ICommand ShowLogisticsCommand { get; }
@@ -64,7 +83,6 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
 
         public ICommand AddModeCommand { get; }
         public ICommand AddItemModeCommand { get; }
-
         public ICommand ManageModeCommand { get; }
         public ICommand ViewModeCommand { get; }
 
@@ -91,12 +109,32 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             ShowDonations();
         }
 
+        private void SetActiveTab(string activeTab)
+        {
+            _activeTab = activeTab;
+
+            OnPropertyChanged(nameof(DonationsUnderline));
+            OnPropertyChanged(nameof(PledgesUnderline));
+            OnPropertyChanged(nameof(LogisticsUnderline));
+            OnPropertyChanged(nameof(InventoryUnderline));
+            OnPropertyChanged(nameof(DistributionUnderline));
+            OnPropertyChanged(nameof(WasteUnderline));
+
+            OnPropertyChanged(nameof(DonationsFontWeight));
+            OnPropertyChanged(nameof(PledgesFontWeight));
+            OnPropertyChanged(nameof(LogisticsFontWeight));
+            OnPropertyChanged(nameof(InventoryFontWeight));
+            OnPropertyChanged(nameof(DistributionFontWeight));
+            OnPropertyChanged(nameof(WasteFontWeight));
+        }
+
         private void ShowDonations()
         {
             SelectedDonationModuleTitle = "Donations";
             var viewModel = new admindashboard_donation_Donations_viewModel();
             var view = new admindashboard_donation_Donations_view { DataContext = viewModel };
             LoadModule(view, viewModel);
+            SetActiveTab(DonationsTab);
         }
 
         private void ShowPledges()
@@ -105,6 +143,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             var viewModel = new admindashboard_donation_Pledges_viewModel();
             var view = new admindashboard_donation_Pledges_view { DataContext = viewModel };
             LoadModule(view, viewModel);
+            SetActiveTab(PledgesTab);
         }
 
         private void ShowLogistics()
@@ -113,6 +152,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             var viewModel = new admindashboard_donation_Logistics_viewModel();
             var view = new admindashboard_donation_Logistics_view { DataContext = viewModel };
             LoadModule(view, viewModel);
+            SetActiveTab(LogisticsTab);
         }
 
         private void ShowInventory()
@@ -121,6 +161,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             var viewModel = new admindashboard_donation_Inventory_viewModel();
             var view = new admindashboard_donation_Inventory_view { DataContext = viewModel };
             LoadModule(view, viewModel);
+            SetActiveTab(InventoryTab);
         }
 
         private void ShowDistribution()
@@ -129,6 +170,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             var viewModel = new admindashboard_donation_Distribution_viewModel();
             var view = new admindashboard_donation_Distribution_view { DataContext = viewModel };
             LoadModule(view, viewModel);
+            SetActiveTab(DistributionTab);
         }
 
         private void ShowWaste()
@@ -137,6 +179,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             var viewModel = new admindashboard_donation_Waste_viewModel();
             var view = new admindashboard_donation_Waste_view { DataContext = viewModel };
             LoadModule(view, viewModel);
+            SetActiveTab(WasteTab);
         }
 
         private void LoadModule(object view, IAdminDonationModuleViewModel viewModel)
@@ -153,6 +196,7 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             CurrentMode = "Add";
             _currentModuleViewModel?.EnterAddMode();
         }
+
         private void EnterAddItemMode()
         {
             CurrentMode = "Add Item";

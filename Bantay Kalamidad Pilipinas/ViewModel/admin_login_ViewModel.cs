@@ -151,13 +151,11 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
 
         private void Back()
         {
-            Window currentWindow = Application.Current.MainWindow;
-
-            var startWindow = new start_view();
-            Application.Current.MainWindow = startWindow;
-            startWindow.Show();
-
-            currentWindow?.Close();
+            var window = new Window();
+            window = new View.start_view();
+            window.Show();
+            Application.Current.MainWindow.Close();
+            Application.Current.MainWindow = window;
         }
 
         private void ForgotPassword()

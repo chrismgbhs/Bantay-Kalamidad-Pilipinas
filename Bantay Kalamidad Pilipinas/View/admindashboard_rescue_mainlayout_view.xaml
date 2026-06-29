@@ -67,7 +67,6 @@
                   Margin="14,0,14,0">
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="72"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -77,52 +76,51 @@
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="0"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    Cursor="Hand"
-                    Command="{Binding BackToAdminMenuCommand}">
-                    
-                    <Viewbox Width="34" Height="34">
-                        <Canvas Width="34" Height="34">
-                            <Path Data="M21,8 L12,17 L21,26"
-                                  Style="{StaticResource Path3}"/>
-                            <Path Data="M13,17 L29,17"
-                                  Style="{StaticResource Path4}"/>
-                        </Canvas>
-                    </Viewbox>
+                        Background="{StaticResource RescueBorder}"
+                        Style="{StaticResource Menubtn}"
+                        Command="{Binding ShowRescuersCommand}">
+                    <TextBlock Text="Rescuers"
+                               TextDecorations="{Binding RescuersUnderline}"
+                               FontWeight="{Binding RescuersFontWeight}"/>
                 </Button>
 
                 <Button Grid.Column="1"
-                        Content="Rescuers"
                         Background="{StaticResource RescueBorder}"
                         Style="{StaticResource Menubtn}"
-                        Command="{Binding ShowRescuersCommand}"/>
+                        Command="{Binding ShowDisasterEventsCommand}">
+                    <TextBlock Text="Disaster Events"
+                               TextDecorations="{Binding DisasterEventsUnderline}"
+                               FontWeight="{Binding DisasterEventsFontWeight}"/>
+                </Button>
 
                 <Button Grid.Column="2"
-                        Content="Disaster Events"
                         Background="{StaticResource RescueBorder}"
                         Style="{StaticResource Menubtn}"
-                        Command="{Binding ShowDisasterEventsCommand}"/>
+                        Command="{Binding ShowOperationsCommand}">
+                    <TextBlock Text="Operations"
+                               TextDecorations="{Binding OperationsUnderline}"
+                               FontWeight="{Binding OperationsFontWeight}"/>
+                </Button>
 
                 <Button Grid.Column="3"
-                        Content="Operations"
                         Background="{StaticResource RescueBorder}"
                         Style="{StaticResource Menubtn}"
-                        Command="{Binding ShowOperationsCommand}"/>
+                        Command="{Binding ShowAssignmentsCommand}">
+                    <TextBlock Text="Assignments"
+                               TextDecorations="{Binding AssignmentsUnderline}"
+                               FontWeight="{Binding AssignmentsFontWeight}"/>
+                </Button>
 
                 <Button Grid.Column="4"
-                        Content="Assignments"
                         Background="{StaticResource RescueBorder}"
                         Style="{StaticResource Menubtn}"
-                        Command="{Binding ShowAssignmentsCommand}"/>
+                        Command="{Binding ShowTeamsCommand}">
+                    <TextBlock Text="Teams"
+                               TextDecorations="{Binding TeamsUnderline}"
+                               FontWeight="{Binding TeamsFontWeight}"/>
+                </Button>
 
                 <Button Grid.Column="5"
-                        Content="Teams"
-                        Background="{StaticResource RescueBorder}"
-                        Style="{StaticResource Menubtn}"
-                        Command="{Binding ShowTeamsCommand}"/>
-
-                <Button Grid.Column="6"
                         Background="Transparent"
                         BorderThickness="0"
                         Cursor="Hand"
@@ -165,7 +163,6 @@
                                        FontSize="11"
                                        FontWeight="Black"
                                        VerticalAlignment="Center"/>
-
                         </StackPanel>
 
                         <Button Content="+ Add"
