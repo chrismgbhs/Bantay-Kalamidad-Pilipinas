@@ -23,13 +23,5 @@ namespace Bantay_Kalamidad_Pilipinas.View
             InitializeComponent();
             DataContext = new admin_login_ViewModel();
         }
-
-        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is admin_login_ViewModel vm && sender is PasswordBox pb)
-            {
-                vm.CurrentUser.Password = pb.Password;
-            }
-        }
     }
 }

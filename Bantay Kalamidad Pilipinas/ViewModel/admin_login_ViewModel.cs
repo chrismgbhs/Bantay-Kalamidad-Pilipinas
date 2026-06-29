@@ -43,7 +43,6 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             }
         }
 
-        // testing
         public string StatusMessage
         {
             get => _statusMessage;
@@ -81,15 +80,21 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
         {
             if (string.IsNullOrWhiteSpace(CurrentUser.Username))
             {
-                MessageBox.Show("Please enter your username.", "Admin Login",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(
+                    "Please enter your username.",
+                    "Admin Login",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(CurrentUser.Password))
             {
-                MessageBox.Show("Please enter your password.", "Admin Login",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(
+                    "Please enter your password.",
+                    "Admin Login",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
                 return;
             }
 
@@ -146,7 +151,13 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
 
         private void Back()
         {
-            Application.Current.MainWindow.Content = new start_view();
+            Window currentWindow = Application.Current.MainWindow;
+
+            var startWindow = new start_view();
+            Application.Current.MainWindow = startWindow;
+            startWindow.Show();
+
+            currentWindow?.Close();
         }
 
         private void ForgotPassword()

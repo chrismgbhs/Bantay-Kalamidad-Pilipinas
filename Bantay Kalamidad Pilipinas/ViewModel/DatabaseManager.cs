@@ -3350,5 +3350,69 @@ namespace Bantay_Kalamidad_Pilipinas.ViewModel
             return newId;
         }
 
+        //last minute
+        public static async Task<bool> RegisterVolunteerAccountAsync(
+    string email,
+    string password,
+    string volunteerName,
+    string contactNumber)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(SQL.connectionString))
+                using (SqlCommand command = new SqlCommand("usp_AddVolunteer", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    command.Parameters.Add("@email", SqlDbType.VarChar, 255).Value = email.Trim();
+                    command.Parameters.Add("@password", SqlDbType.VarChar, 255).Value = PasswordHelper.HashPassword(password);
+                    command.Parameters.Add("@volunteerName", SqlDbType.VarChar, 255).Value = volunteerName.Trim();
+                    command.Parameters.Add("@contactNumber", SqlDbType.VarChar, 50).Value =
+                        string.IsNullOrWhiteSpace(contactNumber) ? (object)DBNull.Value : contactNumber.Trim();
+
+                    await connection.OpenAsync();
+                    await command.ExecuteNonQueryAsync();
+
+                    MessageBox.Show(
+                        "Account created! You may now log in.",
+                        "Registration Successful",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+
+                    return true;
+                }
+            }
+            catch (SqlException ex) when (ex.Message.Contains("already registered") || ex.Number == 50000)
+            {
+                MessageBox.Show(
+                    "An account with this email already exists. Please use a different email.",
+                    "Registration Failed",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+
+                return false;
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show(
+                    "Could not complete registration because of a database error.\n\n" + ex.Message,
+                    "Database Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "An unexpected error occurred while creating the account.\n\n" + ex.Message,
+                    "Registration Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+
+                return false;
+            }
+        }
+
     }
 }

@@ -16,23 +16,12 @@ using System.Windows.Shapes;
 
 namespace Bantay_Kalamidad_Pilipinas.View
 {
-    /// <summary>
-    /// Interaction logic for rescue_signup_view.xaml
-    /// </summary>
     public partial class rescue_signup_view : UserControl
     {
         public rescue_signup_view()
         {
             InitializeComponent();
-            this.DataContext = new ViewModel.rescuer_signup_ViewModel();
-        }
-
-        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is rescuer_signup_ViewModel vm)
-            {
-                vm.Password = ((PasswordBox)sender).Password;
-            }
+            DataContext = new rescuer_signup_ViewModel();
         }
     }
 }

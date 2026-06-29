@@ -7,96 +7,200 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Bantay_Kalamidad_Pilipinas.View;
 
 namespace Bantay_Kalamidad_Pilipinas.ViewModel
 {
-    internal class rescue_login_ViewModel : ObservableObject
+    public class rescue_login_ViewModel : ObservableObject
     {
-        public static UserModel CurrentUser { get; set; }
-        public ICommand LoginCommand { get; set; }
-        public ICommand GoogleLoginCommand { get; set; }
-
-        private bool _isPasswordVisible;
-        public bool IsPasswordVisible
-        {
-            get => _isPasswordVisible;
-            set
-            {
-                _isPasswordVisible = value;
-                OnPropertyChanged();
-            }
-        }
+        public static UserModel CurrentUser { get; set; } = new UserModel();
 
         private string _password;
+        private bool _isPasswordVisible;
+        private bool _isBusy;
+
         public string Password
         {
             get => _password;
             set
             {
-                _password = value;
-                OnPropertyChanged();
-                CurrentUser.Password = value;
+                if (_password != value)
+                {
+                    _password = value;
+                    OnPropertyChanged();
+
+                    if (CurrentUser == null)
+                    {
+                        CurrentUser = new UserModel();
+                    }
+
+                    CurrentUser.Password = value;
+                    OnPropertyChanged(nameof(CurrentUser));
+                }
             }
         }
+
+        public bool IsPasswordVisible
+        {
+            get => _isPasswordVisible;
+            set
+            {
+                if (_isPasswordVisible != value)
+                {
+                    _isPasswordVisible = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(PasswordToggleText));
+                    OnPropertyChanged(nameof(MaskedPasswordVisibility));
+                    OnPropertyChanged(nameof(VisiblePasswordVisibility));
+                }
+            }
+        }
+
+        public string PasswordToggleText => IsPasswordVisible ? "Hide" : "Show";
+
+        public Visibility MaskedPasswordVisibility =>
+            IsPasswordVisible ? Visibility.Collapsed : Visibility.Visible;
+
+        public Visibility VisiblePasswordVisibility =>
+            IsPasswordVisible ? Visibility.Visible : Visibility.Collapsed;
+
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set
+            {
+                if (_isBusy != value)
+                {
+                    _isBusy = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public ICommand LoginCommand { get; }
+        public ICommand GoogleLoginCommand { get; }
+        public ICommand OpenSignupCommand { get; }
+        public ICommand BackCommand { get; }
+        public ICommand TogglePasswordVisibilityCommand { get; }
+        public ICommand ForgotPasswordCommand { get; }
 
         public rescue_login_ViewModel()
         {
-            CurrentUser = new UserModel();
-            LoginCommand = new RelayCommand(Login);
-            OpenSignupCommand = new RelayCommand(Signup);
+            if (CurrentUser == null)
+            {
+                CurrentUser = new UserModel();
+            }
+
+            LoginCommand = new AsyncRelayCommand(LoginAsync, CanSubmit);
+            GoogleLoginCommand = new AsyncRelayCommand(GoogleLoginAsync, CanSubmit);
+            OpenSignupCommand = new RelayCommand(OpenSignup);
             BackCommand = new RelayCommand(Back);
-            TogglePasswordVisibilityCommand = new RelayCommand(() => IsPasswordVisible = !IsPasswordVisible);
-            GoogleLoginCommand = new RelayCommand(async () => await GoogleLogin());
+            TogglePasswordVisibilityCommand = new RelayCommand(TogglePasswordVisibility);
+            ForgotPasswordCommand = new RelayCommand(ForgotPassword);
         }
 
-        public ICommand OpenSignupCommand { get; set; }
-        public ICommand BackCommand { get; set; }
-        public ICommand TogglePasswordVisibilityCommand { get; }
-
-        private async void Signup()
+        private bool CanSubmit()
         {
-            var userControl = new View.rescue_signup_view(); // this is a UserControl
-            Application.Current.MainWindow.Content = userControl;
+            return !IsBusy;
         }
 
-        private async void Login()
+        private void TogglePasswordVisibility()
         {
-            await DatabaseManager.Login(CurrentUser, "rescue", "Volunteer");
+            IsPasswordVisible = !IsPasswordVisible;
         }
 
-        private async Task GoogleLogin()
+        private async Task LoginAsync()
+        {
+            if (CurrentUser == null)
+            {
+                CurrentUser = new UserModel();
+            }
+
+            CurrentUser.Password = Password;
+
+            if (string.IsNullOrWhiteSpace(CurrentUser.Username) ||
+                string.IsNullOrWhiteSpace(CurrentUser.Password))
+            {
+                MessageBox.Show(
+                    "Please enter your username and password.",
+                    "Login",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+                return;
+            }
+
+            try
+            {
+                IsBusy = true;
+                await DatabaseManager.Login(CurrentUser, "rescue", "Volunteer");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private async Task GoogleLoginAsync()
         {
             try
             {
-                var result = await GoogleAuthHelper.SignInAsync();
-                await DatabaseManager.LoginWithGoogle(result.Email, result.DisplayName, "rescue", "Volunteer");
+                IsBusy = true;
+
+                await GoogleAuthHelper.SignOutAsync();
+
+                GoogleSignInResult result = await GoogleAuthHelper.SignInAsync();
+
+                await DatabaseManager.LoginWithGoogle(
+                    result.Email,
+                    result.DisplayName,
+                    "rescue",
+                    "Volunteer");
             }
             catch (InvalidOperationException ex)
             {
-                // Thrown by GoogleAuthHelper when GoogleAuthConfig.cs still has placeholder values.
-                MessageBox.Show(ex.Message, "Google Sign-In Not Set Up", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-            catch (Exception)
-            {
-                // Covers the user closing the browser tab, denying consent, or losing network
-                // mid-flow — GoogleWebAuthorizationBroker surfaces these as generic exceptions
-                // rather than a specific "user cancelled" type, so this is a catch-all on purpose.
                 MessageBox.Show(
-                    "Google sign-in was cancelled or could not be completed. Please try again.",
+                    ex.Message,
+                    "Google Sign-In Not Set Up",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Google sign-in was cancelled or could not be completed.\n\n" + ex.Message,
                     "Google Sign-In",
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
             }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private void OpenSignup()
+        {
+            Application.Current.MainWindow.Content = new rescue_signup_view();
         }
 
         private void Back()
         {
-            var window = new Window();
-            window = new View.start_view();
-            window.Show();
-            Application.Current.MainWindow.Close();
-            Application.Current.MainWindow = window;
+            Window currentWindow = Application.Current.MainWindow;
+
+            var startWindow = new start_view();
+            Application.Current.MainWindow = startWindow;
+            startWindow.Show();
+
+            currentWindow?.Close();
         }
 
+        private void ForgotPassword()
+        {
+            MessageBox.Show(
+                "Password recovery is not implemented yet.",
+                "Forgot Password",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
     }
 }
